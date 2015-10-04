@@ -1,0 +1,318 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	template="/pages/protected/usuario_autorizado/home.xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui">
+    
+<ui:define name="historico_pedidos_usuario"> 
+
+	<script type="text/javascript">
+		var title='USUARIO | HISTÓRICO COMPRAS';
+		document.getElementsByTagName('title')[0].innerHTML = title;
+	</script>
+	
+	<p:panel>
+		<h:outputText value="SABORES NATURAIS | MEU HISTORICO DE COMPRAS"/>
+	</p:panel>
+	
+	<h:form>
+		
+		<p:toolbar>
+		
+			<f:facet name="left">
+			
+				<p:commandButton 	value="Busca com Parametros" 
+									onclick="PF('widget_buscaParamsHistoricoComprasDialog').show();"
+									actionListener="#{listaMB.carregarListasAuxiliaresPesquisaParametro()}" 
+									update="pnl_dialog_busca">
+									
+					<p:dialog 	id="dialog_busca" 
+								widgetVar="widget_buscaParamsHistoricoComprasDialog" 
+								modal="true" 
+								dynamic="true" 
+								closable="true"
+								fitViewport="true" 
+								header="SELEÇÃO DE PARÂMETROS DE PESQUISA">
+								
+						<h:panelGroup 	id="pnl_dialog_busca" 
+										style="width:100%;">
+										
+							<table style="width:100%;">
+							
+								<tr style="width:100%;">
+								
+									<td style="width:100%;">
+							        	<p:outputLabel value="Produto:"/> <br/>
+							        	<p:selectOneMenu 	value="#{listaMB.parametros.produto}" 
+							        						style="width:100%;"
+							        						converter="produtoConverter">
+							        		<f:selectItem 	itemLabel="Selecione" 
+							        						noSelectionOption="true"/>
+							        		<f:selectItems 	value="#{listaMB.listaProdutos}" 
+							        						var="produto" 
+							        						itemValue="#{produto}" 
+							        						itemLabel="#{produto.produto}"/>
+							        	</p:selectOneMenu>
+									</td>
+									
+								</tr>
+								
+								<tr style="width:100%;">
+								
+									<td style="width:100%;">
+							        	<p:outputLabel value="Categoria:"/> <br />
+							        	<p:selectOneMenu 	value="#{listaMB.parametros.categoria}" 
+							        						style="width:100%;"
+							        						converter="categoriaConverter">
+							        		<f:selectItem 	itemLabel="Selecione" 
+							        						noSelectionOption="true"/>
+							        		<f:selectItems 	value="#{listaMB.listaCategorias}" 
+							        						var="cat" 
+							        						itemValue="#{cat}" 
+							        						itemLabel="#{cat.categoria}"/>
+							        	</p:selectOneMenu>
+									</td>
+								</tr>
+								
+								<tr style="width:100%;">
+								
+									<td style="width:100%;">
+							        	<p:outputLabel value="Fabricante:"/> <br/>
+							        	<p:selectOneMenu 	value="#{listaMB.parametros.fabricante}" 
+							        						style="width:100%;"
+							        						converter="fabricanteConverter">
+							        		<f:selectItem 	itemLabel="Selecione" 
+							        						noSelectionOption="true"/>
+							        		<f:selectItems 	value="#{listaMB.listaFabricantes}" 
+							        						var="fab" 
+							        						itemValue="#{produto}" 
+							        						itemLabel="#{fab.fabricante}"/>
+							        	</p:selectOneMenu>
+									</td>
+									
+								</tr>
+								
+							</table>
+							
+							<table style="width:100%;">
+							
+								<tr style="width:100%;">
+								
+									<td style="width:33%;">
+										<p:outputLabel value="Açucar: "/> <br />
+										<p:selectOneMenu 	value="#{listaMB.parametros.acucar}">
+											<f:selectItem 	itemLabel="Selecione" 
+															noSelectionOption="true"/>
+											<f:selectItems 	value="#{listaMB.listaSimNao}" 
+															var="sn" 
+															itemLabel="#{sn.descricao}"
+															itemValue="#{sn.status}"/>
+										</p:selectOneMenu>
+									</td>
+									
+									<td style="width:33%;">
+										<p:outputLabel value="Lactose: "/> <br /> 
+										<p:selectOneMenu 	value="#{listaMB.parametros.lactose}">
+											<f:selectItem 	itemLabel="Selecione" 
+															noSelectionOption="true"/>
+											<f:selectItems 	value="#{listaMB.listaSimNao}" 
+															var="sn" 
+															itemLabel="#{sn.descricao}"
+															itemValue="#{sn.status}"/>
+										</p:selectOneMenu>
+									</td>
+									
+									<td style="width:34%;">
+										<p:outputLabel 	value="Gluten: "/> <br />
+										<p:selectOneMenu 	value="#{listaMB.parametros.gluten}">
+											<f:selectItem 	itemLabel="Selecione" 
+															noSelectionOption="true"/>
+											<f:selectItems 	value="#{listaMB.listaSimNao}" 
+															var="sn" 
+															itemLabel="#{sn.descricao}"
+															itemValue="#{sn.status}"/>
+										</p:selectOneMenu>
+									</td>
+								</tr>
+							</table>
+							
+							<table style="width:100%;">
+							
+								<tr style="width:100%;">
+								
+									<td style="width:50%;">
+										<p:outputLabel 	value="Data Inicio:"/> <br />
+										<p:calendar 	mode="popup" 
+														showButtonPanel="true" 
+														pattern="dd/MM/yyyy" 
+														showOtherMonths="true" 
+														selectOtherMonths="true" 
+														value="#{listaMB.parametros.dataInicio}"/>
+									</td>
+									
+									<td style="width:50%;">
+										<p:outputLabel 	value="Data Fim:"/> <br />
+										<p:calendar 	mode="popup" 
+														showButtonPanel="true" 
+														pattern="dd/MM/yyyy" 
+														showOtherMonths="true" 
+														selectOtherMonths="true" 
+														value="#{listaMB.parametros.dataFim}"/>
+									</td>
+									
+								</tr>
+								
+								<tr style="width:100%;">
+								
+									<td style="width:50%;">
+										<p:outputLabel value="Preço Minimo:"/> <br />
+										<p:inputText value="#{listaMB.parametros.precoInicio}"/>
+									</td>
+									
+									<td style="width:50%;">
+										<p:outputLabel value="Preço Máximo:"/>  <br />
+										<p:inputText value="#{listaMB.parametros.precoFim}"/>
+									</td>
+									
+								</tr>
+								
+								<tr style="width:100%;">
+								
+									<td style="width:50%;">
+										<p:outputLabel value="Qtd. Comprada (Mínima):"/> <br />
+										<p:inputText value="#{listaMB.parametros.quantidadeCompradaMin}"/>
+									</td>
+									
+									<td style="width:50%;">
+										<p:outputLabel value="Qtd. Comprada (Máxima):"/> <br />
+										<p:inputText value="#{listaMB.parametros.quantidadeCompradaMax}"/>
+									</td>
+									
+								</tr>
+								
+								<tr 	style="width:100%;">
+								
+									<td 	colspan="2" 
+											style="text-align: center">
+									
+										<h:panelGroup 	style="width:100%;">
+											<p:commandButton 	value="Todas" 
+																action="#{listaMB.prepararListasPorCliente()}"
+																oncomplete="PF('widget_buscaParamsHistoricoComprasDialog').hide()"/>
+											<p:commandButton 	value="Carregar Parametros" 
+																action="#{listaMB.carregarListaCustom(listaMB.parametros)}"
+																oncomplete="PF('widget_buscaParamsHistoricoComprasDialog').hide()" 
+																update="toolbar_total_geral tabelaPedidos" 
+																process="@form" 
+																resetValues="true"/>
+											<p:commandButton 	value="Cancelar" 
+																immediate="true" 
+																oncomplete="PF('widget_buscaParamsHistoricoComprasDialog').hide()"/>
+										</h:panelGroup>
+										
+									</td>
+									
+								</tr>
+								
+							</table>	
+							
+						</h:panelGroup>
+						
+					</p:dialog>
+					
+				</p:commandButton> 
+				       
+			</f:facet>
+			
+			<f:facet name="right">
+			
+				<h:outputText value="Total Geral: "/>
+				<h:outputText value="#{listaMB.totalGeral}">
+					<f:convertNumber type="currency" currencySymbol="R$"/>
+				</h:outputText>
+				
+			</f:facet>
+			
+		</p:toolbar>
+	
+		<p:dataTable 	id="tabelaPedidos" 
+						value="#{listaMB.listasTodosPedidos}" 
+						var="pedido" 
+						rowIndexVar="rowIndex"
+						paginator="true"
+						paginatorAlwaysVisible="true"
+						rows="15">
+						
+			<p:column 	style="width:10%;">
+				<p:rowToggler />
+			</p:column>
+			
+			<p:column 	headerText="Codigo Pedido"
+						style="text-align:center;">
+				<h:outputText value="#{pedido.id}"/>
+			</p:column>
+			
+			<p:column 	headerText="Data Compra"
+						style="text-align:center;">
+				<h:outputText value="#{pedido.dataCompra}">
+					<f:convertDateTime pattern="dd/MM/yyyy hh:MM:ss"/>
+				</h:outputText>
+			</p:column>
+			
+			<p:column 	headerText="Entregue?"
+						style="text-align:center;">
+				<h:outputText value="#{listaMB.getStatusEntregue(pedido)}"/> 
+			</p:column>
+			
+			<p:column headerText="Total do Pedido">
+				<h:outputText 	value="#{listaMB.getSubtotal(pedido)}"
+								style="padding-left:20px;">
+					<f:convertNumber type="currency" currencySymbol="R$"/>
+				</h:outputText>
+			</p:column>
+			
+			<p:rowExpansion>
+			
+				<p:dataTable 	value="#{pedido.itens}" 
+								var="it">
+								
+					<p:column 	headerText="Codigo do Produto"
+								style="text-align:center;">
+						<h:outputText value="#{it.produto.codigoProduto}"/>
+					</p:column>
+					
+					<p:column 	headerText="Produto">
+						<h:outputText value="#{it.produto.produto}"/>
+					</p:column>
+					
+					<p:column 	headerText="Quantidade"
+								style="text-align:center;">
+						<h:outputText value="#{it.quantidade}"/>
+					</p:column>
+					
+					<p:column 	headerText="Preco">
+						<h:outputText 	value="#{it.preco}"
+										style="padding-left:20px;">
+							<f:convertNumber type="currency" currencySymbol="R$"/>
+						</h:outputText>
+					</p:column>
+					
+					<p:column 	headerText="Subtotal Item">
+						<h:outputText 	value="#{listaMB.getTotalItem(it.quantidade,it.preco)}"
+										style="padding-left:20px;">
+							<f:convertNumber type="currency" currencySymbol="R$"/>
+						</h:outputText>
+					</p:column>
+					
+				</p:dataTable>
+				
+			</p:rowExpansion>
+			
+		</p:dataTable>
+		
+	</h:form>
+	
+</ui:define>
+</ui:composition>

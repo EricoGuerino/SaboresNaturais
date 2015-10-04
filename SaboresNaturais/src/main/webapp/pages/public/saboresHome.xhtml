@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/pages/public/sabores.xhtml"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<ui:define name="home">
+	
+		<script type="text/javascript">
+			var title='SABORES | HOME';
+			document.getElementsByTagName('title')[0].innerHTML = title;
+		</script>
+		
+		<h:form>
+		
+			<ui:repeat value="#{saboresMB.noticias}" var="news" >
+			
+				<h:panelGroup 	id="pnlGeral">
+					
+					<p:panel 	id="pnlResumoGeral" 
+								rendered="#{not saboresMB.renderizarNoticiaCompleta}"
+								style="width:99%;">
+								
+						
+						<table style="width:100%;">
+						
+							<tr style="width:100%;">
+								<p:toolbar style="width:97%;">
+									<f:facet name="left">
+										<h:outputText value="#{news.titulo}"/>
+									</f:facet>
+									<f:facet name="right"></f:facet>
+								</p:toolbar>
+							</tr>
+							
+							<tr style="width:100%;">
+							
+								<td style="width:30%;text-align:center;">
+									<h:graphicImage 	value="/ServletMedia/?imagemListarNoticia=imagem_@NN@_#{news.id}" 
+														style="max-height:120px;max-width:150px;"/>
+								</td>
+								
+								<td style="width:65%;">
+									<h:outputText 	value="#{saboresMB._140Caracteres(news.noticia)}" 
+													escape="false"/> <br />
+													
+									<p:commandLink 	value="Continue Lendo" 
+													id="link_continuar_lendo"
+													action="#{saboresMB.continuarLendoSaboresHome(news)}"
+													immediate="true">			
+									</p:commandLink>				
+													
+								</td>
+								
+							</tr>
+							
+						</table>
+						
+					</p:panel>
+					
+				</h:panelGroup>
+					
+			</ui:repeat>
+		
+		</h:form>
+		
+	</ui:define>
+	
+</ui:composition>

@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+      template="/pages/protected/admin/administracao.xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"> 
+
+<ui:define name="cadastrar">
+
+	<script type="text/javascript">
+		var title='CADASTRO | PRODUTO';
+		document.getElementsByTagName('title')[0].innerHTML = title;
+	</script>
+	
+	<h:form id="formUiInsert" enctype="multipart/form-data">
+		
+		<p:panel>
+			<h:outputText value="SABORES NATURAIS | CADASTRO DE PRODUTOS" />
+		</p:panel>
+		
+		<p:panel header="DADOS GERAIS DO PRODUTO">
+			
+			<h:panelGrid columns="2" style="width:100%;">
+				<h:column>
+					<p:outputLabel 	value="Nome do Produto"/>
+					<p:inputText 	id="produto" 
+									value="#{produtoMB.produto.produto}" 
+									placeholder="Nome do Produto"
+									style="width:90%;"/>
+				</h:column>
+				
+				<h:column>
+					<p:outputLabel 	value="Descrição do Produto"/>
+					<p:inputText 	id="dsc" 
+									value="#{produtoMB.produto.descricao}" 
+									placeholder="Descriçao do Produto"
+									style="width:90%;"/>
+				</h:column>
+				
+				<h:column>
+					<p:outputLabel 	value="Argumento de Venda do Produto"/>
+					<p:inputTextarea 	id="argumento" 
+										value="#{produtoMB.produto.argumentoDeVenda}" 
+										placeholder="Digite um Argumento de Venda para o Produto" 
+										rows="5" 
+										cols="20"
+										style="width:90%;"/>
+				</h:column>
+				
+				<h:column>
+					<table width="100%">
+						<tr>
+							<td>
+								<p:outputLabel 	value="Código do Produto "/><br />
+								<pe:inputNumber 	maxValue="999" 
+													minValue="000" 
+													emptyValue="000" 
+													value="#{produtoMB.produto.codigoProduto}"
+													style="width:90%;"/>
+							</td>
+							<td>
+								<p:outputLabel 	value="Período de Validade "/><br />
+								<pe:inputNumber 	maxValue="999" 
+													minValue="000" 
+													emptyValue="000" 
+													value="#{produtoMB.produto.periocoDeValidade}"
+													style="width:90%;"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<p:outputLabel 	value="Categoria do Produto "/><br />
+								<p:selectOneMenu 	id="categoria" 
+													value="#{produtoMB.produto.categoria}" 
+													converter="categoriaConverter"
+													style="width:60%;">
+									<f:selectItem 	itemLabel="Selecione" 
+													noSelectionOption="true"/>
+									<f:selectItems 	value="#{produtoMB.allCategorias}" 
+													var="cat" 
+													itemLabel="#{cat.categoria}" 
+													itemValue="#{cat}"/>
+								</p:selectOneMenu>
+							</td>
+							<td>
+								<p:outputLabel 	value="Fabricante do Produto "/><br />
+								<p:selectOneMenu 	id="fabricante" 
+													value="#{produtoMB.produto.fabricante}" 
+													converter="fabricanteConverter"
+													style="width:60%;">
+									<f:selectItem 	itemLabel="Selecione" 
+													noSelectionOption="true"/>
+									<f:selectItems 	value="#{produtoMB.allFabricante}" 
+													var="fab" 
+													itemLabel="#{fab.fabricante}" 
+													itemValue="#{fab}"/>
+								</p:selectOneMenu>
+							</td>
+						</tr>
+					</table>
+				</h:column>
+			</h:panelGrid>
+		
+		</p:panel>
+		
+		<p:panel id="pnlFoto" header="IMAGENS (FOTOS) DOS PRODUTOS">
+		
+			<h:panelGrid id="fotoDetalhes" columns="2" style="width:100%;">
+				
+				<h:column>
+					<p:graphicImage 	id="foto" 
+										cache="false" 
+										style="width:70%;height:50%;max-width:150px;max-height:90px;" 
+										value="/exibicaoTemporariaCadastroImagensProdutos"/>
+				</h:column>
+				
+				<h:column>
+					<table style="width:100%;">
+						<tr>
+							<td>
+								<p:outputLabel 	value="Nome da Imagem"/><br />
+								<p:inputText 	id="alterar_nome_foto" 
+												value="#{produtoMB.produto.foto.nomeFoto}"
+												disabled="true"
+												style="width:90%;"/>
+							</td>
+							<td>
+								<p:outputLabel 	value="Tipo da Imagem"/><br />
+								<p:inputText 	id="alterar_tipo_foto" 
+												value="#{produtoMB.produto.foto.contentType}"
+												disabled="true"
+												style="width:90%;"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<p:outputLabel 	value="Tamanho da Imagem"/><br />
+								<p:inputText 	id="alterar_tam_foto" 
+												value="#{produtoMB.formatarTamanhoImagem(produtoMB.produto.foto.tamFoto)}"
+												disabled="true"
+												style="width:90%;"/>
+							</td>
+							<td>
+								<p:outputLabel 	value="Extensão da Imagem"/><br />
+								<p:inputText 	id="alterar_caminho_foto" 
+												value="#{produtoMB.produto.foto.extensaoFoto}"
+												disabled="true"
+												style="width:90%;"/>
+							</td>
+						</tr>
+					</table>
+									
+				</h:column>
+			
+			</h:panelGrid>
+			
+			<p:fileUpload 	mode="advanced" immediate="true" id="updateFoto" fileUploadListener="#{produtoMB.fotoDoProdutoHandler}"
+			 				update="pnlFoto" style="width:100%;"/>
+				
+		</p:panel>
+		
+		<p:panel header="INFORMAÇÕES NUTRICIONAIS DO PRODUTO">
+		
+			<h:panelGrid columns="3" style="width:100%;">
+				<h:column>
+					<p:outputLabel value="Possui Açúcar?  "/>
+					<p:selectBooleanCheckbox id="acucar" value="#{produtoMB.produto.acucar}"/>
+				</h:column>
+				<h:column>
+					<p:outputLabel value="Possui Lactose?  "/>
+					<p:selectBooleanCheckbox id="lactose" value="#{produtoMB.produto.lactose}"/>
+				</h:column>
+				<h:column>
+					<p:outputLabel value="Possui Glúten?  "/>
+					<p:selectBooleanCheckbox id="gluten" value="#{produtoMB.produto.gluten}"/>
+				</h:column>
+			</h:panelGrid>
+		</p:panel>
+		
+		<p:panel header="PREÇO DO PRODUTO">
+			<h:panelGrid columns="3" style="width:100%;">
+				<h:column>
+					<p:outputLabel 	value="Preço do Produto"/> <br />
+					<pe:inputNumber 	value="#{produtoMB.produto.preco}" 
+										emptyValue="0.00" 
+										id="preco" 
+										decimalSeparator=","
+										thousandSeparator="."
+										symbol="R$ "
+										symbolPosition="p">
+					
+					</pe:inputNumber>
+				</h:column>
+				<h:column>
+					<p:commandButton 	id="btnSalvar" 
+										value="Salvar" 
+										action="#{produtoMB.salvarProduto()}" 
+										update="@form" 
+										process="@form" 
+										resetValues="true">
+						<f:setPropertyActionListener 	target="#{produtoMB.produto}" 
+														value="#{produtoMB.produto}"/>
+						<p:ajax 	resetValues="true"/>
+					</p:commandButton>
+				</h:column>
+				<h:column>
+					<p:commandButton 	id="btnCancelar"
+										value="Cancelar" 
+										immediate="true" 
+										action="toAdministracaoHome"/>
+				</h:column>
+			</h:panelGrid>
+		</p:panel>				
+	</h:form>
+</ui:define>
+</ui:composition>

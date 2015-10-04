@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>SABORES | HOME</title>
+	<h:outputStylesheet library="css" name="normalize.css" />
+	<h:outputStylesheet library="css" name="main.css" />
+	<script type="text/javascript">
+		window.onload = function()
+		{
+			document.getElementById('login:username').placeholder = "Digite seu e-mail";
+			document.getElementById('login:password').placeholder = "Digite a senha";
+		}
+  	</script>
+</h:head>
+
+<h:body>
+	<div class="container">
+		<header>
+			<h:graphicImage library="img" name="sabores_img_ka/sabores.jpg"
+				alt="" class="fl" />
+			<div class="form fl">
+				<h:form id="login" styleClass="clearfix">
+					<p:growl globalOnly="true" showDetail="true" showSummary="false"/>
+					<h:inputText id="username" value="#{loginMB.emailHeader}"
+						alt="Digite seu e-mail" styleClass="email fl bordas_arredondadas" />
+
+					<h:inputSecret id="password" value="#{loginMB.passwordHeader}"
+						alt="Digite a senha" styleClass="senha fl bordas_arredondadas" />
+
+					<p:commandButton id="btnLogin" value="Login"
+						action="#{loginMB.logar()}">
+
+						<f:setPropertyActionListener target="#{loginMB.emailHeader}"
+							value="#{loginMB.emailHeader}" />
+
+						<f:setPropertyActionListener target="#{loginMB.passwordHeader}"
+							value="#{loginMB.passwordHeader}" />
+					</p:commandButton>
+
+					<p:commandButton id="btnLogoff" value="Logoff"
+						action="#{loginMB.logoff}" immediate="true"
+						rendered="#{loginMB.logged}" update="@all">
+
+						<p:ajax />
+					</p:commandButton>
+
+					<label class="fl"> 
+						<p:commandLink value="Faça o cadastro!"
+							style="color:green;" immediate="true" action="toCadastroCliente" />
+					</label>
+					<label class="fr"> 
+						<p:commandLink 	value="Esqueci a senha!"
+										style="color:green;" 
+										immediate="true" 
+										oncomplete="PF('widgetDialogEsqueciSenha').show();"
+										update=":formDialog:pnlEsqueciSenha">
+							
+						</p:commandLink>	
+					</label>
+
+				</h:form>
+			</div>
+		</header>
+		<div class="clearfix">
+			<nav class="bordas_arredondadas">
+				<h:form id="redirectsForm">
+					<ul>
+						<li><p:commandLink value="Home" action="toSaboresHome"
+								immediate="true" style="font-size:24px;" /></li>
+
+						<li><p:commandLink value="Sobre" action="toSobre"
+								immediate="true" style="font-size:24px;" /></li>
+
+						<li><p:commandLink value="Notícias" action="toNoticias"
+								immediate="true" style="font-size:24px;" /></li>
+
+						<li><p:commandLink value="Produtos" action="toProdutos"
+								immediate="true" style="font-size:24px;" /></li>
+
+						<li><p:commandLink value="Contato" action="toContato"
+								immediate="true" style="font-size:24px;" /></li>
+					</ul>
+				</h:form>
+			</nav>
+			<section>
+				<div class="content">
+					<ui:insert name="home" />
+				</div>
+			</section>
+		</div>
+		<footer>
+			<p><h:outputText value="Sabores Naturais &#174; 2015" /></p>
+			<a target="_blank" href="https://www.facebook.com/pages/Sabores-Naturais-Distribuidora-de-produtos-Natural-Diet-e-Light/452591984903134">
+				<h:graphicImage library="img" name="sabores_img_ka/fb.png" alt="" />
+			</a>
+		</footer>
+	</div>
+	
+	<h:form id="formDialog">
+		<p:dialog 	id="dialogEsqueciSenha"
+					widgetVar="widgetDialogEsqueciSenha"
+					modal="true"
+					closable="false"
+					header="SABORES | RECUPERAÇÃO DE SENHA">
+			<h:panelGrid 	id="pnlEsqueciSenha"
+							columns="1">
+				
+				<h:column>
+					<p:outputLabel value="Digite seu email cadastrado como principal. "/>
+					<br />
+					<p:outputLabel value="Sua nova senha será enviada para este endereço de email."/>
+				</h:column>
+				<h:column>
+					<p:inputText 	value="#{saboresMB.emailEsqueciSenha}"
+									placeholder="Digite seu email"
+									style="width:500px;"/>
+				</h:column>
+				<h:column>
+					<h:panelGroup>
+						<p:commandButton 	id="btnEsqueciSenha"
+											value="Enviar"
+											action="#{saboresMB.enviar()}"
+											update=":login"/>
+						
+						<p:commandButton 	id="btnEsqueciSenhaCancelar"
+											value="Cancelar"
+											update=":login"
+											immediate="true"
+											oncomplete="PF('widgetDialogEsqueciSenha').hide();"/>
+					</h:panelGroup>
+				</h:column>
+			</h:panelGrid>
+		</p:dialog>
+	</h:form>
+
+</h:body>
+</html>

@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+		template="/pages/protected/admin/administracao.xhtml"
+		xmlns:ui="http://java.sun.com/jsf/facelets"
+		xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:f="http://java.sun.com/jsf/core"
+		xmlns:p="http://primefaces.org/ui"
+		xmlns:pe="http://primefaces.org/ui/extensions">
+      
+    <ui:define name="cadastrar">
+    
+    	<script type="text/javascript">
+			var title='CADASTRO | PREÇO E STATUS';
+			document.getElementsByTagName('title')[0].innerHTML = title;
+		</script>
+		
+        <p:panel>
+        	<h:outputText 	value="SABORES NATURAIS | ADICIONAR OU ALTERAR PREÇO E STATUS"/>
+        </p:panel>
+		
+       	<h:form prependId="false">
+       	
+       		<p:growl 	id="msg" 
+       					autoUpdate="true" 
+       					escape="false" 
+       					showSummary="true" 
+       					showDetail="true"/>
+       		
+       		<p:contextMenu 	for="tabEstoquePreco" 
+       						widgetVar="widgetVar_ctxMenu_tabEstoquePreco">
+       						   
+		       <p:menuitem 	value="Edit Cell" 
+		       				icon="ui-icon-search" 
+		       				onclick="PF('widgetVar_tabEstoquePreco').showCellEditor();return false;"/>
+		       				  
+		       <p:menuitem 	value="Hide Menu" 
+		       				icon="ui-icon-close" 
+		       				onclick="PF('widgetVar_ctxMenu_tabEstoquePreco').hide()"/>
+		       				  
+		   </p:contextMenu>
+       		
+       		<p:dataTable	id="tabEstoquePreco" 
+       						value="#{produtoMB.allProdutos}" 
+       						var="produto" 
+       						paginator="true" 
+       						rows="50" 
+       						emptyMessage="Sem Registros"
+							rowIndexVar="rowIndex" 
+							rendered="#{not empty produtoMB.allProdutos}" 
+							widgetVar="widgetVar_tabEstoquePreco">
+				
+				<f:facet 	name="header">
+					<h:outputText 	value="Produtos Cadastrados"/>
+				</f:facet>
+				
+				<p:column 	style="text-align:center;" 
+							headerText ="Cod. Identificação Produto" 
+							sortBy="#{produto.codigoProduto}" 
+							filterBy="#{produto.codigoProduto}">
+								
+					<h:outputText 	value="#{produto.codigoProduto}"/>
+					
+				</p:column>
+							
+				<p:column 	headerText="Produto" 
+							sortBy="#{produto.produto}" 
+							filterBy="#{produto.produto}">
+							
+					<p:commandLink 	id="ver_detalhes" 
+									value="#{produto.produto}" 
+									action="#{produtoMB.visualizarProduto(produto)}"
+									/>
+									
+				</p:column >
+				
+				<p:column 	headerText="Alterar Status (ATIVADO | DESATIVADO)" 
+							style="text-align:center;">
+							
+					<p:commandButton 	value="#{produto.statusAtivacao.descricao}"
+										action="#{produtoMB.alterarStatusAtivacao(produto)}"
+										process="@this"
+										update="@this"
+										id="btnAlteraStatus_#{rowIndex}"
+										accesskey="#{produto.id}"
+										widgetVar="widget_btnAlteraStatus_#{rowIndex}">
+						
+					</p:commandButton>
+		           	
+				</p:column >
+				
+				<p:column 	headerText="Editar Preço" 
+							style="text-align:center;">
+							
+               		<pe:inputNumber 	value="#{produto.preco}" 
+										emptyValue="0.00" 
+										id="edita_preco" 
+										decimalSeparator=","
+										thousandSeparator="."
+										widgetVar="edita_preco_#{produto.id}"
+										accesskey="#{produto.id}"
+										valueChangeListener="#{produtoMB.alterarPreco}">
+						<p:ajax process="@this" update="@this"/>				
+					</pe:inputNumber>					
+
+				</p:column >
+				
+	        </p:dataTable>
+	        
+	        <p:commandButton 	id="novo_produto" 
+	        					action="#{produtosMB.criar()}" 
+	        					value="Novo Produto"/>
+	        					
+		</h:form>
+		
+		<h:form id="formDialogProdutos">
+		
+        	<p:dialog 	modal="true" 
+						fitViewport="true" 
+						dynamic="true" 
+						id="dialog_visualizar_produto"
+						widgetVar="widget_dialog_visualizar_produto">
+								
+				<p:fieldset 	legend="#{produtoMB.produto.produto}">
+				
+					<h:panelGrid 	columns="3">
+									
+						<h:column>
+										
+							
+							<p:graphicImage 	id="visualizar_prod_foto" 
+												value="/fotosProdutos/?produtoId=#{produtoMB.produto.id}" 
+												width="300" 
+												height="250"
+												style="border:1px;"/>
+							
+						</h:column>
+						
+						<h:column>
+						
+							<p:fieldset 	id="visualizar_out_validade" 
+												legend="Prazo de Validade"
+												style="font-weight:bolder;">
+												
+									<h:outputText 	id="visualizar_txt_validade" 
+													value="#{produtoMB.produto.periocoDeValidade} meses"/>
+								
+							</p:fieldset>
+										
+							<p:fieldset 	id="visualizar_out_dsc" 
+											legend="Descrição do Produto"
+											style="font-weight:bolder;">
+											
+								<h:outputText 	id="visualizar_txt_dsc" 
+												value="#{produtoMB.produto.descricao}"/>
+											
+							</p:fieldset>
+							
+							<p:fieldset 	id="visualizar_out_argumento" 
+											legend="Argumento de Venda"
+											style="font-weight:bolder;width:400px;">
+											
+								<h:outputText 	id="visualizar_txt_argumento" 
+												value="#{produtoMB.produto.argumentoDeVenda}"/>
+											
+							</p:fieldset>
+											
+						</h:column>
+						
+						<h:column>
+											
+							<p:fieldset 	id="visualizar_out_acucar" 
+											legend="Possui Açucar?" 
+											style="font-weight:bolder;">
+											
+								<h:outputText 	id="visualizar_txt_acucar" 
+												value="#{produtoMB.produto.acucar eq true ? 'Sim':'Não'}"/>
+												
+							</p:fieldset>
+							
+							<p:fieldset 	id="visualizar_out_lactose" 
+											legend="Possui Lactose?" 
+											style="font-weight:bolder;">
+							
+								<h:outputText 	id="visualizar_txt_lactose" 
+												value="#{produtoMB.produto.lactose eq true ? 'Sim':'Não'}"/>
+											
+							</p:fieldset>
+							
+							<p:fieldset 	id="visualizar_out_gluten" 
+											legend="Possui Glúten?"
+											style="font-weight:bolder;">
+							
+								<h:outputText 	id="visualizar_txt_gluten" 
+												value="#{produtoMB.produto.gluten eq true ? 'Sim':'Não'}"/>
+												
+							</p:fieldset>
+								
+						</h:column>
+						
+					</h:panelGrid>
+					
+				</p:fieldset>
+			
+		</p:dialog>
+		</h:form>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,662 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	template="/pages/protected/usuario_autorizado/home.xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui">
+    
+<ui:define name="comprar"> 
+	<script type="text/javascript">
+		var title='USUARIO | COMPRAR';
+		document.getElementsByTagName('title')[0].innerHTML = title;
+	</script>
+	<style>
+		.ui-icon-cart 
+		{
+    		background-image: url(img/cesta-compras-icon-jpeg.jpg) no-repeat top left !important;
+		}
+		
+		.columnImage
+		{
+			width: 20%;
+			height:100%;
+		}
+		
+		.columnTable
+		{
+			width: 80%;
+		}
+		
+		.altura_row
+		{
+			height: 100% !important;
+		}
+		
+		.bordas_arredondas
+		{
+			border-radius: 20px;
+			-moz-border-radius: 20px;
+			-webkit-border-radius: 20px;
+		}
+		
+		.bordas_arredondas_reforcadas
+		{
+			border-width: 5px;
+			border-radius: 50px;
+			-moz-border-radius: 50px;
+			-webkit-border-radius: 50px;
+		}
+		
+		.tb_titulo
+		{
+			font-size: 25px;
+		}
+		
+		.ui-panel .ui-panel-titlebar 
+		{
+		    border-radius: 50px;
+		    -moz-border-radius: 50px;
+			-webkit-border-radius: 50px;
+		}
+		
+		.ui-toolbar-group-left
+		{
+			padding-top:5px;
+			padding-left:10px;
+		}
+	</style>
+	
+    <h:form id="formUiComprar"> 
+		<p:panel>
+			<h:outputText value="SABORES NATURAIS | COMPRAR PRODUTOS"/>
+		</p:panel>
+		<p:sticky target="tb" />
+		<p:sticky target="tb_filtro" />
+		<div style="width:100%; display:inline-block" class="bordas_arredondas">
+			<div style="width:20%;float:left;" >
+				<p:toolbar id="tb_filtro" styleClass="bordas_arredondas" style="height:50px;width:95%;">
+			    	<f:facet name="left">
+			        	<h:outputText value="Filtro" styleClass="tb_titulo"/>
+			    	</f:facet>
+			    	<f:facet name="right"></f:facet>
+				</p:toolbar>
+				
+				<p:panel 	header="Filtrar por Categoria" 
+							styleClass="bordas_arredondas" 
+							style="width:95%;">
+							
+					<p:selectManyCheckbox 	id="filtroCategorias"	
+											value="#{compraMB.selectedCategorias}" 
+											layout="grid" 
+											columns="1"
+											converter="categoriaConverter"
+											valueChangeListener="#{compraMB.valueChangeCategorias}">
+						<f:selectItems 	value="#{compraMB.categorias}"
+										var="cat"
+										itemValue="#{cat}"
+										itemLabel="#{cat.categoria}"/>
+						<p:ajax process="@this" update="@form"/>
+					</p:selectManyCheckbox>
+					
+				</p:panel>
+				
+				<p:panel 	header="Filtrar por Fabricante" 
+							styleClass="bordas_arredondas" 
+							style="width:95%;">
+							
+					<p:selectManyCheckbox 	id="filtroFabricantes"	
+											value="#{compraMB.selectedFabricantes}" 
+											layout="grid" 
+											columns="1"
+											converter="fabricanteConverter"
+											valueChangeListener="#{compraMB.valueChangeFabricantes}">
+						<f:selectItems 	value="#{compraMB.fabricantes}" 
+										var="fab"
+										itemValue="#{fab}"
+										itemLabel="#{fab.fabricante}"/>
+						<p:ajax process="@this" update="@form"/>
+					</p:selectManyCheckbox>
+					
+				</p:panel>
+				
+				<p:panel 	header="Filtrar por Preco" 
+							styleClass="bordas_arredondas" 
+							style="width:95%;">
+							
+					<p:selectManyCheckbox 	id="filtroFaixaPreco" 
+											value="#{compraMB.selectedFaixasPreco}" 
+											layout="grid" 
+											columns="1"
+											converter="faixaPrecoConverter"
+											valueChangeListener="#{compraMB.valueChangeFaixasPreco}">
+						<f:selectItems 	value="#{compraMB.faixasPreco}" 
+										var="fp"
+										itemValue="#{fp}"
+										itemLabel="#{fp.faixa}"/>
+						<p:ajax process="@this" update="@form"/>
+					</p:selectManyCheckbox>
+					
+				</p:panel>
+				
+				<p:panel 	header="Filtrar por Inf. Nutricionais (Açúcar)" 
+							styleClass="bordas_arredondas" 
+							style="width:95%;">
+					
+					<p:selectOneRadio 	id="filtroInformacoesNutricionaisAcucar" 
+											value="#{compraMB.selectedAcucar}" 
+											layout="grid" 
+											columns="2"
+											valueChangeListener="#{compraMB.valueChangeInformacoesNutricionais}">
+						<f:selectItem 	itemValue="acucar_true"
+										itemLabel="Sim"/>
+						<f:selectItem 	itemValue="acucar_false"
+										itemLabel="Não"/>
+						<f:selectItem	itemLabel="Nenhum"
+										itemValue="acucar_nenhum"/>
+						<p:ajax process="@this" update="@form"/>				
+					</p:selectOneRadio>
+				</p:panel>
+				
+				<p:panel	header="Filtrar por Inf. Nutricionais (Lactose)" 
+							styleClass="bordas_arredondas" 
+							style="width:95%;">
+					<p:selectOneRadio 	id="filtroInformacoesNutricionaisLactose" 
+											value="#{compraMB.selectedLactose}" 
+											layout="grid" 
+											columns="2"
+											valueChangeListener="#{compraMB.valueChangeInformacoesNutricionais}">
+						<f:selectItem 	itemValue="lactose_true"
+										itemLabel="Sim"/>
+						<f:selectItem 	itemValue="lactose_false"
+										itemLabel="Não"/>
+						<f:selectItem	itemLabel="Nenhum"
+										itemValue="lactose_nenhum"/>
+						<p:ajax process="@this" update="@form"/>				
+					</p:selectOneRadio>
+				</p:panel>
+				
+				<p:panel	header="Filtrar por Inf. Nutricionais (Glúten)" 
+							styleClass="bordas_arredondas" 
+							style="width:95%;">	
+					<p:selectOneRadio 	id="filtroInformacoesNutricionaisGluten" 
+											value="#{compraMB.selectedGluten}" 
+											layout="grid" 
+											columns="2"
+											valueChangeListener="#{compraMB.valueChangeInformacoesNutricionais}">
+						<f:selectItem 	itemValue="gluten_true"
+										itemLabel="Sim"/>
+						<f:selectItem 	itemValue="gluten_false"
+										itemLabel="Não"/>
+						<f:selectItem	itemLabel="Nenhum"
+										itemValue="gluten_nenhum"/>
+						<p:ajax process="@this" update="@form"/>				
+					</p:selectOneRadio>
+					
+				</p:panel>
+				
+			</div>
+			<div style="width:80%;float:right;" class="bordas_arredondas">
+				<p:toolbar id="tb" styleClass="bordas_arredondas" style="height:50px;width:100%;">
+			    	<f:facet name="left">
+			        	<h:outputText value="Produtos disponíveis para compra" styleClass="tb_titulo"/>
+			    	</f:facet>
+			    	<f:facet name="right">
+			       		<p:commandButton 	value="Seu Carrinho" 
+			       							action="#{compraMB.abrirCarrinho()}" 
+			       							styleClass="bordas_arredondas" 
+			       							style="height:45px;"
+			       							oncomplete="PF('widgetDialogaCarrinho').show();"
+			       							update=":formDialogCarrinho:pnlCarrinho"/>
+			    	</f:facet>
+				</p:toolbar>
+				<h:dataTable 	id="dtCompras"	
+								value="#{compraMB.produtosTabela}" 
+								var="p" 
+								rows="15"
+								columnClasses="columnImage,columnTable"
+								rowClasses="altura_row">
+			 
+					<h:column>
+						<p:panel styleClass="bordas_arredondas" style="height:94%;">
+				            <p:graphicImage 	id="imagem_produto" 
+				            					value="/fotosProdutos/?produtoId=#{p.produto.id}" 
+				            					width="70%" height="50%"/> 
+						</p:panel>
+					</h:column>
+			 
+			        <h:column width="85%">
+			        	<p:panel style="display:inline-block;width:100%;" styleClass="bordas_arredondas">
+			        		<p:toolbar styleClass="bordas_arredondas" style="height:30px;">
+			        			<f:facet name="left">
+			        				<h:outputText value="#{p.produto.produto}" style="font-weight: bold"/>
+			        			</f:facet>
+			        			<f:facet name="right">
+				        			<h:outputText value="#{p.produto.preco}" style="font-weight: bold">
+				                 		<f:convertNumber type="currency" currencySymbol="R$"/>
+				                 	</h:outputText>
+				                </f:facet>
+			        		</p:toolbar>
+			        		<table>
+			        			<tr style="width:100%;">
+			        				<td style="width:90%;">
+			        					<table style="width:100%;">
+			        						<tr>
+			        							<td colspan="4">
+			        								<h:outputText value="Descrição Produto: " style="font-weight: bold"/>
+				                					<h:outputText value="#{p.produto.descricao}" />
+			        							</td>
+			        						</tr>
+			        						<tr>
+			        							<td colspan="4">
+			        								<h:outputText value="Porque comprar este produto: " style="font-weight: bold"/>
+				                					<h:outputText value="#{p.produto.argumentoDeVenda}" />
+			        							</td>
+			        						</tr>
+			        						<tr>
+			        							<td colspan="2">
+			        								<h:outputText value="Categoria: " style="font-weight: bold"/>
+						                			<h:outputText value="#{p.produto.categoria.categoria}" />
+			        							</td>
+			        							<td colspan="2">
+			        								<h:outputText value="Fabricante: " style="font-weight: bold"/>
+						                			<h:outputText value="#{p.produto.fabricante.fabricante}" />
+			        							</td>
+			        						</tr>
+			        						<tr>
+			        							<td>
+									                <h:outputText value="Validade: " style="font-weight: bold" />
+									                <h:outputText value="#{p.produto.periocoDeValidade} meses" />
+												</td>
+								             	
+								             	<td>
+									                <h:outputText value="Açúcar: " style="font-weight: bold"/>
+									                <h:outputText value="#{compraMB.getSimNaoFromBoolean(p.produto.acucar)}" disabled="true" />
+												</td>
+												
+												<td>
+									                <h:outputText value="Lactose: " style="font-weight: bold"/>
+									                <h:outputText value="#{compraMB.getSimNaoFromBoolean(p.produto.lactose)}" disabled="true" />
+												</td>
+												
+												<td>
+									                <h:outputText value="Glúten: " style="font-weight: bold"/>
+									                <h:outputText value="#{compraMB.getSimNaoFromBoolean(p.produto.gluten)}" disabled="true" />
+								                </td>
+			        						</tr>
+			        					</table>
+			        				</td>
+			        				<td style="width:10%;">
+			        					<table>
+			        						<tr>
+			        							<td>
+						        					<h:outputText value="Quantidade" />
+			        							</td>
+			        						</tr>
+			        						<tr>
+			        							<td>
+									             	<p:spinner 	size="5"
+									             				accesskey="#{p.produto.id}"
+									             				id="setar_quantidade" 
+									             				value="#{p.quantidade}" 
+									             				valueChangeListener="#{compraMB.pegarQuantidade}"
+									             				styleClass="bordas_arredondas">
+									             		<f:converter converterId="javax.faces.Integer" />
+									             		<f:param id="tabelaProdutoObj" name="tabelaProdutoObj" value="#{p.pid}"/>
+									             		<p:ajax process="@this" update="@this"/>
+									             	</p:spinner>
+			        							</td>
+			        						</tr>
+			        						<tr>
+			        							<td>
+									              	<p:commandButton 	id="btnComprar" 
+									              						title="Adicionar ao Carrinho" 
+									              						icon="ui-icon-cart" 
+									              						action="#{compraMB.comprar(p.produto.id)}"
+									              						process="@form" 
+									              						update="@none" 
+									              						resetValues="true"
+									              						style="width:100%;height:50px;"
+									              						styleClass="bordas_arredondas">
+									              		<f:setPropertyActionListener target="#{compraMB.produto}" value="#{p.produto}"/>
+									              	</p:commandButton>
+			        							</td>
+			        						</tr>
+			        					</table>
+						             	
+			        				</td>
+			        			</tr>
+			        		</table>
+			        		<p:commandButton 	id="openDialogTabelaNutricional"
+				        						value="Tabela Nutricional"
+				        						process="@this"
+				        						update=":formDialogTabelaNutricional:pnlDialogTabelaNutricional"
+				        						onclick="PF('widgetDialogTabelaNutricional').show();"
+					        					rendered="#{p.renderizarTabelaNutricional}"
+				        						immediate="true">
+			        			<f:setPropertyActionListener 	target="#{compraMB.tabelaNutricional}" 
+			        											value="#{p.tabelaNutricional}"/>
+			        		</p:commandButton>
+			        	</p:panel>
+			        </h:column>
+			        
+			    </h:dataTable>
+			    
+			</div>
+			
+		</div>
+		
+	</h:form>
+		
+	<p:dialog 	id="dialogCarrinho"
+				widgetVar="widgetDialogaCarrinho"
+				modal="true"
+				width="900px"
+				header=""
+				dynamic="true"
+				fitViewport="true"
+				position="center">
+		
+		<p:panel>
+			<h:outputText value="MEU CARRINHO"/>
+		</p:panel>
+		
+		<h:form id="formDialogCarrinho">
+		
+			<h:panelGrid id="pnlCarrinho">
+			
+				<p:growl autoUpdate="true" escape="false" showDetail="true" showSummary="true"/>
+				
+				<p:toolbar id="toolbarCarrinho">
+				
+					<f:facet name="left">
+						<p:commandButton 	value="Continuar Comprando" 
+											action="#{compraMB.continuarComprando()}"
+											oncomplete="PF('widgetDialogaCarrinho').hide();"
+											immediate="true"/>
+											
+						<p:commandButton 	value="Finalizar Pedido" 
+											action="#{compraMB.finalizarCompra()}"
+											oncomplete="PF('widgetDialogaCarrinho').hide();"/>
+						
+						<p:commandButton 	value="Limpar Carrinho" 
+											action="#{compraMB.limparCarrinho()}" 
+											update="tblCarrinho"/>
+					</f:facet>
+					
+					<f:facet name="right">
+						<h:outputText value="Total Pedido: "/>
+						<h:outputText id="totalCompra" value="#{compraMB.total}">
+							<f:convertNumber type="currency" currencySymbol="R$ "/>
+						</h:outputText>
+					</f:facet>
+					
+				</p:toolbar>	
+			
+				<p:dataTable 	id="tblCarrinho"
+								value="#{compraMB.carrinho}" 
+								var="item" 
+								rowIndexVar="rowIndex">
+				
+					<p:column headerText="Produto">
+						<h:outputText value="#{item.produto.produto}"/>
+					</p:column>
+					
+					<p:column headerText="Quantidade">
+						<p:spinner 	size="5"
+		             				accesskey="#{item.quantidade}"
+		             				id="alterar_quantidade" 
+		             				value="#{item.quantidade}" 
+		             				valueChangeListener="#{compraMB.valueChangeAlterarQuantidadeQuantidade}"
+		             				styleClass="bordas_arredondas">
+		             		<f:converter converterId="javax.faces.Integer" />
+		             		<f:param id="produto_id" name="produto_id" value="#{item.produto.id}"/>
+		             		<p:ajax process="@this" update="@this,:formDialogCarrinho:totalCompra"/>
+		             	</p:spinner>
+					</p:column>
+					
+					<p:column headerText="Preço">
+						<h:outputText value="#{item.produto.preco}">
+							<f:convertNumber currencySymbol="R$ " type="currency"/>
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Subtotal">
+						<h:outputText value="#{compraMB.getSubtotalItem(item.quantidade,item.produto.preco)}">
+							<f:convertNumber currencySymbol="R$ " type="currency"/>
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Remover Item">
+						<p:commandButton value="Remover" action="#{compraMB.retirarItemCarrinho(item)}" process="@form" update="tblCarrinho"/>
+					</p:column>
+				</p:dataTable>
+				
+			</h:panelGrid>
+			
+		</h:form>
+		
+	</p:dialog>
+	
+	
+	
+	
+	<p:dialog 	id="dialogTabelaNutricional"
+				widgetVar="widgetDialogTabelaNutricional"
+				modal="true"
+				header="INFORMAÇÕES NUTRICIONAIS PRODUTO #{compraMB.tabelaNutricional.produto.produto}"
+				dynamic="true"
+				fitViewport="true"
+				position="center">
+				
+		<h:form id="formDialogTabelaNutricional">
+		
+			<h:panelGrid id="pnlDialogTabelaNutricional">
+				
+				<p:panelGrid 	id="pnlDialogTabelaNutricionalImagem" 
+								style="width:100%;"
+								rendered="#{compraMB.getRenderizarImagem(compraMB.tabelaNutricional.tabela)}">
+								
+					<h:graphicImage value="/servletTabela/?tabelaId=#{compraMB.tabelaNutricional.id}"/>
+				
+				</p:panelGrid>
+						
+				<p:panelGrid 	id="pnlDialogTabelaNutricionalDados" 
+								style="width:100%;"
+								rendered="#{not compraMB.getRenderizarImagem(compraMB.tabelaNutricional.tabela)}">
+					
+					<f:facet name="header">
+						<p:row>
+							<p:column colspan="3">
+								<h:outputText value="INFORMAÇÕES NUTRICIONAIS"/>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="3">
+								<h:outputText value="Porção de "/>
+								<h:outputText value="#{compraMB.tabelaNutricional.porcao}"/>
+								<h:outputText value="#{compraMB.tabelaNutricional.medidaPorcao}"/>
+								<h:outputText value="(#{compraMB.tabelaNutricional.medidaCaseira})"/>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<h:outputText value=""/>
+							</p:column>
+							<p:column>
+								<h:outputText value="Quantidade por Porção"/>
+							</p:column>
+							<p:column>
+								<h:outputText value="% VD"/>
+							</p:column>
+						</p:row>
+					</f:facet>
+					
+					<p:row rendered="#{compraMB.getRenderizarLinhaTabelaNutricioanl(compraMB.tabelaNutricional.valorEnergeticoKCAL)}">
+						<p:column>
+							<p:outputLabel value="Valor Energético"/>
+						</p:column>
+						<p:column>
+							<p:outputLabel value="#{compraMB.tabelaNutricional.valorEnergeticoKCALFormatado} = #{compraMB.tabelaNutricional.valorEnergeticoKJFormatado}"/>
+						</p:column>
+						<p:column>
+							<p:outputLabel value="#{compraMB.tabelaNutricional.VDValorEnergetico}"/>
+						</p:column>
+					</p:row>
+					
+					<p:row rendered="#{compraMB.getRenderizarLinhaTabelaNutricioanl(compraMB.tabelaNutricional.carboidratos)}">
+						<p:column>
+							<p:outputLabel value="Carboidratos"/>
+						</p:column>
+						<p:column>
+							<p:outputLabel value="#{compraMB.tabelaNutricional.carboidratosFormatado}"/>
+						</p:column>
+						<p:column>
+							<p:outputLabel value="#{compraMB.tabelaNutricional.VDCarboidratos}"/>
+						</p:column>
+					</p:row>
+					
+					<p:row rendered="#{compraMB.getRenderizarLinhaTabelaNutricioanl(compraMB.tabelaNutricional.proteinas)}">
+						<p:column>
+							<p:outputLabel value="Proteínas"/>
+						</p:column>
+						<p:column>
+							<p:outputLabel value="#{compraMB.tabelaNutricional.proteinasFormatado}"/>
+						</p:column>
+						<p:column>
+							<p:outputLabel value="#{compraMB.tabelaNutricional.VDProteinas}"/>
+						</p:column>
+					</p:row>
+					
+					<p:row rendered="#{compraMB.getRenderizarLinhaTabelaNutricioanl(compraMB.tabelaNutricional.gordurasTotais)}">
+						<p:column>
+							<p:outputLabel value="Gorduras Totais"/>
+						</p:column>
+						<p:column>
+							<p:outputLabel value="#{compraMB.tabelaNutricional.gordurasTotaisFormatado}"/>
+						</p:column>
+						<p:column>
+							<p:outputLabel value="#{compraMB.tabelaNutricional.VDGordeurasTotais}"/>
+						</p:column>
+					</p:row>
+					
+					<p:row rendered="#{compraMB.getRenderizarLinhaTabelaNutricioanl(compraMB.tabelaNutricional.gordurasSaturadas)}">
+						<p:column>
+							<p:outputLabel value="Gordura Saturada"/>
+						</p:column>
+						<p:column>
+							<p:outputLabel value="#{compraMB.tabelaNutricional.gordurasSaturadasFormatado}"/>
+						</p:column>
+						<p:column>
+							<p:outputLabel value="#{compraMB.tabelaNutricional.VDGordurasSaturadas}"/>
+						</p:column>
+					</p:row>
+					
+					<p:row rendered="#{compraMB.getRenderizarLinhaTabelaNutricioanl(compraMB.tabelaNutricional.gordurasTrans)}">
+						<p:column>
+							<p:outputLabel value="Gorduras Trans"/>
+						</p:column>
+						<p:column>
+							<p:outputLabel value="#{compraMB.tabelaNutricional.gordurasTransFormatado}"/>
+						</p:column>
+						<p:column>
+							<p:outputLabel value="#{compraMB.tabelaNutricional.VDGordurasTrans}"/>
+						</p:column>
+					</p:row>
+					
+					<p:row rendered="#{compraMB.getRenderizarLinhaTabelaNutricioanl(compraMB.tabelaNutricional.colesterol)}">
+						<p:column>
+							<p:outputLabel value="Colesterol"/>
+						</p:column>
+						<p:column>
+							<p:outputLabel value="#{compraMB.tabelaNutricional.colesterolFormatado}"/>
+						</p:column>
+						<p:column>
+							<p:outputLabel value="#{compraMB.tabelaNutricional.VDColesterol}"/>
+						</p:column>
+					</p:row>
+					
+					<p:row rendered="#{compraMB.getRenderizarLinhaTabelaNutricioanl(compraMB.tabelaNutricional.fibraAlimentar)}">
+						<p:column>
+							<p:outputLabel value="Fibra Alimentar"/>
+						</p:column>
+						<p:column>
+							<p:outputLabel value="#{compraMB.tabelaNutricional.fibraAlimentarFormatado}"/>
+						</p:column>
+						<p:column>
+							<p:outputLabel value="#{compraMB.tabelaNutricional.VDFibraAlimentar}"/>
+						</p:column>
+					</p:row>
+					
+					<p:row rendered="#{compraMB.getRenderizarLinhaTabelaNutricioanl(compraMB.tabelaNutricional.calcio)}">
+						<p:column>
+							<p:outputLabel value="Cálcio"/>
+						</p:column>
+						<p:column>
+							<p:outputLabel value="#{compraMB.tabelaNutricional.calcioFormatado}"/>
+						</p:column>
+						<p:column>
+							<p:outputLabel value="#{compraMB.tabelaNutricional.VDCalcio}"/>
+						</p:column>
+					</p:row>
+					
+					<p:row rendered="#{compraMB.getRenderizarLinhaTabelaNutricioanl(compraMB.tabelaNutricional.ferro)}">
+						<p:column>
+							<p:outputLabel value="Ferro"/>
+						</p:column>
+						<p:column>
+							<p:outputLabel value="#{compraMB.tabelaNutricional.ferroFormatado}"/>
+						</p:column>
+						<p:column>
+							<p:outputLabel value="#{compraMB.tabelaNutricional.VDFerro}"/>
+						</p:column>
+					</p:row>
+					
+					<p:row rendered="#{compraMB.getRenderizarLinhaTabelaNutricioanl(compraMB.tabelaNutricional.sodio)}">
+						<p:column>
+							<p:outputLabel value="Sódio"/>
+						</p:column>
+						<p:column>
+							<p:outputLabel value="#{compraMB.tabelaNutricional.sodioFormatado}"/>
+						</p:column>
+						<p:column>
+							<p:outputLabel value="#{compraMB.tabelaNutricional.VDSodio}"/>
+						</p:column>
+					</p:row>
+					
+					<p:row rendered="#{compraMB.getRenderizarLinhaTabelaNutricioanl(compraMB.tabelaNutricional.vitaminas)}">
+						<p:column>
+							<p:outputLabel value="Vitaminas (1)"/>
+						</p:column>
+						<p:column>
+							<p:outputLabel value="#{compraMB.tabelaNutricional.vitaminas}"/>
+						</p:column>
+						<p:column>
+							<p:outputLabel value="Não Implementado Ainda"/>
+						</p:column>
+					</p:row>
+					
+					<f:facet name="footer">
+						<p:row>
+							<p:column colspan="3">
+								<h:outputText value="#{compraMB.tabelaNutricional.OBSERVACAO_VD}"/>
+							</p:column>
+						</p:row>
+						<p:row rendered="#{compraMB.getRenderizarLinhaTabelaNutricioanl(compraMB.tabelaNutricional.vitaminas)}">
+							<p:column colspan="3">
+								<h:outputText value="#{compraMB.tabelaNutricional.OBSERVACAO_MINERAIS_VITAMINAS}"/>
+							</p:column>
+						</p:row>
+					</f:facet>
+					
+				</p:panelGrid>
+				
+			</h:panelGrid>
+			
+		</h:form>
+				
+	</p:dialog>
+		
+	
+</ui:define> 
+</ui:composition>

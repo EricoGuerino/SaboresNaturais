@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<composite:interface>
+	<composite:attribute displayName="tipo_de_endereco"
+		type="java.lang.String" name="tipo_de_endereco" />
+	<composite:attribute name="valor_cep" type="java.lang.String" />
+	<composite:attribute name="valor_tipo" type="java.lang.String" />
+	<composite:attribute name="valor_logradouro" type="java.lang.String" />
+	<composite:attribute name="valor_numero" type="java.lang.String" />
+	<composite:attribute name="valor_bairro" type="java.lang.String" />
+	<composite:attribute name="valor_estado" type="java.lang.String" />
+	<composite:attribute name="valor_cidade" type="java.lang.String" />
+	<composite:attribute name="valor_lista_estados" type="java.util.List" />
+	<composite:attribute name="valor_lista_cidades" type="java.util.List" />
+	<composite:attribute name="valor_pais" type="java.lang.String" />
+	<composite:attribute name="listener"
+		method-signature="java.lang.Void action()" />
+</composite:interface>
+<composite:implementation>
+	<p:panelGrid columns="1" style="text-align: center;">
+		<h2>CADASTRO DE ENDERECO #{cc.attrs.tipo_de_endereco}</h2>
+		<p:panelGrid columns="1">
+			<p:panelGrid columns="3" style="text-align: left">
+				<p:outputLabel for="cep" value="CEP" />
+				<p:inputMask id="cep" mask="99.999-999"
+					value="#{cc.attrs.valor_cep}" size="15" maxlength="15" />
+				<p:commandButton value="Pesquisar" />
+			</p:panelGrid>
+			<p:panelGrid columns="2" style="text-align: left">
+				<p:outputLabel for="tipoLogradouro" value="Tipo" />
+				<p:selectOneMenu id="tipoLogradouro" value="#{cc.attrs.valor_tipo}">
+					<f:selectItem itemLabel="Selecione..." noSelectionOption="true" />
+					<f:selectItems value="#{clienteMB.listaTiposLogradouros}"
+						var="tipo" itemValue="#{tipo.descricao}"
+						itemLabel="#{tipo.descricao}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="logradouro" value="Logradouro" />
+				<p:inputText id="logradouro" value="#{cc.attrs.valor_logradouro}" />
+
+				<p:outputLabel for="num" value="No" />
+				<p:inputText id="num" value="#{cc.attrs.valor_numero}" />
+
+				<p:outputLabel for="bairro" value="Bairro" />
+				<p:inputText id="bairro" value="#{cc.attrs.valor_bairro}" />
+
+				<p:outputLabel for="estado" value="Estado" />
+				<p:selectOneMenu id="estado" value="#{cc.attrs.valor_estado}" >
+					<p:ajax listener="#{cc.attrs.listener}" process="@this"
+						update="cidade" />
+					<f:selectItem noSelectionOption="true"
+						itemLabel="Selecione um Estado..." />
+					<f:selectItems value="#{cc.attrs.valor_lista_estados}" var="estado"
+						itemLabel="#{estado.nomeEstado}" itemValue="#{estado.nomeEstado}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="cidade" value="Cidade" />
+				<p:selectOneMenu id="cidade" value="#{cc.attrs.valor_cidade}">
+					<f:selectItem noSelectionOption="true"
+						itemLabel="Selecione uma Cidade..." />
+					<f:selectItems value="#{cc.attrs.valor_lista_cidades}" />
+				</p:selectOneMenu>
+				<p:outputLabel for="pais" value="País" />
+				<p:inputText id="pais" value="#{cc.attrs.valor_pais}" />
+			</p:panelGrid>
+		</p:panelGrid>
+	</p:panelGrid>
+</composite:implementation>
+</html>

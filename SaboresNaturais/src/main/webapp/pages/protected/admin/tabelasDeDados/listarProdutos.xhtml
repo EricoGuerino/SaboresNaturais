@@ -1,0 +1,512 @@
+<!DOCTYPE html> 
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      template="/pages/protected/admin/administracao.xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"> 
+<ui:define name="visualizar">
+	
+	<script type="text/javascript">
+	
+		var title='ADMINISTRAR | PRODUTOS';
+		document.getElementsByTagName('title')[0].innerHTML = title;
+		
+	</script>
+	
+	<p:panel>
+		<h:outputText value="SABORES NATURAIS | ADMINISTRAÇÃO DE PRODUTOS" />
+	</p:panel>
+	
+	<h:form id="formUiDados">
+		
+		<p:toolbar>
+		
+			<f:facet name="left"></f:facet>
+			
+			<f:facet name="right">
+			
+				<p:commandButton 	value="Busca com Parametros" 
+									onclick="PF('widget_buscaParamsProdutosDialog').show();"
+									immediate="true"
+									action="#{produtoMB.cancelar()}">
+									
+					<p:resetInput 	target=":form_pesquisa_parametros:pnl_dialog_busca"/>	
+								
+				</p:commandButton>
+				
+			</f:facet>
+			
+		</p:toolbar>
+		
+		<p:dataTable 	id="dtProdutos" 
+						value="#{produtoMB.produtosCustom}"
+						var="prod" 
+						emptyMessage="Não há categorias para serem exibidas"
+						rowIndexVar="rowIndex" 
+						widgetVar="dtProdutos_widget"
+						paginator="true"
+						rows="10">
+
+			<p:column style="text-align:center;">
+			
+				<h:graphicImage 	id="prod_foto" 
+									value="/fotosProdutos/?produtoId=#{prod.id}" 
+									width="150" 
+									height="120"/>
+									
+			</p:column>
+
+			
+			<p:column 	headerText="Produto">
+			
+				<h:outputText 	id="produto" 
+								value="#{prod.produto}"/>
+								
+			</p:column>
+			
+			<p:column 	headerText="Descrição" 
+						filterBy="#{prod.descricao}" 
+						filterMatchMode="contains">
+						
+				<h:outputText 	id="prod_desc_out" 
+								value="#{prod.descricao}" />
+			</p:column>
+			
+			<p:column 	headerText="Preço" 
+						filterBy="#{prod.preco}" 
+						filterFunction="#{produtoMB.filterByPrice}"
+						style="text-align:center;">
+						
+				<h:outputText 	id="prod_preco_out" 
+								value="#{prod.preco}" >
+								
+					<f:convertNumber 	currencySymbol="R$" 
+										type="currency"/>
+										
+				</h:outputText>
+				
+			</p:column>
+			
+			<p:column 	headerText="Visualizar Detalhes" style="text-align:center;">
+			
+				<p:commandButton 	id="visualizar_produto" 
+									value="Detalhes" 
+									immediate="true" 
+									onclick="PF('widgetDialogDetalhesProduto').show();"
+									update=":formDialogDetalhesProduto:pnlDetalhesProduto">
+					<f:setPropertyActionListener target="#{produtoMB.produto}" value="#{prod}"/>				
+				</p:commandButton>
+				
+			</p:column>
+			
+			<p:column 	headerText="Alterar" style="text-align:center;">
+			
+				<p:commandButton 	id="btnAlterarProduto"
+									value="Alterar"
+									title="Alterar Produto"
+									immediate="true"
+									widgetVar="formUiDados_btnAlterarProduto_#{rowIndex}"
+									actionListener="#{produtoMB.editarProduto}">
+									
+					<f:setPropertyActionListener 	target="#{produtoMB.produto}" 
+													value="#{prod}"/>
+					
+					<p:ajax 	process="@form" 
+								event="dialogReturn" 
+								listener="#{produtoMB.returnAndRefresh}"/>	
+					
+				</p:commandButton>
+				
+			</p:column>
+			
+			<p:column 	headerText="Apagar" style="text-align:center;">
+			
+				<p:commandButton 	id="btnApagarProduto" 
+									icon="ui-icon-close"
+									title="Apagar Produto" action="#{produtoMB.removerProduto()}"
+									immediate="true"
+									update="dtProdutos"
+									widgetVar="formUiDados_btnApagarProduto_#{rowIndex}">
+									
+					<f:setPropertyActionListener 	target="#{produtoMB.produto}" 
+													value="#{prod}" />
+													
+					<f:ajax />	
+					
+				</p:commandButton>
+				
+			</p:column>
+			
+		</p:dataTable>
+		
+	</h:form>
+	
+	<p:dialog 	id="dialog_busca" 
+				widgetVar="widget_buscaParamsProdutosDialog" 
+				modal="true" 
+				dynamic="true" 
+				closable="true"
+				fitViewport="true"
+				width="900"
+				height="450"
+				header="SELEÇÃO DE PARÂMETROS DE PESQUISA">
+				
+		<h:form id="form_pesquisa_parametros">
+		
+			<h:panelGrid 	id="pnl_dialog_busca" 
+							style="width:820px;">
+			
+				<p:panelGrid 	id="selects"
+								style="width:810px;">
+				
+					<p:row>
+					
+						<p:column>
+						
+				        	<h:outputText 	value="Produto:"/>
+				        	
+				        	<p:selectOneMenu 	id="produto_dialog" 
+									        	value="#{produtoMB.parametros.produto}" 
+									        	style="width:100%;">
+				        	
+				        		<f:selectItem 	itemLabel="Selecione" 
+				        						noSelectionOption="true"/>
+				        		
+				        		<f:selectItems 		value="#{listaMB.listaProdutos}" 
+								        			var="produto" 
+								        			itemValue="#{produto.produto}" 
+								        			itemLabel="#{produto.produto}"/>
+				        			
+				        	</p:selectOneMenu>
+				        	
+						</p:column>
+						
+					</p:row>
+					
+					<p:row>
+						<p:column>
+						
+				        	<h:outputText 	value="Categoria:"/>
+				        	
+				        	<p:selectOneMenu 	id="categoria_dialog" 
+									        	value="#{produtoMB.parametros.categoria}" 
+									        	style="width:100%;"
+								        		converter="categoriaConverter">
+				        		
+				        		<f:selectItem 	itemLabel="Selecione" 
+				        						noSelectionOption="true"/>
+				        		
+				        		<f:selectItems 	value="#{produtoMB.allCategorias}" 
+							        			var="cat" 
+							        			itemValue="#{cat}" 
+							        			itemLabel="#{cat.categoria}"/>
+				        			
+				        	</p:selectOneMenu>
+				        	
+						</p:column>
+						
+					</p:row>
+					
+					<p:row>
+					
+						<p:column>
+						
+				        	<h:outputText 	value="Fabricante"/>
+				        	
+				        	<p:selectOneMenu 	id="fabricante_dialog" 
+									        	value="#{produtoMB.parametros.fabricante}" 
+									        	style="width:100%;"
+				        						converter="fabricanteConverter">
+				        		
+				        		<f:selectItem 	itemLabel="Selecione" 
+				        						noSelectionOption="true"/>
+				        		
+				        		<f:selectItems 	value="#{produtoMB.allFabricante}" 
+							        			var="fab" 
+							        			itemValue="#{fab}" 
+							        			itemLabel="#{fab.fabricante}"/>
+				        			
+				        	</p:selectOneMenu>
+				        	
+						</p:column>
+						
+					</p:row>
+					
+				</p:panelGrid>
+				
+				<p:panelGrid 	id="caracteristicas"
+								style="width:810px;">
+				
+					<p:row>
+					
+						<p:column>
+						
+							<h:outputText 	value="Açucar: "/><br />
+							
+							<p:selectOneMenu 	id="acucar_dialog" 
+												value="#{produtoMB.parametros.acucar}">
+							
+								<f:selectItem 	itemLabel="Selecione" 
+												noSelectionOption="true"/>
+								
+								<f:selectItems 	value="#{produtoMB.listaSimNao}" 
+												var="sn" 
+												itemLabel="#{sn.descricao}"
+												itemValue="#{sn.status}"/>
+									
+							</p:selectOneMenu>
+							
+						</p:column>
+						
+						<p:column>
+						
+							<h:outputText 	value="Lactose: "/><br />
+							
+							<p:selectOneMenu 	id="lactose_dialog" 
+												value="#{produtoMB.parametros.lactose}">
+							
+								<f:selectItem 	itemLabel="Selecione" 
+												noSelectionOption="true"/>
+								
+								<f:selectItems 	value="#{produtoMB.listaSimNao}" 
+												var="sn" 
+												itemLabel="#{sn.descricao}"
+												itemValue="#{sn.status}"/>
+									
+							</p:selectOneMenu>
+							
+						</p:column>
+		
+						<p:column>
+						
+							<h:outputText 	value="Gluten: "/><br />
+							
+							<p:selectOneMenu 	id="gluten_dialog" 
+												value="#{produtoMB.parametros.gluten}">
+												
+								<f:selectItem 	itemLabel="Selecione" 
+												noSelectionOption="true"/>
+												
+								<f:selectItems 	value="#{produtoMB.listaSimNao}" 
+												var="sn" 
+												itemLabel="#{sn.descricao}"
+												itemValue="#{sn.status}"/>
+									
+							</p:selectOneMenu>
+							
+						</p:column>
+						
+					</p:row>
+					
+					<p:row>
+					
+						<p:column>
+						
+							<h:outputText 	value="Preço Minimo"/>
+							
+							<p:inputText 	id="preco_minico_dialog" 
+											value="#{produtoMB.parametros.precoInicio}"/>
+											
+						</p:column>
+						
+						<p:column>
+						
+							<h:outputText 	value="Preço Máximo"/>
+							
+							<p:inputText 	id="preco_maximo_dialog" 
+											value="#{produtoMB.parametros.precoFim}"/>
+							
+						</p:column>
+						
+						<p:column>
+						
+							<h:outputText 	value="Validade (Meses)"/>
+							
+							<p:inputText	id="validade_dialog" 
+											value="#{produtoMB.parametros.validade}"/>
+											
+						</p:column>
+						
+					</p:row>
+					
+					<p:row>
+					
+						<p:column>
+						
+							<p:commandButton 	value="Todas"
+												action="#{produtoMB.carregarTodosProdutos()}"
+												update=":formUiDados:dtProdutos :form_pesquisa_parametros"
+												oncomplete="PF('widget_buscaParamsProdutosDialog').hide()">
+												
+								<p:resetInput 	target=":form_pesquisa_parametros"/>			
+									
+							</p:commandButton>
+												
+						</p:column>
+						
+						<p:column>
+						
+							<p:commandButton 	value="Carregar Parametros" 
+												action="#{produtoMB.carregarListaProdutosCustom(produtoMB.parametros)}"
+												oncomplete="PF('widget_buscaParamsProdutosDialog').hide()" 
+												update=":formUiDados:dtProdutos :form_pesquisa_parametros" 
+												process="@form">
+												
+								<p:resetInput target=":form_pesquisa_parametros"/>		
+										
+							</p:commandButton>
+							
+						</p:column>	
+						
+						<p:column>
+						
+							<p:commandButton 	value="Cancelar" 
+												immediate="true"
+												action="#{produtoMB.cancelar()}"
+												update=":form_pesquisa_parametros"
+												oncomplete="PF('widget_buscaParamsProdutosDialog').hide()">
+												
+								<p:resetInput 	target=":form_pesquisa_parametros"/>				
+								
+							</p:commandButton>
+						
+						</p:column>	
+					
+					
+					</p:row>
+				</p:panelGrid>
+			
+			</h:panelGrid>
+			
+		</h:form>
+		
+	</p:dialog>
+	
+	<p:dialog 	modal="true" 
+				fitViewport="true" 
+				dynamic="true"
+				id="dialogDetalhesProduto" 
+				widgetVar="widgetDialogDetalhesProduto"
+				header="Detalhes: #{produtoMB.produto.produto}"
+				width="1200">
+				
+		<h:form id="formDialogDetalhesProduto">		
+				
+			<h:panelGrid columns="2" id="pnlDetalhesProduto" style="width:100%;border: 0 none;">
+			
+				<h:column>
+				
+						<p:graphicImage 	id="visualizar_prod_foto" 
+											value="/fotosProdutos/?produtoId=#{produtoMB.produto.id}" 
+											width="300" 
+											height="250"/>
+				</h:column>
+				
+				<h:column>
+					
+					<table style="width:100%;font-size: 20px;">
+					
+						<tr>
+						
+							<td colspan="2" style="text-align: left;">
+								<h:outputText 	id="visualizar_out_dsc" 
+												value="Descrição do Produto: "
+												style="font-weight: bold;"/>
+												
+								<h:outputText 	id="visualizar_txt_dsc" 
+												value="#{produtoMB.produto.descricao}"/>
+							</td>
+							
+						</tr>
+						
+						<tr>
+						
+							<td colspan="2" style="text-align: left;">
+								<h:outputText 	id="visualizar_out_argumento" 
+												value="Argumento de Venda: "
+												style="font-weight: bold;"/>
+												
+								<h:outputText 	id="visualizar_txt_argumento" 
+												value="#{produtoMB.produto.argumentoDeVenda}"/>
+							</td>
+							
+						</tr>
+						
+						<tr>
+						
+							<td style="text-align: left;">
+								<h:outputText 	id="visualizar_out_acucar" 
+												value="Possui Açucar?: "
+												style="font-weight: bold;"/>
+												
+								<h:outputText 	id="visualizar_txt_acucar" 
+												value="#{produtoMB.produto.acucar eq true ? 'Sim':'Não'}"/>
+							</td>
+							
+							<td style="text-align: left;">
+								<h:outputText 	id="visualizar_out_preco" 
+												value="Preço: " 
+												style="font-weight: bold;"/>
+								
+								<h:outputText 	id="visualizar_txt_preco" 
+												value="#{produtoMB.produto.preco}">
+								
+									<f:convertNumber 	type="currency" 
+														currencySymbol="R$"/>
+									
+								</h:outputText>
+							</td>
+							
+						</tr>
+						
+						<tr>
+						
+							<td style="text-align: left;">
+								<h:outputText 	id="visualizar_out_lactose" 
+												value="Possui Lactose?: "
+												style="font-weight: bold;"/>
+								
+								<h:outputText 	id="visualizar_txt_lactose" 
+												value="#{produtoMB.produto.lactose eq true ? 'Sim':'Não'}"/>
+							</td>
+							
+							<td style="text-align: left;">
+								<h:outputText 	id="visualizar_out_validade" 
+												value="Prazo de Validade: "
+												style="font-weight: bold;"/>
+												
+								<h:outputText 	id="visualizar_txt_validade" 
+												value="#{produtoMB.produto.periocoDeValidade} meses"/>
+							</td>
+							
+						</tr>
+						
+						<tr>
+						
+							<td style="text-align: left;">
+								<h:outputText 	id="visualizar_out_gluten" 
+												value="Possui Glúten?: "
+												style="font-weight: bold;"/>
+								
+								<h:outputText 	id="visualizar_txt_gluten" 
+												value="#{produtoMB.produto.gluten eq true ? 'Sim':'Não'}"/>
+							</td>
+							
+							<td>
+							</td>
+						</tr>
+						
+					</table>
+						
+				</h:column>
+				
+			</h:panelGrid>
+			
+		</h:form>							
+								
+	</p:dialog>
+	
+</ui:define> 
+
+</ui:composition>

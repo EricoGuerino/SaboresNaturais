@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<ui:composition 	xmlns="http://www.w3.org/1999/xhtml"
+					template="/pages/protected/usuario_autorizado/home.xhtml"
+    				xmlns:ui="http://java.sun.com/jsf/facelets"
+    				xmlns:h="http://java.sun.com/jsf/html"
+    				xmlns:f="http://java.sun.com/jsf/core"
+    				xmlns:p="http://primefaces.org/ui">
+    
+<ui:define name="contato_home_user">
+ 
+	<script type="text/javascript">
+		var title='USUARIO | CONTATO';
+		document.getElementsByTagName('title')[0].innerHTML = title;
+	</script>
+	
+	<h:form>
+	
+		<p:panel style="width:100%;">
+			<h:outputText value="SABORES NATURAIS | CONTATO COM A EMPRESA"/>
+		</p:panel>
+		
+		<p:panel style="width:100%;">
+			
+			<table style="width:100%;">
+			
+				<tr style="width:100%;">
+				
+					<td style="width:50%;">
+						<p:outputLabel 	value="Empresa:"/> <br />
+						<p:inputText 	value="#{contatoMB.cliente.nomeFantasia}"
+										disabled="true"
+										style="width:90%;"/>
+					</td>
+					
+					<td style="width:50%;">
+						<p:outputLabel 	value="Contato:"/> <br />
+						<p:inputText 	value="#{contatoMB.cliente.nomeDoContato}"
+										disabled="true"
+										style="width:90%;"/>
+					</td>
+					
+				</tr>
+				
+				<tr style="width:100%;">
+				
+					<td style="width:50%;">
+						<p:outputLabel 	value="Selecionar email para contato:"/> <br />
+						<p:selectOneMenu 	id="selecionarEmail"
+											value="#{contatoMB.email}"
+											required="true"
+											requiredMessage="É preciso selecionar qual email irá utilizar.">
+							<f:selectItem 	itemLabel="..:Selecione:.." 
+											itemValue="#{null}" 
+											noSelectionOption="true"/>
+							<f:selectItems 	value="#{contatoMB.listaEmailsCliente}"/>				
+						</p:selectOneMenu>					
+					</td>
+					
+					<td style="width:50%;">
+						<p:outputLabel 	value="Selecionar motivo do contato:"/> <br />
+						<p:selectOneMenu 	id="selecionarTipoContato"
+											value="#{contatoMB.tipoContato}"
+											required="true"
+											requiredMessage="É preciso selecionar um motivo para o contato.">
+							<f:selectItem 	itemLabel="..:Selecione:.." 
+											itemValue="#{null}" 
+											noSelectionOption="true"/>
+							<f:selectItems 	value="#{contatoMB.contatos}"
+											var="c"
+											itemLabel="#{c.descricao}"
+											itemValue="#{c}"/>				
+						</p:selectOneMenu>
+					</td>
+					
+				</tr>
+				
+				<tr style="width:100%;">
+				
+					<td colspan="2">
+						<p:outputLabel 	value="Mensagem:"/> <br />
+						<p:inputTextarea 	value="#{contatoMB.mensagem}"
+											style="width:100%;"
+											required="true"
+											requiredMessage="É preciso preencher o campo \'Mensagem\'"/>
+					</td>
+					
+				</tr>
+				
+				<tr style="width:100%;">
+				
+					<td colspan="2" style="text-align:center;">
+						
+						<p:commandButton 	value="Enviar"
+											action="#{contatoMB.enviarEmail()}"/>
+						
+					</td>
+					
+				</tr>
+				
+			</table>
+			
+		</p:panel>
+	</h:form>
+	
+</ui:define> 
+</ui:composition>

@@ -1,0 +1,255 @@
+<!DOCTYPE html> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"> 
+
+<h:head>
+	<title><h:outputText value="SABORES NATURAIS | EDIÇÃO DE PRODUTO" /></title>
+	<style type="text/css">
+	    .ui-widget {font-size: 90%;}
+	    .colunaPanelGridImagem_col1 {
+	    	width:40%;
+	    }
+	    .colunaPanelGridImagem_col2 {
+	    	width:60%;
+	    }
+	    .colunaPanelGridImagem_col3 {
+	    	col
+	    	width:40%;
+	    }
+	    
+	</style>
+</h:head>
+ 
+<h:body>
+
+	<h:form id="formDialogDetalhesProduto">		
+				
+			<table style="width:100%;">
+				
+				<tr style="width:100%;">
+					<td style="width:40%;text-align:center;">
+						<p:graphicImage 	id="foto" 
+											cache="false" 
+											style="width:150px;height:90px;" 
+											value="/exibicaoTemporariaEdicaoImagensProdutos"/>
+					</td>
+					
+					<td style="width:60%;">
+					
+						<table style="width:100%;">
+				
+							<tr style="width:100%;">
+							
+								<td style="width:50%;">
+									<p:outputLabel 	for="alterar_nome_foto" 
+													value="Nome da Imagem:"/> <br />
+									<p:inputText 	id="alterar_nome_foto" 
+													value="#{produtoMB.produto.foto.nomeFoto}"
+													disabled="true"
+													style="width:80%;"/>
+								</td>
+								
+								<td style="width:50%;">
+								
+									<p:outputLabel 	for="alterar_tipo_foto" 
+													value="Tipo da Imagem:"/> <br />
+									<p:inputText 	id="alterar_tipo_foto" 
+													value="#{produtoMB.produto.foto.contentType}"
+													disabled="true"
+													style="width:80%;"/>
+								</td>
+								
+							</tr>
+							
+							<tr style="width:100%;">
+							
+								<td style="width:50%;">
+									<p:outputLabel 	for="alterar_tam_foto" 
+													value="Tamanho da Imagem:"/> <br />
+									<p:inputText 	id="alterar_tam_foto" 
+													value="#{produtoMB.formatarTamanhoImagem(produtoMB.produto.foto.tamFoto)}"
+													disabled="true"
+													style="width:80%;"/>
+								</td>
+								
+								<td style="width:50%;">
+									<p:outputLabel 	for="alterar_extensao" 
+													value="Extensão da Imagem:"/> <br />
+									<p:inputText 	id="alterar_extensao" 
+													value="#{produtoMB.produto.foto.extensaoFoto}"
+													disabled="true"
+													style="width:80%;"/>
+								</td>
+								
+							</tr>
+							
+						</table>
+					
+					</td>
+					
+				</tr>
+				
+				<tr style="width: 100%;">
+				
+					<td colspan="2" style="width:100%;">
+						<p:fileUpload 	mode="advanced" 
+										immediate="true" 
+										id="uploadFoto" 
+										style="width:100%;"
+										update="@form" 
+										fileUploadListener="#{produtoMB.edicaoImagemProdutoHandler}"/>
+					</td>
+					
+				</tr>
+				
+			</table>
+			
+			<table style="width:100%;">
+				
+				<tr style="width:100%">
+				
+					<td 	style="text-align: left;">
+						<h:outputText 	id="visualizar_out_nome" 
+										value="Nome do Produto: "/> <br />
+										
+						<p:inputText 	id="alterar_txt_nome" 
+										value="#{produtoMB.produto.produto}"
+										style="width:80%;"/>
+					</td>
+					
+				
+					<td style="text-align: left;">
+						<h:outputText 	id="visualizar_out_dsc" 
+										value="Descrição do Produto: "/>  <br />
+										
+						<p:inputText 	id="alterar_txt_dsc" 
+										value="#{produtoMB.produto.descricao}"
+										style="width:98%;"/>
+					</td>
+					
+				</tr>
+				
+				<tr style="width:100%">
+				
+					<td colspan="2" style="text-align: left;">
+						<h:outputText 	id="visualizar_out_argumento" 
+										value="Argumento de Venda: "/> <br />
+										
+						<p:inputTextarea 	id="alterar_txt_argumento" 
+											value="#{produtoMB.produto.argumentoDeVenda}"
+											style="width:99%;"/>
+					</td>
+					
+				</tr>
+				
+				<tr style="width:100%">
+					<td>
+						<p:outputLabel 	value="Categoria do Produto "/><br />
+						<p:selectOneMenu 	id="categoria" 
+											value="#{produtoMB.produto.categoria}" 
+											converter="categoriaConverter">
+							<f:selectItem 	itemLabel="Selecione" 
+											noSelectionOption="true"/>
+							<f:selectItems 	value="#{produtoMB.allCategorias}" 
+											var="cat" 
+											itemLabel="#{cat.categoria}" 
+											itemValue="#{cat}"/>
+						</p:selectOneMenu>
+					</td>
+					
+					<td>
+						<p:outputLabel 	value="Fabricante do Produto "/><br />
+						<p:selectOneMenu 	id="fabricante" 
+											value="#{produtoMB.produto.fabricante}" 
+											converter="fabricanteConverter">
+							<f:selectItem 	itemLabel="Selecione" 
+											noSelectionOption="true"/>
+							<f:selectItems 	value="#{produtoMB.allFabricante}" 
+											var="fab" 
+											itemLabel="#{fab.fabricante}" 
+											itemValue="#{fab}"/>
+						</p:selectOneMenu>
+					</td>
+				</tr>
+			
+			</table>
+			
+			<table style="width:100%;">
+			
+				<tr style="width:100%">
+				
+					<td>
+						<h:outputText 	id="visualizar_out_acucar" 
+										value="Possui Açucar?: "/>
+										
+						<p:selectBooleanCheckbox 	id="alterar_txt_acucar" 
+													value="#{produtoMB.produto.acucar}"/>
+					</td>
+					
+					<td>
+						<h:outputText 	id="visualizar_out_lactose" 
+										value="Possui Lactose?: "/>
+						
+						<p:selectBooleanCheckbox 	id="alterar_txt_lactose" 
+													value="#{produtoMB.produto.lactose}"/>
+					</td>
+					
+					<td>
+						<h:outputText 	id="visualizar_out_gluten" 
+										value="Possui Glúten?: "/>
+						
+						<p:selectBooleanCheckbox 	id="alterar_txt_gluten" 
+													value="#{produtoMB.produto.gluten}"/>
+					</td>
+				
+				</tr>
+				
+				<tr >	
+					<td style="text-align: left;">
+						<h:outputText 	id="visualizar_out_preco" 
+										value="Preço: "/> <br />
+						
+						<pe:inputNumber 	value="#{produtoMB.produto.preco}" 
+									emptyValue="0.00" 
+									id="preco" 
+									decimalSeparator=","
+									thousandSeparator="."
+									symbol="R$ "
+									symbolPosition="p"/>
+						
+					</td>
+					
+					<td style="text-align: left;">
+						<h:outputText 	id="visualizar_out_validade" 
+										value="Prazo de Validade: "/> <br />
+										
+						<pe:inputNumber 	maxValue="999" 
+											minValue="000" 
+											emptyValue="000" 
+											value="#{produtoMB.produto.periocoDeValidade}"/>
+					</td>
+					
+					
+					<td>
+						<p:outputLabel 	value="Código do Produto "/><br />
+						<p:inputText 	value="#{produtoMB.produto.codigoProduto}"
+										style="width:97%;"/>
+					</td>
+				</tr>
+				
+			</table>
+						
+			<h:panelGrid columns="2">
+				<p:commandButton value="Salvar" action="#{produtoMB.alterarProduto()}" />
+				<p:commandButton value="Cancelar" immediate="true" action="#{produtoMB.fecharDialog()}"/>
+			</h:panelGrid>
+			
+		</h:form>
+	
+	</h:body>
+	 
+</html>

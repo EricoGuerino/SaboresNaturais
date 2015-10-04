@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:cadastros="http://java.sun.com/jsf/composite/componentes/cadastros"
+	template="/pages/protected/admin/administracao.xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="cadastrar">
+	
+	<h:form id="formUiInsert">
+	
+		<script type="text/javascript">
+			var title='CADASTRO | TIPO DE ESTABELECIMENTO';
+			document.getElementsByTagName('title')[0].innerHTML = title;
+		</script>
+		
+		<cadastros:cadastroAdministrativo
+			valor="#{tipoDeEstabelecimentoMB.tipoDeEstabelecimento.tipoDeEstabelecimento}"
+			titulo_do_cadastro="SABORES NATURAIS | CADASTRO DE TIPO DE ESTABELECIMENTO"
+			requiredPlaceHolderTitle="Digite um Tipo de Estabelecimento" />
+			
+		<br />
+		
+		<p:commandButton 	value="Enviar"
+							action="#{tipoDeEstabelecimentoMB.salvarTipoDeEstabelecimento()}"
+							resetValues="true" 
+							update="@form">
+							
+			<f:setPropertyActionListener
+							target="#{tipoDeEstabelecimentoMB.tipoDeEstabelecimento}"
+							value="#{tipoDeEstabelecimentoMB.tipoDeEstabelecimento}" />
+							
+		</p:commandButton>
+		
+	</h:form>
+	
+	</ui:define>
+
+</ui:composition>

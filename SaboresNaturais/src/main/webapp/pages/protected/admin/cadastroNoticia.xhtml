@@ -1,0 +1,297 @@
+<!DOCTYPE html> 
+<ui:composition 	xmlns="http://www.w3.org/1999/xhtml"
+					template="/pages/protected/admin/administracao.xhtml"
+				  	xmlns:ui="http://java.sun.com/jsf/facelets"
+			      	xmlns:h="http://java.sun.com/jsf/html"
+			      	xmlns:f="http://java.sun.com/jsf/core"
+			      	xmlns:p="http://primefaces.org/ui"> 
+
+	<ui:define 	name="cadastrar">
+	
+		<script 	type="text/javascript">
+			var title='CADASTRO | NOTICIA';
+			document.getElementsByTagName('title')[0].innerHTML = title;
+			
+		</script>
+		
+		<style type="text/css">
+			.fontPanelHeader {
+				font-size: 1.3em;
+				font-weight: bold;
+			}
+		</style>
+		
+		<p:panel>
+			<h:outputText value="SABORS NATURAIS | CADASTRO DE NOTICIAS (POSTAGENS)"/>
+		</p:panel>
+		
+		<h:form id="formUiInsert">
+				
+			<p:tabView 	id="tabView" 
+						widgetVar="widgetTabViewCadastroNoticias"
+						>
+					
+				<p:tab title="Cadastrar Corpo da Notícia">
+						
+					<p:panel header="Título da Postagem">
+							
+				
+						<p:inputText 	value="#{noticiaMB.noticia.titulo}" 
+											style="width:100%;"/>
+						
+					</p:panel>
+						
+					<p:panel header="Corpo da Postagem">
+							
+						<p:toolbar>
+							<f:facet name="left"></f:facet>
+							<f:facet name="right">
+								<p:commandButton 	value="Clear" 
+													type="button" 
+													onclick="PF('editorWidget').clear();" 
+													icon="ui-icon-close" 
+													title="Limpar Editor"/>
+							</f:facet>
+						</p:toolbar>
+							
+						<p:editor 	value="#{noticiaMB.noticia.noticia}" 
+									widgetVar="editorWidget"/>
+						
+					</p:panel>
+						
+					<p:panel header="Cadastro de Tags">
+						
+						<p:inputText 	value="#{noticiaMB.noticia.tags}" 
+										style="width:100%;"/>
+										
+					</p:panel>	
+					
+				</p:tab>
+					
+				<p:tab title="Cadastrar Imagens">
+				
+					<h:panelGroup 	id="pnlFotos">
+							
+						<p:fileUpload 	mode="advanced" 
+										immediate="true" 
+										id="updateFoto" 
+										fileUploadListener="#{noticiaMB.adicionarImagensHandler}"
+						 				update="dtExibirFotos" 
+						 				style="width:100%;"
+						 				cancelLabel="Cancelar Carregamento"
+						 				label="Escolher Imagem"
+						 				uploadLabel="Subir Imagem"/>
+							 				
+					
+							<p:dataTable 	var="ft"
+											value="#{noticiaMB.listaImagens}" 
+											style="width:100%;" 
+											id="dtExibirFotos"
+											emptyMessage="Não há imagens carregadas">
+											
+								<f:facet 	name="header">
+									<h:outputText 	value="Imagens Carregadas" />
+								</f:facet>
+								
+								<p:column 	style="width:30%;text-align:center;">
+								
+									<h:graphicImage 	id="foto" 
+														style="width:150px;height:90px;" 
+														value="/ServletMedia/?nomeMedia=imagem_@NN@_#{ft.imagemNome}"/>
+														
+								</p:column>
+								
+								<p:column style="width:50%;">
+								
+									<p:outputLabel 	for="alterar_nome_foto" 
+													value="Nome da Imagem: "
+													styleClass="fontPanelHeader"/>
+													
+									<h:outputText 	id="alterar_nome_foto" 
+													value="#{ft.imagemNome}"/> <br />
+													
+									<p:outputLabel 	for="alterar_tipo_foto" 
+													value="Tipo da Imagem: "
+													styleClass="fontPanelHeader"/>
+													
+									<h:outputText 	id="alterar_tipo_foto" 
+													value="#{ft.contentType}"/> <br />
+													
+									<p:outputLabel 	for="alterar_tam_foto" 
+													value="Tamanho da Imagem: "
+													styleClass="fontPanelHeader"/>
+													
+									<h:outputText 	id="alterar_tam_foto" 
+													value="#{noticiaMB.formatarTamanhoImagem(ft.imagemTamanho)}"/>
+													
+								</p:column>
+								
+								<p:column style="width:20%;text-align:center">
+								
+									<p:commandButton 	value="Remover Foto" 
+														action="#{noticiaMB.removerFotoLista(ft)}" 
+														update="@form"/>
+														
+								</p:column>
+								
+							</p:dataTable>
+							
+							<p:toolbar>
+								
+								<f:facet name="left"></f:facet>
+								<f:facet name="right">
+									<p:commandButton 	value="Limpar Lista" 
+														action="#{noticiaMB.limparListaFotos()}" 
+														update="dtExibirFotos"/>
+								</f:facet>
+								
+							</p:toolbar>
+							
+												
+						
+					</h:panelGroup>
+					
+				</p:tab>
+				
+				<p:tab title="Cadastrar Videos do Youtube">
+				
+					<h:panelGroup 	id="pnlVideo" 
+									columns="1">
+						<p:panel>
+							<p:inputText 	id="inputVideoYoutube" 
+											value="#{noticiaMB.noticia.video.url}" 
+											placeholder="Insira a URL do video do YouTube" 
+											size="100"
+											update="@this" 
+											immediate="true" 
+											valueChangeListener="#{noticiaMB.adicionarVideosYoutubeListener}"/>
+							
+							<p:spacer width="10px"/>
+											
+							<p:commandButton 	value="Adicionar" 
+												action="#{noticiaMB.addVideoYoutube()}" 
+												update="pnlYoutube" 
+												process="inputVideoYoutube,@this"/>
+						</p:panel>					
+													
+						<p:panel id="pnlYoutube" style="text-align:center;">
+							
+							<object id="playerYoutube" width="600" height="480"> 
+								<param name="movie" value="#{noticiaMB.noticia.video.url}" /> 
+								<embed 	src="#{noticiaMB.noticia.video.url}" 
+										type="application/x-shockwave-flash" 
+										width="600" 
+										height="480" />
+
+							</object>
+							
+							<p:spacer height="10px"/>
+							
+							<p:toolbar>
+								<f:facet name="left">
+									<p:outputLabel 	for="url_video" 
+													value="URL do Vídeo: "/>
+													
+									<h:outputText 	id="url_video" 
+													value="#{noticiaMB.noticia.video.url}"/>
+								</f:facet>
+								
+								<f:facet name="right">
+									<p:commandButton 	id="btnRemoverYoutube" 
+														value="Remover Video" 
+														process="@this" 
+														update="@form"/>
+								</f:facet>
+							</p:toolbar>
+													
+						</p:panel>
+													
+					</h:panelGroup>
+							
+				</p:tab>
+				
+				<p:tab title="Cadastrar Videos salvos no Computados">
+				
+					<p:fileUpload 	mode="advanced" 
+									immediate="true" 
+									id="updateVideo" 
+									fileUploadListener="#{noticiaMB.adicionarVideosHandler}"
+					 				update="pnlExibirVideoGeral" 
+					 				sizeLimit="150000000" 
+					 				oncomplete="PF('widgetTabViewCadastroNoticias').select(4);"
+					 				cancelLabel="Cancelar Upload"
+					 				label="Escolher Vídeo"
+					 				uploadLabel="Subir Vídeo"/>
+					 				
+					 <p:panelGrid 	id="pnlExibirVideoGeral" 
+									style="width:100%;">
+									
+						<p:row style="width:100%;">
+						
+							<p:column style="width:50%;max-height:480px;min-height:240px;text-align:center;">
+							
+								<p:media 	id="videoGeral" 
+											player="#{noticiaMB.videoGuardado.tipoPlayer.descricao != null ? noticiaMB.videoGuardado.tipoPlayer.descricao : quicktime}" 
+											value="/ServletMedia/?nomeMedia=video_@NN@_#{noticiaMB.videoGuardado.nomeVideo}" 
+											rendered="#{noticiaMB.videoGuardado.nomeVideo != null}">
+									<f:param id="autoplay" name="autoPlay" value="false"/>		
+								</p:media>			
+							
+							</p:column>
+							
+							<p:column style="width:50%;max-height:480px;min-height:240px;">
+							
+								<p:outputLabel 	for="nome_video" 
+												value="Nome do Vídeo: "
+												styleClass="fontPanelHeader"/>
+												
+								<h:outputText 	id="nome_video" 
+												value="#{noticiaMB.noticia.video.nomeVideo}"/> <br />
+								
+								<p:outputLabel 	for="tipo_video" 
+												value="Tipo do Vídeo: "
+												styleClass="fontPanelHeader"/>
+												
+								<h:outputText 	id="tipo_video" 
+												value="#{noticiaMB.noticia.video.contentType}"/> <br />
+												
+								<p:outputLabel 	for="tam_video" 
+												value="Tamanho do Vídeo: "
+												styleClass="fontPanelHeader"/>
+												
+								<h:outputText 	id="tam_video" 
+												value="#{noticiaMB.formatarTamanhoVideo(noticiaMB.noticia.video.tamVideo)}"/>
+												
+							</p:column>
+							
+						
+						</p:row>		
+						
+					</p:panelGrid>
+					
+					<p:toolbar>
+						<f:facet name="left"></f:facet>
+						<f:facet name="right">
+							<p:commandButton 	id="btnRemoverGeral" 
+												value="Remover Video" 
+												process="@this" 
+												update="@form"
+												action="#{noticiaMB.removerVideoGeral()}"/>
+						</f:facet>
+					</p:toolbar>
+					
+				</p:tab>
+				
+			</p:tabView>
+				
+			<p:panel>
+				<p:commandButton value="Salvar" action="#{noticiaMB.salvar()}" process="@form" update="@form">
+					<p:resetInput target="@form"/>
+				</p:commandButton>
+			</p:panel>
+			
+		</h:form>
+		
+	</ui:define> 
+	
+</ui:composition>

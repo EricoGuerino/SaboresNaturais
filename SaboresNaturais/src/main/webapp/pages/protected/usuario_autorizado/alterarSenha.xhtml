@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	template="/pages/protected/usuario_autorizado/home.xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui">
+    
+<ui:define name="dados_usuario"> 
+	<script type="text/javascript">
+		var title='USUARIO | ALTERAR SENHA';
+		document.getElementsByTagName('title')[0].innerHTML = title;
+	</script>
+	
+	<p:panel>
+		<h:outputText value="SABORES NATURAIS | ALTERAÇÃO DE SENHA"/>
+	</p:panel>
+	
+	<h:form id="formAlterarSenha" prependId="true">
+	
+		<p:panel header="USUARIO">
+			<p:inputText id="username" value="#{passwordMB.cliente.razaoSocial}" disabled="true"/>
+		</p:panel>
+		
+		<p:panel header="LOGIN (EMAIL PRINCIPAL) ">
+			<p:inputText id="login" value="#{passwordMB.cliente.email.emailPrincipal}" disabled="true"/>
+		</p:panel>
+		
+		<p:panel header="SENHAS">
+			<h:panelGroup id="matchGrid">
+				<table>
+					<tr>
+						<td>
+					        <p:outputLabel 	for="pwd1" value="Nova Senha: " />
+						</td>
+						<td>
+					        <p:password 	id="pwd1" 
+					        				value="#{passwordMB.passwordHeader}"
+					        				valueChangeListener="#{passwordMB.valueChangePassword}" 
+					        				placeholder="Digite a nova senha" 
+					        				feedback="true" 
+					        				inline="true" 
+					        				promptLabel="Misture maiusculas, minúsculas, números e simbolos para uma senha forte"  
+					        				weakLabel="fraca"
+			                    			goodLabel="boa" 
+			                    			strongLabel="forte" 
+			                    			label="Nova Senha" 
+			                    			immediate="true"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+					        <p:outputLabel for="pwd2" value="Confirme Nova Senha: " />
+						</td>
+						<td>
+					        <p:password 	id="pwd2" 
+					        				value="#{passwordMB.confirmPasswordHeader}"
+					        				valueChangeListener="#{passwordMB.valueChangeConfirmation}" 
+					        				placeholder="Repita a senha digitada" 
+					        				label="Confirme Nova Senha"
+					        				immediate="true"/>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="3">
+							<p:commandButton 	id="btnMostrarSenha" 
+												value="Mostrar Senha" 
+												type="button"
+												onclick="mostrarEsconderValorSenha()"
+												update="matchGrid"
+												immediate="true"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+					        <p:commandButton 	id="btnAlterarSenha" 
+					        					update="matchGrid" 
+					        					action="#{passwordMB.alterarSenhas()}"  
+					        					value="Salvar" 
+					        					resetValues="true"/>
+						</td>
+					</tr>
+				</table>
+			</h:panelGroup>
+		</p:panel>
+	</h:form>                   
+	<script type="text/javascript">
+		function mostrarEsconderValorSenha() 
+		{
+			mostrarSenhaDigitada();
+			mostrarSenhaConfirmada();
+			alterarValorButton();
+		}
+		
+		function mostrarSenhaDigitada() 
+		{
+			var destino = document.getElementById('formAlterarSenha:pwd1');
+			if(destino.type == 'password')
+			{
+				destino.type = 'text';
+			} else if(destino.type == 'text')
+			{
+				destino.type = 'password';
+			} 
+		}
+
+		function mostrarSenhaConfirmada() 
+		{
+			var destino = document.getElementById('formAlterarSenha:pwd2');
+			if(destino.type == 'password')
+			{
+				destino.type = 'text';
+			} else if(destino.type == 'text')
+			{
+				destino.type = 'password';
+			}
+		}
+
+		function alterarValorButton()
+		{
+			var button = document.getElementById('formAlterarSenha:btnMostrarSenha');
+			if(button.innerHTML == '<span class="ui-button-text ui-c">Mostrar Senha</span>')
+			{
+				button.innerHTML = '<span class="ui-button-text ui-c">Ocultar Senha</span>';
+			} else if(button.innerHTML == '<span class="ui-button-text ui-c">Ocultar Senha</span>')
+			{
+				button.innerHTML = '<span class="ui-button-text ui-c">Mostrar Senha</span>';
+			}
+		}
+	</script>
+</ui:define> 
+</ui:composition>

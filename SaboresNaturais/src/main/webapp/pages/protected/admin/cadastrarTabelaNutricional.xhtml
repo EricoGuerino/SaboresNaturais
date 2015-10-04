@@ -1,0 +1,266 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+      template="/pages/protected/admin/administracao.xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"> 
+
+<ui:define name="cadastrar">
+
+	<script type="text/javascript">
+		var title='CADASTRO | TABELA NUT.';
+		document.getElementsByTagName('title')[0].innerHTML = title;
+	</script>
+	
+	<p:panel>
+		<h:outputText value="SABORES NATURAIS | CADASTRAR / EDITAR TABELA COM INFORMAÇÕES NUTRICIONAIS"/>
+	</p:panel>
+	
+	<h:form id="formUiInsert" enctype="multipart/form-data">
+		<h:panelGrid columns="2" style="width:100%;">
+		<p:panel header="Escolha para qual produto cadastrar a tabela nutricional">
+			<p:selectOneMenu 	value="#{tabelaNutricionalMB.tabelaNutricional.produto}"
+								converter="produtoConverter"
+								style="width:70%;"
+								valueChangeListener="#{tabelaNutricionalMB.valueChangeCarregarTabelaNutricional}">
+				<f:selectItem 	itemLabel="Selecione..." itemValue="#{null}" noSelectionOption="true"/>
+				<f:selectItems 	value="#{tabelaNutricionalMB.produtos}" 
+								var="prod" 
+								itemValue="#{prod}" 
+								itemLabel="#{prod.codigoProduto} - #{prod.produto}"/>
+				<p:ajax process="@this" update="@form"/>
+			</p:selectOneMenu>
+		</p:panel>
+		<p:panel header="Escolha se vai cadastrar uma imagem ou vai digitar os dados">
+			<p:selectOneRadio 	id="cadastrarImagemOuDados"
+								value="#{tabelaNutricionalMB.tabelaNutricional.tabelaFigura}"
+								converter="booleanConverter"
+								valueChangeListener="#{tabelaNutricionalMB.valueChangeImagemOuDados}"
+								style="width:100%;">
+				<f:selectItem itemLabel="Cadastrar Imagem Tabela Nutricional" itemValue="true"/>
+				<f:selectItem itemLabel="Cadastrar Dados Tabela Nutricional" itemValue="false"/>
+				<p:ajax process="@this" update="pnlCadastro"/>
+			</p:selectOneRadio>
+		</p:panel>
+		</h:panelGrid>
+		
+		<h:panelGrid id="pnlCadastro" style="width:100%;">
+			
+			<p:panel 	id="pnlCadastroImagem" 
+						header="Cadastrar uma foto de uma Tabela Nutricional"
+						rendered="#{tabelaNutricionalMB.tabelaNutricional.tabelaFigura}"
+						style="width:100%;">
+						
+				<p:panel id="pnlUploadoImagem">
+				
+					<p:fileUpload 	id="uploadImagemTabelaNutricional" 
+									label="Escolher Imagem" 
+									uploadLabel="Carregar Imagem" 
+									cancelLabel="Cancelar Imagem" 
+									style="width:100%;"
+									fileUploadListener="#{tabelaNutricionalMB.listenerCarregarImagem}" 
+									update="pnlCadastro"/>
+									
+				</p:panel>
+								
+				<p:panel 	id="pnlExibicaoImagem"
+							style="width:100%;">
+				
+					<table>
+					
+						<tr>
+						
+							<td>
+
+								<p:graphicImage 	id="imagemAtual"	
+													value="/exibicaoTemporariaTabelaNutricional"
+													width="50%" 
+													height="50%"
+													cache="false"/>
+													
+							</td>
+							
+							<td>
+								<table>
+									<tr>
+										<td>
+											<p:outputLabel 	value="Nome da Imagem"/>
+										</td>
+										<td>
+											<p:inputText 	value="#{tabelaNutricionalMB.tabelaNutricional.nomeArquivo}"
+															disabled="true"/>
+										</td>
+									</tr>
+									
+									<tr>	
+										<td>
+											<p:outputLabel 	value="Extensão da Imagem"/>
+										</td>
+										<td>
+											<p:inputText 	value="#{tabelaNutricionalMB.tabelaNutricional.extensao}"
+															disabled="true"/>
+										</td>
+									</tr>
+									
+									<tr>	
+										<td>
+											<p:outputLabel 	value="Tipo da Imagem"/>
+										</td>
+										<td>
+											<p:inputText 	value="#{tabelaNutricionalMB.tabelaNutricional.tipoArquivo}"
+															disabled="true"/>
+										</td>
+									</tr>
+									
+									<tr>	
+										<td>
+											<p:outputLabel 	value="Tamanho da Imagem"/>
+										</td>
+										<td>
+											<p:inputText 	value="#{tabelaNutricionalMB.formatarTamanhoImagem(tabelaNutricionalMB.tabelaNutricional.tamanhoArquivo)}"
+															disabled="true"/>
+										</td>
+									</tr>
+									
+								</table>
+								
+							</td>
+						</tr>
+					</table>
+				</p:panel>
+				
+			</p:panel>
+			<p:panel 	id="pnlCadastroDados"
+						header="Cadastrar os dados de uma Tabela Nutricional" 
+						rendered="#{not tabelaNutricionalMB.tabelaNutricional.tabelaFigura}"
+						style="width:100%;">
+				<table style="width:100%;">
+					<tr>
+						<td style="width:55%;">
+							<p:outputLabel 	value="Porção"/><br />
+							<p:inputText 	id="porcao" 
+											value="#{tabelaNutricionalMB.tabelaNutricional.porcao}"
+											style="width:91%;"/>
+						</td>
+						<td style="width:20%;">
+							<p:outputLabel 	value="Medida da Porção"
+											style="margin-left:10px;"/>
+							<p:selectOneMenu 	id="medidaPorcao"
+												style="width:80%;margin-left:10px;"
+												value="#{tabelaNutricionalMB.tabelaNutricional.medidaPorcao}">
+								<f:selectItem 	itemLabel="Selecione... " 
+												itemValue="#{null}" 
+												noSelectionOption="true"/>
+								<f:selectItem 	itemLabel="gramas" 
+												itemValue="g"/>
+								<f:selectItem 	itemLabel="mililitros" 
+												itemValue="m"/>
+							</p:selectOneMenu>
+						</td>
+						<td style="width:30%;">
+							<p:outputLabel 	value="Medida Caseira" style="margin-left:70px;"/>
+							<p:inputText 	id="medidaCaseira"
+											style="width:67%;margin-left:69px;"	
+											value="#{tabelaNutricionalMB.tabelaNutricional.medidaCaseira}"/>
+						</td>
+					</tr>
+				</table>
+				<table style="width:100%;">
+					<tr>
+						<td>
+							<p:outputLabel 	value="Valor Energético (KCAL)"/>
+							<p:inputText 	id="vrEnergeticoKCAL"
+											style="width:80%;"	
+											value="#{tabelaNutricionalMB.tabelaNutricional.valorEnergeticoKCAL}"/>
+						</td>
+						<td>
+							<p:outputLabel 	value="Valor Energético (KJ)"/>
+							<p:inputText 	id="vrEnergeticoKJ"
+											style="width:80%;"	
+											value="#{tabelaNutricionalMB.tabelaNutricional.valorEnergeticoKJ}"/>
+						</td>
+						<td>
+							<p:outputLabel 	value="Carboidratos"/>
+							<p:inputText 	id="carboidratos"
+											style="width:80%;"	
+											value="#{tabelaNutricionalMB.tabelaNutricional.carboidratos}"/>
+						</td>
+						<td>
+							<p:outputLabel 	value="Proteínas"/>
+							<p:inputText 	id="proteinas"
+											style="width:80%;"	
+											value="#{tabelaNutricionalMB.tabelaNutricional.proteinas}"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<p:outputLabel 	value="Gorduras Totais"/>
+							<p:inputText 	id="gordurasTotais"
+											style="width:80%;"	
+											value="#{tabelaNutricionalMB.tabelaNutricional.gordurasTotais}"/>
+						</td>
+						<td>
+							<p:outputLabel 	value="Gorduras Saturadas"/>
+							<p:inputText 	id="gordurasSaturadas"
+											style="width:80%;"	
+											value="#{tabelaNutricionalMB.tabelaNutricional.gordurasSaturadas}"/>
+						</td>
+						<td>
+							<p:outputLabel 	value="Gorduras Trans"/>
+							<p:inputText 	id="gordurasTrans"
+											style="width:80%;"	
+											value="#{tabelaNutricionalMB.tabelaNutricional.gordurasTrans}"/>
+						</td>
+						<td>
+							<p:outputLabel 	value="Colesterol"/>
+							<p:inputText 	id="colesterol"
+											style="width:80%;"	
+											value="#{tabelaNutricionalMB.tabelaNutricional.colesterol}"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<p:outputLabel 	value="Fibra Alimentar"/>
+							<p:inputText 	id="fibraAlimentar"
+											style="width:80%;"	
+											value="#{tabelaNutricionalMB.tabelaNutricional.fibraAlimentar}"/>
+						</td>
+						<td>
+							<p:outputLabel 	value="Cálcio"/> <br />
+							<p:inputText 	id="calcio"
+											style="width:80%;"	
+											value="#{tabelaNutricionalMB.tabelaNutricional.calcio}"/>
+						</td>
+						<td>
+							<p:outputLabel 	value="Ferro"/> <br />
+							<p:inputText 	id="ferro"
+											style="width:80%;"	
+											value="#{tabelaNutricionalMB.tabelaNutricional.ferro}"/>
+						</td>
+						<td>
+							<p:outputLabel 	value="Sódio"/> <br />
+							<p:inputText 	id="sodio"
+											style="width:80%;"	
+											value="#{tabelaNutricionalMB.tabelaNutricional.sodio}"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<p:commandButton 	value="Salvar Dados Tabela Nutricional"
+												action="#{tabelaNutricionalMB.salvar()}">
+								<p:resetInput target="@form"/>				
+							</p:commandButton>					
+						</td>
+					</tr>
+				</table>
+				
+			</p:panel>
+		</h:panelGrid>
+		
+	</h:form>
+	
+</ui:define>
+
+</ui:composition>

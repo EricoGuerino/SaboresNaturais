@@ -1,0 +1,556 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      template="/pages/protected/admin/administracao.xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+    
+<ui:define name="relatorio"> 
+	<script type="text/javascript">
+		var title='ADMINISTRADOR | RELATÓRIO PRODUTOS';
+		document.getElementsByTagName('title')[0].innerHTML = title;
+	</script>
+		<p:panel>
+			<h:outputText value="RELATÓRIO PERIÓDICO POR PRODUTOS"/>
+		</p:panel>
+		<p:accordionPanel dynamic="true" cache="false" id="accordion">
+			<p:tab title="VENDAS ANUAIS TOP 10 PRODUTOS">
+				<h:form prependId="true" id="formTop10Anual">
+				
+					<p:toolbar>
+						<f:facet 	name="left">
+							<h:outputText value="SOMA DOS 10 PRODUTOS: "/>
+							<h:outputText value="#{dashboardMB.totalVendaTop10ProdutosAnual}">
+								<f:convertNumber type="currency" currencySymbol="R$"/>
+							</h:outputText>
+						</f:facet>
+						<f:facet 	name="right">
+							<p:commandButton	value="PARAMETRIZAÇÕES"
+												update=":form_dialog_parametrizacoes_formTop10Anual:pnlDialogTop10Anual"
+												onclick="PF('widget_form_dialog_parametrizacoes_formTop10Anual').show();"
+												process="@this"/>
+						</f:facet>
+					</p:toolbar>
+					
+					<h:panelGrid columns="2" id="pnlTop10Anual">
+					
+						<p:chart 	type="donut" 
+									model="#{dashboardMB.donutTop10ProdutosModel}"
+									id="chartTop10Anual" 
+									style="width:1000px;height:400px"/>
+									
+						<h:panelGrid columns="1">
+							
+							<p:toolbar>
+								<f:facet 	name="left">
+									<h:outputText value=""/>
+								</f:facet>
+								<f:facet 	name="right">
+									<h:outputText id="valor" value="Ano da Consulta aos dados: #{dashboardMB.selectedAnoTop10}"/>
+								</f:facet>
+							</p:toolbar>
+							
+							<p:dataTable id="dtTop10Anual" value="#{dashboardMB.top10ProdutosAnual}" var="top10">
+								<p:column headerText="Produto" style="width:60%;">
+									<h:outputText value="#{top10.produto.produto}"/>
+								</p:column>
+								<p:column headerText="Valor">
+									<h:outputText value="#{top10.total}">
+										<f:convertNumber type="currency" currencySymbol="R$"/>
+									</h:outputText>
+								</p:column>
+							</p:dataTable>
+						</h:panelGrid>
+					</h:panelGrid>
+				</h:form>
+			</p:tab>
+			
+			<p:tab title="VENDAS COMPARATIVAS TOP 5 (TOP 5 DE PRODUTOS MAIS VENDIDOS NO ANO / PRESENTE DATA)">
+				<h:form prependId="true" id="formTop5Anual">
+					<p:panel style="height:430px;">
+						<p:toolbar>
+							<f:facet 	name="left">
+								<h:outputText 	value="VENDAS ANUAIS TOP 5 PRODUTOS"/>
+							</f:facet>
+							<f:facet 	name="right">
+								<p:commandButton	value="PARAMETRIZAÇÕES"
+													update=":form_dialog_parametrizacoes_formTop5Anual:pnlDialogTop5Anual"
+													onclick="PF('widget_form_dialog_parametrizacoes_formTop5Anual').show();"
+													process="@this"/>
+							</f:facet>
+						</p:toolbar>
+						
+						<h:panelGrid columns="2" id="pnlTop5Anual">
+							<p:chart 	type="#{dashboardMB.innerTipoChart.tipo.descricao}" 
+										model="#{dashboardMB.innerTipoChart.chartModel}" 
+										style="width:1000px;height:400px;margin-top:-80px;"/>
+							<h:panelGrid columns="1">
+								<p:toolbar>
+									<f:facet 	name="left">
+										<h:outputText value=""/>
+									</f:facet>
+									<f:facet 	name="right">
+										<h:outputText id="valor" value="Ano da Consulta aos dados: #{dashboardMB.selectedAnoTop5}"/>
+									</f:facet>
+								</p:toolbar>
+								<p:dataTable 	value="#{dashboardMB.top5ProdutosGeralAnual}" 
+												var="top5Geral"
+												id="dtTop5Anual"
+												rowIndexVar="rowIndex"
+												style="width:500px;" 
+												scrollable="true"
+												scrollHeight="400">
+												
+									<p:column exportable="false" width="50">
+										<p:rowToggler/>
+									</p:column>
+									
+									<p:column headerText="Produto">
+										<h:outputText value="#{top5Geral.produto.produto}"/>
+									</p:column>
+									
+									<p:rowExpansion>
+										<p:dataTable 	value="#{top5Geral.mesesValores}" var="mesesVal" 
+														style="width:418px;float:right;">
+											<p:column headerText="Mês">
+												<h:outputText value="#{mesesVal.mes}"/>
+											</p:column>
+											<p:column headerText="Valor">
+												<h:outputText value="#{mesesVal.total}">
+													<f:convertNumber type="currency" currencySymbol="R$"/>
+												</h:outputText>
+											</p:column>
+										</p:dataTable>
+									</p:rowExpansion>
+									
+								</p:dataTable>
+								
+							</h:panelGrid>
+						</h:panelGrid>
+						
+					</p:panel>
+				</h:form>
+			</p:tab>
+			
+			<p:tab title="VENDAS COMPARATIVAS TOP 5 (TOP 5 PRODUTOS MAIS VENDIDOS A CADA MÊS)">
+				<h:form prependId="true" id="formTop5AnualMensal">
+					<p:panel style="height:450px;">
+						<p:toolbar>
+							<f:facet 	name="left">
+								<h:outputText 	value="VENDAS ANUAIS / MENSAIS TOP 5 PRODUTOS"/>
+							</f:facet>
+							<f:facet 	name="right">
+								<p:commandButton	value="PARAMETRIZAÇÕES"
+													update=":form_dialog_parametrizacoes_formTop5AnualMensal:pnlDialogTop5AnualMensal"
+													onclick="PF('widget_form_dialog_parametrizacoes_formTop5AnualMensal').show();"
+													process="@this"/>
+							</f:facet>
+						</p:toolbar>
+						
+						<h:panelGrid columns="2" id="pnlTop5ProdutosAnoMes">
+							<h:panelGrid columns="2" rendered="#{dashboardMB.renderizaAnual}">
+								<p:chart 	type="bar" 
+											model="#{dashboardMB.barTop5ProdutosMensalPorAnoModel}" 
+											style="width:800px;height:375px;margin-top:-50px;"
+											id="chartTop5ProdutosAnual"/>
+											
+								<h:panelGrid columns="1">
+									<p:toolbar>
+										<f:facet 	name="left">
+											<h:outputText value=""/>
+										</f:facet>
+										<f:facet 	name="right">
+											<h:outputText id="valor" value="Ano da Consulta aos dados: #{dashboardMB.selectedAnoTop5Meses}"/>
+										</f:facet>
+									</p:toolbar>
+									<p:dataTable 	value="#{dashboardMB.top5ProdutosAnual}" 
+													var="top5Anual"
+													selectionMode="single" 
+													selection="#{dashboardMB.innerTop5Anual}"
+													rowIndexVar="rowIndex" 
+													rowKey="#{top5Anual.mes}"
+													id="dtTop5ProdutosAnual"
+													scrollable="true"
+													scrollHeight="375">
+													
+										<p:ajax 	event="rowSelect" 
+													listener="#{dashboardMB.onRowSelectTop5ProdutosAnual}" 
+													update="@form"
+													process="@form"/>
+													
+										<p:column headerText="MÊS">
+											<h:outputText value="#{top5Anual.mes}"/>
+										</p:column>
+										
+									</p:dataTable>
+									
+								</h:panelGrid>			
+								
+							</h:panelGrid>
+										
+							<h:panelGrid columns="2" rendered="#{dashboardMB.renderizaMensal}">
+								<p:chart 	type="bar" 
+											model="#{dashboardMB.barTop5ProdutosEspecificoMes}" 
+											style="width:800px;height:375px;margin-top:-50px;"
+											id="chartTop5ProdutosMensal"/>
+							
+								<h:panelGrid columns="1">
+									<p:toolbar rendered="#{dashboardMB.renderizaMensal}">
+										<f:facet name="left">
+											<h:outputText value="#{dashboardMB.innerTop5Anual.mes}"/>
+										</f:facet>
+										<f:facet name="right">
+											<p:commandButton 	value="Voltar"
+																action="#{dashboardMB.voltarTop5ProdutosAnoMes()}"
+																immediate="true"
+																update="@form"/>
+										</f:facet>
+									</p:toolbar>
+									<p:dataTable 	value="#{dashboardMB.innerTop5Anual.listaProdutosTotal}" 
+													var="top5Mensal"
+													rowIndexVar="rowIndex" 
+													rowKey="#{top5Mensal.produto.id}"
+													id="dtTop5ProdutosMensal"
+													scrollable="true"
+													scrollHeight="375">
+										
+										
+										<p:column headerText="PRODUTO">
+											<h:outputText value="#{top5Mensal.produto.produto}"/>
+										</p:column>
+										
+										<p:column headerText="VALOR VENDIDO">
+											<h:outputText value="#{top5Mensal.total}">
+												<f:convertNumber type="currency" currencySymbol="R$"/>
+											</h:outputText>
+										</p:column>
+										
+									</p:dataTable>
+								</h:panelGrid>
+								
+							</h:panelGrid>
+							
+													
+							
+						</h:panelGrid>
+						
+					</p:panel>
+				</h:form>
+			</p:tab>
+			
+			<p:tab title="COMPARATIVO DA MÉDIA DAS VENDAS ANUAIS DOS PRODUTOS X VENDA ANUAL POR PRODUTO">
+			
+				<h:form prependId="true" id="formMediaE1Produto">
+				
+					<p:panel style="height:450px;">
+					
+						<p:toolbar>
+						
+							<f:facet 	name="left">
+								<h:outputText 	value="VENDAS COMPARATIVAS PRODUTO X MÉDIA PRODUTOS"/>
+							</f:facet>
+							<f:facet 	name="right">
+								<p:commandButton	value="PARAMETRIZAÇÕES"
+													update=":form_dialog_parametrizacoes_formMediaE1Produto:pnlDialogMediaE1Produto"
+													onclick="PF('widget_form_dialog_parametrizacoes_formMediaE1Produto').show();"
+													process="@this"/>
+							</f:facet>
+						</p:toolbar>
+						
+						<h:panelGrid columns="2" id="pnlMediaE1Produto">
+						
+							<p:chart 	type="bar" 
+										model="#{dashboardMB.combinedTop1ProdutosModel}" 
+										style="width:1000px;height:350px;margin-top:-50px;"/>
+										
+							<h:panelGrid columns="1">
+								
+								<p:toolbar>
+									<f:facet 	name="left">
+										<h:outputText value=""/>
+									</f:facet>
+									<f:facet 	name="right">
+										<h:outputText id="valor" value="Ano da Consulta aos dados: #{dashboardMB.selectedAnoMediaTop1}"/>
+									</f:facet>
+								</p:toolbar>
+								
+								<p:dataTable 	value="#{dashboardMB.top1ProdutoAnual}" 
+												var="top1"
+												rowIndexVar="rowIndex"
+												scrollable="true"
+												scrollHeight="350">
+
+									<p:column headerText="Mês">
+										<h:outputText value="#{top1.mes}"/>
+									</p:column>
+												
+									<p:column headerText="Média Produtos">
+										<h:outputText value="#{top1.mediaProdutos}">
+											<f:convertNumber type="currency" currencySymbol="R$"/>
+										</h:outputText>
+									</p:column>
+									
+									<p:column headerText="Venda Produtos">
+										<h:outputText value="#{top1.vendaProduto}">
+											<f:convertNumber type="currency" currencySymbol="R$"/>
+										</h:outputText>
+									</p:column>
+									
+								</p:dataTable>
+								
+							</h:panelGrid>
+						</h:panelGrid>
+						
+					</p:panel>
+				</h:form>
+			</p:tab>
+		</p:accordionPanel>
+		
+		<h:form id="form_dialog_parametrizacoes_formTop10Anual" prependId="true">
+		
+			<p:dialog 	widgetVar="widget_form_dialog_parametrizacoes_formTop10Anual"
+						id="dialogTop10Anual"
+						closable="false"
+						width="500"
+						height="200"
+						header="PARAMETRIZAÇÕES TOP 10 ANUAL"
+						modal="true">
+						
+				<h:panelGrid id="pnlDialogTop10Anual">
+					
+					<h:panelGroup>
+					
+						<h:inputText 	value="Selecione um ano" disabled="true" 
+										style="height: 40px;margin-bottom: 30px;margin-right: 20px;width: 215px;"/>
+	
+						<p:selectOneMenu 	value="#{dashboardMB.selectedAnoTop10}"
+											valueChangeListener="#{dashboardMB.carregarListaAnosTop10}"
+											style="width:200px;height: 40px;"
+											immediate="true">
+											
+							<f:selectItem 	itemValue="#{dashboardMB.selectedAnoTop10}" 
+											itemLabel="#{dashboardMB.selectedAnoTop10}"/>
+											
+							<f:selectItems 	value="#{dashboardMB.listaAnos}"/>
+							<p:ajax 	process="@this"
+										update="@this"/>
+						</p:selectOneMenu>
+					
+					</h:panelGroup>
+					
+					<h:panelGroup>
+					
+						<p:commandButton 	value="Carregar Parametros"
+											action="#{dashboardMB.carregarTop10Parametrizado()}"
+											process="@this"
+											oncomplete="PF('widget_form_dialog_parametrizacoes_formTop10Anual').hide();"
+											style="height: 70px;margin-right: 20px;width: 221px;"/>
+											
+						<p:commandButton 	value="Cancelar"
+											oncomplete="PF('widget_form_dialog_parametrizacoes_formTop10Anual').hide();"
+											immediate="true"
+											action="#{dashboardMB.fecharDialogParametrizacoes()}"
+											process="form_dialog_parametrizacoes_formTop10Anual"
+											style="height: 70px;width: 206px;"/>
+										
+					</h:panelGroup>
+										
+				</h:panelGrid>
+			
+			</p:dialog>
+			
+		</h:form>
+		
+		<h:form id="form_dialog_parametrizacoes_formTop5Anual" prependId="true">
+		
+			<p:dialog 	widgetVar="widget_form_dialog_parametrizacoes_formTop5Anual"
+						id="dialogTop5Comparativas"
+						closable="false"
+						width="500"
+						height="200"
+						header="PARAMETRIZAÇÕES TOP 5 COMPARATIVAS"
+						modal="true">
+						
+				<h:panelGrid id="pnlDialogTop5Anual">
+					
+					<h:panelGroup>
+					
+						<h:inputText 	value="Selecione um ano" disabled="true" 
+										style="height: 40px;margin-bottom: 30px;margin-right: 20px;width: 215px;"/>
+	
+						<p:selectOneMenu 	value="#{dashboardMB.selectedAnoTop5}"
+											valueChangeListener="#{dashboardMB.carregarListaAnosTop5}"
+											style="width:200px;height: 40px;"
+											immediate="true">
+											
+							<f:selectItem 	itemValue="#{dashboardMB.selectedAnoTop5}" 
+											itemLabel="#{dashboardMB.selectedAnoTop5}"/>
+											
+							<f:selectItems 	value="#{dashboardMB.listaAnos}"/>
+							<p:ajax 	process="@this"
+										update="@this"/>
+						</p:selectOneMenu>
+					
+					</h:panelGroup>
+					
+					<h:panelGroup>
+					
+						<p:commandButton 	value="Carregar Parametros"
+											action="#{dashboardMB.carregarTop5Parametrizado()}"
+											process="@this"
+											oncomplete="PF('widget_form_dialog_parametrizacoes_formTop5Anual').hide();"
+											style="height: 70px;margin-right: 20px;width: 221px;"/>
+											
+						<p:commandButton 	value="Cancelar"
+											oncomplete="PF('widget_form_dialog_parametrizacoes_formTop5Anual').hide();"
+											immediate="true"
+											action="#{dashboardMB.fecharDialogParametrizacoes()}"
+											process="form_dialog_parametrizacoes_formTop5Anual"
+											style="height: 70px;width: 206px;"/>
+										
+					</h:panelGroup>
+										
+				</h:panelGrid>
+			
+			</p:dialog>
+			
+		</h:form>
+		
+		<h:form id="form_dialog_parametrizacoes_formTop5AnualMensal" prependId="true">
+		
+			<p:dialog 	widgetVar="widget_form_dialog_parametrizacoes_formTop5AnualMensal"
+						id="dialogTop5AnualMensal"
+						closable="false"
+						width="500"
+						height="200"
+						header="PARAMETRIZAÇÕES TOP 5 COMPARATIVAS"
+						modal="true">
+						
+				<h:panelGrid id="pnlDialogTop5AnualMensal">
+					
+					<h:panelGroup>
+					
+						<h:inputText 	value="Selecione um ano" disabled="true" 
+										style="height: 40px;margin-bottom: 30px;margin-right: 20px;width: 215px;"/>
+	
+						<p:selectOneMenu 	value="#{dashboardMB.selectedAnoTop5Meses}"
+											valueChangeListener="#{dashboardMB.carregarListaAnosTop5Meses}"
+											style="width:200px;height: 40px;"
+											immediate="true">
+											
+							<f:selectItem 	itemValue="#{dashboardMB.selectedAnoTop5Meses}" 
+											itemLabel="#{dashboardMB.selectedAnoTop5Meses}"/>
+											
+							<f:selectItems 	value="#{dashboardMB.listaAnos}"/>
+							<p:ajax 	process="@this"
+										update="@this"/>
+						</p:selectOneMenu>
+					
+					</h:panelGroup>
+					
+					<h:panelGroup>
+					
+						<p:commandButton 	value="Carregar Parametros"
+											action="#{dashboardMB.carregarTop5MesesParametrizado()}"
+											process="@this"
+											oncomplete="PF('widget_form_dialog_parametrizacoes_formTop5AnualMensal').hide();"
+											style="height: 70px;margin-right: 20px;width: 221px;"/>
+											
+						<p:commandButton 	value="Cancelar"
+											oncomplete="PF('widget_form_dialog_parametrizacoes_formTop5AnualMensal').hide();"
+											immediate="true"
+											action="#{dashboardMB.fecharDialogParametrizacoes()}"
+											process="form_dialog_parametrizacoes_formTop5AnualMensal"
+											style="height: 70px;width: 206px;"/>
+										
+					</h:panelGroup>
+										
+				</h:panelGrid>
+			
+			</p:dialog>
+			
+		</h:form>
+		
+		<h:form id="form_dialog_parametrizacoes_formMediaE1Produto" prependId="true">
+		
+			<p:dialog 	widgetVar="widget_form_dialog_parametrizacoes_formMediaE1Produto"
+						id="dialogMediaE1Produto"
+						closable="false"
+						width="500"
+						height="350"
+						header="PARAMETRIZAÇÕES TOP 5 COMPARATIVAS"
+						modal="true">
+						
+				<h:panelGrid id="pnlDialogMediaE1Produto">
+					
+					<h:panelGroup>
+					
+						<h:inputText 	value="Selecione um ano" disabled="true" 
+										style="height: 40px;margin-bottom: 30px;margin-right: 20px;width: 215px;"/>
+	
+						<p:selectOneMenu 	value="#{dashboardMB.selectedAnoMediaTop1}"
+											valueChangeListener="#{dashboardMB.carregarListaAnoMediaTop1}"
+											style="width:200px;height: 40px;"
+											immediate="true">
+											
+							<f:selectItem 	itemValue="#{dashboardMB.selectedAnoMediaTop1}" 
+											itemLabel="#{dashboardMB.selectedAnoMediaTop1}"/>
+											
+							<f:selectItems 	value="#{dashboardMB.listaAnos}"/>
+							<p:ajax 	process="@this"
+										update="@this"/>
+						</p:selectOneMenu>
+					
+					</h:panelGroup>
+					
+					<h:panelGroup>
+					
+						<h:inputText 	value="Selecione um Produto" disabled="true" 
+										style="height: 40px;margin-bottom: 30px;margin-right: 20px;width: 215px;"/>
+	
+						<p:selectOneMenu 	value="#{dashboardMB.selectedProduto}"
+											valueChangeListener="#{dashboardMB.carregarParamProduto}"
+											style="width:200px;height: 40px;"
+											immediate="true"
+											converter="produtoConverter">
+											
+							<f:selectItem 	itemValue="#{dashboardMB.selectedProduto}" 
+											itemLabel="#{dashboardMB.selectedProduto.produto}"/>
+											
+							<f:selectItems 		value="#{dashboardMB.produtos}"
+												var="prod"
+												itemValue="#{prod}"
+												itemLabel="#{prod.produto}"/>
+												
+							<p:ajax 	process="@this"
+										update="@this"/>
+										
+						</p:selectOneMenu>
+					
+					</h:panelGroup>
+					
+					<h:panelGroup>
+					
+						<p:commandButton 	value="Carregar Parametros"
+											action="#{dashboardMB.carregarMediaTop1Parametrizado()}"
+											process="@this"
+											oncomplete="PF('widget_form_dialog_parametrizacoes_formMediaE1Produto').hide();"
+											style="height: 70px;margin-right: 20px;width: 221px;"/>
+											
+						<p:commandButton 	value="Cancelar"
+											oncomplete="PF('widget_form_dialog_parametrizacoes_formMediaE1Produto').hide();"
+											immediate="true"
+											action="#{dashboardMB.fecharDialogParametrizacoes()}"
+											process="form_dialog_parametrizacoes_formMediaE1Produto"
+											style="height: 70px;width: 206px;"/>
+										
+					</h:panelGroup>
+										
+				</h:panelGrid>
+			
+			</p:dialog>
+			
+		</h:form>
+</ui:define>
+</ui:composition>

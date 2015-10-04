@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title></title>
+	<h:outputStylesheet library="css" name="estilos.css"/>
+</h:head>
+
+<body>
+	<h:form prependId="false">
+		<p:menubar>
+			<p:submenu label="Cadastros">
+				<p:menuitem value="Categoria" action="toCadastroCategoria" />
+				<p:menuitem value="Fabricante" action="toCadastroFabricante" />
+				<p:menuitem value="Tipo de Estabelecimento" action="toCadastroTipoEstabelecimento" />
+				<p:menuitem value="Produto" action="toCadastroProduto"/>
+				<p:menuitem value="Tabela Nutricional" action="toCadastroTabelaNutricional"/>
+				<p:menuitem value="Noticia" action="toCadastroNoticia"/>
+				<p:menuitem value="Preço / Status" action="toAlterarPrecoStatus"/>
+				<p:menuitem value="Sair" action="toSaboresHome"/>
+			</p:submenu>
+			<p:submenu label="Tabelas de Dados">
+				<p:menuitem value="Categorias" action="toCategorias" />
+				<p:menuitem value="Fabricantes" action="toFabricantes" />
+				<p:menuitem value="Tipos de Estabelecimento" action="toTiposEstabelecimento" />
+				<p:menuitem value="Clientes" action="toClientes"/>
+				<p:menuitem value="Produtos" action="toProdutos"/>
+				<p:menuitem value="Notícias" action="toNoticias"/>
+			</p:submenu>
+			<p:submenu label="Listas de Pedidos">
+				<p:menuitem value="Listas de Pedidos" action="toListarPedidos"/>
+				<p:menuitem value="Alterar Pedido" action="toAlterarLista"/>
+				<p:menuitem value="Apagar Pedido" action="toApagarLista"/>
+				<p:menuitem value="Acompanhar Pedido" action="toAcompanharLista"/>
+				<p:menuitem value="Tirar Pedido" action="toEntregarLista"/>
+				<p:menuitem value="Cadastrar Postagem" action="toCadastrarCodigoPostagem"/>
+			</p:submenu>
+			<p:submenu label="Emails">
+				<p:menuitem value="Assistente de Mala Direta" action="toAssistenteMalaDireta"/>
+				<p:menuitem value="Lista de Emails" action="toListarEmails"/>
+			</p:submenu>
+			<p:submenu label="Relatórios">
+				<p:menuitem value="Vendas Periódicas Gerais" action="toVendasGerais"/>
+				<p:menuitem value="Vendas Periódicas Por Produto" action="toVendasPorProduto"/>
+				<p:menuitem value="Vendas Periódicas Por Cliente" action="toVendasPorCliente"/>
+				<p:menuitem value="Vendas Periódicas Produtos X Cliente" action="toVendasPorProdutoCliente"/>
+			</p:submenu>
+			<f:facet name="options">
+				<h:outputText value="USUARIO LOGADO: " />
+				<h:outputText value="#{loginMB.administrador}"/>
+				<p:commandButton value="Logoff" id="btnLogoff"
+					action="#{loginMB.logoff}" update="@all" />
+			</f:facet>
+		</p:menubar>
+		<p:growl id="msgs" autoUpdate="true" showDetail="true" showSummary="true" />
+	</h:form>
+	
+	<h:form id="formUiAdmHome">
+		<ui:insert name="admhome"></ui:insert>
+	</h:form>
+	
+	<ui:remove>
+	<h:form enctype="multipart/form-data" id="formUiInsert" prependId="true">
+	</h:form>
+	</ui:remove>
+	
+	<ui:insert name="cadastrar"></ui:insert>
+	
+	<h:form id="mensagens" prependId="true">
+		<p:growl id="mensagem_gerais" autoUpdate="true" showDetail="true" showSummary="true" />
+	</h:form>
+	
+	<ui:insert name="visualizar"></ui:insert>
+	
+	<ui:insert name="pedidos"></ui:insert>
+	
+	<p:growl id="msgs_email" autoUpdate="true" showDetail="true" showSummary="true" />
+	<ui:insert name="email"></ui:insert>
+	
+	<p:growl id="msgs_relatorios" autoUpdate="true" showDetail="true" showSummary="true" />
+	<ui:insert name="relatorio"></ui:insert>
+	
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>SABORES | HOME</title>
+</h:head>
+<body>
+	<ui:include src="/pages/public/header.xhtml" />
+	<h:form id="formMenuHome" prependId="false">
+		<p:menubar>
+			<p:menuitem value="Home" action="toSabores" />
+			<p:menuitem value="Sobre" action="toSobre" />
+			<p:menuitem value="Produtos" action="toProdutos" />
+			<p:menuitem value="Contato" action="toContato" />
+
+			<f:facet name="options">
+				<h:form id="loginForm">
+					<p:growl autoUpdate="true" escape="false" showSummary="true"
+						showDetail="true" />
+					<p:inputText value="#{loginMB.emailHeader}" id="login" size="30"
+						maxlength="50" placeholder="Digite seu E-mail Principal" />
+					<p:password value="#{loginMB.passwordHeader}" id="senha"
+						maxlength="15" placeholder="Digite sua Senha" />
+					<p:commandButton value="Login" id="btnLogin"
+						actionListener="#{loginMB.logar}" immediate="true"
+						rendered="#{not loginMB.logged}" update="@all">
+						<p:ajax />
+					</p:commandButton>
+					<p:commandButton value="Logoff" id="btnLogoff"
+						actionListener="#{loginMB.logoff}" immediate="true"
+						rendered="#{loginMB.logged}" update="@all">
+						<p:ajax />
+					</p:commandButton>
+
+					<p:commandButton value="administracao" action="toAdministracao"
+						immediate="true" />
+					<p:commandButton value="cadastro" action="toCadastro"
+						immediate="true" />
+				</h:form>
+			</f:facet>
+		</p:menubar>
+		<h1>
+			<h:outputText value="Bem vindo ao Sabores" />
+		</h1>
+
+	</h:form>
+	<h:form id="formUiInsertHome">
+		<ui:insert name="home"></ui:insert>
+	</h:form>
+	<ui:include src="/pages/public/footer.xhtml" />
+</body>
+</html>

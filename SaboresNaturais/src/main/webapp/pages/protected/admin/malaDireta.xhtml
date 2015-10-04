@@ -1,0 +1,428 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      template="/pages/protected/admin/administracao.xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+    
+<ui:define name="email"> 
+	<script type="text/javascript">
+		var title='ADMINISTRADOR | MALA DIRETA';
+		document.getElementsByTagName('title')[0].innerHTML = title;
+	</script>
+	
+	<p:panel>
+		<h:outputText 	value="SABORES NATURAIS | ASSISTENTE DE ENVIO DE MALA DIRETA"/>
+	</p:panel>
+	
+	<h:form 	prependId="false" 
+				id="formMalaDireta">
+		
+		<p:growl 	id="msg_mala_direta" 
+					autoUpdate="true" 
+					globalOnly="true"/>
+		
+		<p:tabView 	id="tabView"
+					widgetVar="widgetTabView">
+		
+			<p:tab title="ADICIONAR CLIENTES A MALA DIRETA">
+				
+				<table style="width:100%;">
+				
+					<tr style="width:100%;">
+					
+						<td style="width:100%;">
+							<p:outputLabel value="Adicionar Cliente" />
+						</td>
+						
+					</tr>
+					
+					<tr style="width:100%;">
+					
+						<td style="width:100%;">
+							<p:selectOneMenu 	value="#{malaDiretaMB.cliente}"
+												valueChangeListener="#{malaDiretaMB.pegarCLiente}"
+												converter="clienteConverter"
+												style="width:100%;">
+												
+								<f:selectItem	itemLabel="Selecione" 
+												noSelectionOption="true" 
+												itemValue="#{null}"/>
+								
+								<f:selectItems 	value="#{malaDiretaMB.clientes}"
+												var="c"
+												itemValue="#{c}"
+												itemLabel="#{c.nomeFantasia} - #{c.razaoSocial} - #{c.nomeDoContato}"/>
+								<p:ajax 	process="@this" 
+											update="@form"
+											oncomplete="PF('widgetTabView').select(0);"/>
+							</p:selectOneMenu>
+						</td>
+						
+					</tr>
+					
+					<tr style="width:100%;">
+					
+						<td style="width:100%;text-align:center;">
+							<h:panelGroup style="width:100%;">
+								<p:commandButton 	value="Selecionar todos os Clientes"
+													action="#{malaDiretaMB.adicionarTodosCLientes()}"
+													immediate="true"
+													update="@form"
+													process="@this"
+													oncomplete="PF('widgetTabView').select(0);"/>
+													
+								<p:commandButton 	value="Remover Todos os Clientes"
+													action="#{malaDiretaMB.removerTodosClientes()}"
+													immediate="true"
+													update="@form"
+													process="@this"
+													oncomplete="PF('widgetTabView').select(0);"/>
+							</h:panelGroup>
+						</td>
+						
+					</tr>
+				
+				</table>
+				
+				<h:panelGroup 	id="pnlClientesSelecionados">
+								
+					<p:dataTable	value="#{malaDiretaMB.malaDireta.clientes}"
+									var="cl"
+									id="dtClientesAdd"
+									widgetVar="widget_dtClientesAdd"
+									rowIndexVar="rowIndex"
+									emptyMessage="Não há nenhum cliente selecionado.">
+									
+						<p:column 	headerText="Cliente">
+							<h:outputText 	value="#{cl.razaoSocial}"
+											style="padding-left:30px;"/>
+						</p:column>
+						
+						<p:column 	headerText="Email Principal">
+							<h:outputText 	value="#{cl.email.emailPrincipal}"
+											style="padding-left:30px;"/>
+						</p:column>
+						
+						<p:column 	headerText="Remover"
+									style="width:15%;text-align:center;">
+							<p:commandButton 	value="Remover"
+												id="btnRemoverCliente" 
+												action="#{malaDiretaMB.removerClienteLista(cl)}"
+												update="@form dtClientesAdd"
+												process="@this"
+												widgetVar="widget_btnRemoverCliente_#{rowIndex}"
+												oncomplete="PF('widgetTabView').select(0);"/>
+						</p:column>
+						
+					</p:dataTable>
+				
+				</h:panelGroup>
+				
+			</p:tab>
+			
+			<p:tab title="ADICIONAR NOTÍCIAS A MALA DIRETA">
+				
+				<table style="width:100%;">
+				
+					<tr style="width:100%;">
+					
+						<td style="width:100%;">
+							<p:outputLabel value="Adicionar Notícia"/>
+						</td>
+					</tr>
+					
+					<tr style="width:100%;">
+					
+						<td style="width:100%;">
+							<p:selectOneMenu 	value="#{malaDiretaMB.noticiaId}"
+												valueChangeListener="#{malaDiretaMB.pegarNoticia}"
+												style="width:100%;">
+												
+								<f:selectItem	itemLabel="Selecione" noSelectionOption="true" itemValue="#{null}"/>
+								
+								<f:selectItems 	value="#{malaDiretaMB.noticias}"
+												var="n"
+												itemValue="#{n.id}"
+												itemLabel="#{n.id} - #{n.titulo}"/>
+												
+								<p:ajax 	process="@this" 
+											update="@form"
+											oncomplete="PF('widgetTabView').select(1);"/>
+											
+							</p:selectOneMenu>
+						</td>
+						
+					</tr>
+					
+					<tr style="width:100%;">
+					
+						<td style="width:100%;text-align:center;">
+							<h:panelGroup  style="width:100%;">
+								<p:commandButton 	value="Selecionar todos as Noticias"
+													action="#{malaDiretaMB.adicionarTodasNoticias()}"
+													immediate="true"
+													update="@form"
+													process="@this"
+													oncomplete="PF('widgetTabView').select(1);"/>
+													
+								<p:commandButton 	value="Remover todas as Noticias"
+													action="#{malaDiretaMB.removerTodasNoticias()}"
+													immediate="true"
+													update="@form"
+													process="@this"
+													oncomplete="PF('widgetTabView').select(1);"/>
+							</h:panelGroup>
+						</td>
+						
+					</tr>
+					
+				</table>
+				
+				<h:panelGroup 	id="pnlNoticiasSelecionados" 
+								columns="1" 
+								rendered="#{not empty malaDiretaMB.malaDireta.noticias}">
+								
+					<p:dataTable	value="#{malaDiretaMB.malaDireta.noticias}"
+									var="nt"
+									id="dtNoticiasAdd"
+									widgetVar="widget_dtNoticiasAdd"
+									rowIndexVar="rowIndex">
+									
+						<p:column 	headerText="Título">
+							<h:outputText 	value="#{nt.titulo}"/>
+						</p:column>
+						
+						<p:column 	headerText="Resumo">
+							<h:outputText 	value="#{malaDiretaMB.getResumoNoticia(nt.noticia)}" escape="false"/>
+						</p:column>
+						
+						<p:column 	headerText="Data Publicação" 
+									style="width:15%;text-align:center;">
+							<h:outputText 	value="#{nt.dataPublicacao}">
+								<f:convertDateTime pattern="dd/MM/yyyy"/>
+							</h:outputText>
+						</p:column>
+						
+						<p:column 	headerText="Remover" 
+									style="width:15%;text-align:center;">
+							<p:commandButton 	value="Remover"
+												id="btnRemoverNoticia" 
+												action="#{malaDiretaMB.removerNoticiaLista(nt)}"
+												update="@form dtNoticiasAdd"
+												process="@this"
+												widgetVar="widget_btnRemoverNoticia_#{rowIndex}"
+												oncomplete="PF('widgetTabView').select(1);"/>
+						</p:column>
+					</p:dataTable>
+				
+				</h:panelGroup>
+				
+			</p:tab>
+				
+			<p:tab title="ADICIONAR TÍTULO / MENSAGEM A MALA DIRETA">
+				
+				<table style="width:100%;">
+				
+					<tr style="width:100%;">
+					
+						<td style="width:100%;">
+							<p:outputLabel value="Título (Assunto) do email da Mala Direta"/>
+						</td>
+						
+					</tr>
+					
+					<tr style="width:100%;">
+					
+						<td style="width:100%;">
+							<p:inputText 	value="#{malaDiretaMB.malaDireta.titulo}"
+											 style="width:100%;"/>
+						</td>
+						
+					</tr>
+					
+					<tr style="width:100%;">
+					
+						<td style="width:100%;">
+							<p:outputLabel value="Mensagem da Mala Direta"/>
+						</td>
+						
+					</tr>
+					
+					<tr style="width:100%;">
+					
+						<td style="width:100%;">
+							<p:editor value="#{malaDiretaMB.malaDireta.corpo}"/>
+						</td>
+						
+					</tr>
+					
+				</table>
+				
+			</p:tab>
+			
+			<p:tab title="ADICIONAR MÍDIA DIRETA">
+
+				<p:tabView id="tabViewMidiaDireta" widgetVar="widgetTabViewMidiaDireta">
+
+					<p:tab title="ADICIONAR IMAGENS">
+				
+					<h:panelGroup 	id="pnlFotos">
+							
+						<p:fileUpload 	mode="advanced" 
+										immediate="true" 
+										id="updateFoto" 
+										fileUploadListener="#{malaDiretaMB.adicionarImagensHandler}"
+						 				update="dtExibirFotos" 
+						 				style="width:100%;"
+						 				cancelLabel="Cancelar Carregamento"
+						 				label="Escolher Imagem"
+						 				uploadLabel="Subir Imagem"/>
+							 				
+					
+							<p:dataTable 	var="ft"
+											value="#{malaDiretaMB.listaImagens}" 
+											style="width:100%;" 
+											id="dtExibirFotos"
+											emptyMessage="Não há imagens carregadas">
+											
+								<f:facet 	name="header">
+									<h:outputText 	value="Imagens Carregadas" />
+								</f:facet>
+								
+								<p:column 	style="width:30%;text-align:center;">
+								
+									<h:graphicImage 	id="foto" 
+														style="width:150px;height:90px;" 
+														value="/ServletMedia/?nomeMedia=imagem_@NN@_#{ft.imagemNome}"/>
+														
+								</p:column>
+								
+								<p:column style="width:50%;">
+								
+									<p:outputLabel 	for="alterar_nome_foto" 
+													value="Nome da Imagem: "
+													styleClass="fontPanelHeader"/>
+													
+									<h:outputText 	id="alterar_nome_foto" 
+													value="#{ft.imagemNome}"/> <br />
+													
+									<p:outputLabel 	for="alterar_tipo_foto" 
+													value="Tipo da Imagem: "
+													styleClass="fontPanelHeader"/>
+													
+									<h:outputText 	id="alterar_tipo_foto" 
+													value="#{ft.contentType}"/> <br />
+													
+									<p:outputLabel 	for="alterar_tam_foto" 
+													value="Tamanho da Imagem: "
+													styleClass="fontPanelHeader"/>
+													
+									<h:outputText 	id="alterar_tam_foto" 
+													value="#{malaDiretaMB.formatarTamanhoImagem(ft.imagemTamanho)}"/>
+													
+								</p:column>
+								
+								<p:column style="width:20%;text-align:center">
+								
+									<p:commandButton 	value="Remover Foto" 
+														action="#{malaDiretaMB.removerFotoLista(ft)}" 
+														update="@form"/>
+														
+								</p:column>
+								
+							</p:dataTable>
+							
+							<p:toolbar>
+								
+								<f:facet name="left"></f:facet>
+								<f:facet name="right">
+									<p:commandButton 	value="Limpar Lista" 
+														action="#{malaDiretaMB.limparListaFotos()}" 
+														update="dtExibirFotos"/>
+								</f:facet>
+								
+							</p:toolbar>
+							
+												
+						
+					</h:panelGroup>
+					
+				</p:tab>
+				
+				<p:tab title="ADICIONAR VIDEO YOUTUBE">
+				
+					<h:panelGroup 	id="pnlVideo" 
+									columns="1">
+						<p:panel>
+							<p:inputText 	id="inputVideoYoutube" 
+											value="#{malaDiretaMB.malaDireta.youtubeDireto}" 
+											placeholder="Insira a URL do video do YouTube" 
+											size="100"
+											update="@this" 
+											immediate="true" 
+											valueChangeListener="#{malaDiretaMB.adicionarVideosYoutubeListener}"/>
+							
+							<p:spacer width="10px"/>
+											
+							<p:commandButton 	value="Adicionar" 
+												action="#{malaDiretaMB.addVideoYoutube()}" 
+												update="pnlYoutube" 
+												process="inputVideoYoutube,@this"/>
+						</p:panel>					
+													
+						<p:panel id="pnlYoutube" style="text-align:center;">
+							
+							<object id="playerYoutube" width="600" height="480"> 
+								<param name="movie" value="#{malaDiretaMB.malaDireta.youtubeDireto}" /> 
+								<embed 	src="#{malaDiretaMB.malaDireta.youtubeDireto}" 
+										type="application/x-shockwave-flash" 
+										width="600" 
+										height="480" />
+
+							</object>
+							
+							<p:spacer height="10px"/>
+							
+							<p:toolbar>
+								<f:facet name="left">
+									<p:outputLabel 	for="url_video" 
+													value="URL do Vídeo: "/>
+													
+									<h:outputText 	id="url_video" 
+													value="#{malaDiretaMB.malaDireta.youtubeDireto}"/>
+								</f:facet>
+								
+								<f:facet name="right">
+									<p:commandButton 	id="btnRemoverYoutube" 
+														value="Remover Video" 
+														process="@this" 
+														update="@form"/>
+								</f:facet>
+							</p:toolbar>
+													
+						</p:panel>
+													
+					</h:panelGroup>
+							
+				</p:tab>
+				</p:tabView>
+			</p:tab>
+			
+		</p:tabView>
+		
+		<p:panel>
+		
+			<p:commandButton 	value="Enviar Email"
+								action="#{malaDiretaMB.enviarMalaDireta()}"
+								oncomplete="PF('widgetTabView').select(0);">
+				<p:resetInput target="@form"/>				
+			</p:commandButton>					
+								
+		</p:panel>	
+			
+	</h:form>
+	
+</ui:define>
+</ui:composition>

@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/pages/protected/admin/administracao.xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="pedidos">
+		<script type="text/javascript">
+			var title='PEDIDOS | APAGAR';
+			document.getElementsByTagName('title')[0].innerHTML = title;
+		</script>
+		
+		<style type="text/css">
+			td {
+				border: 3px solid !important;
+				border-color: green !important;
+			}
+			
+			.fontPanelGrid {
+				font-family: segoe ui,Arial,sans-serif;
+    			font-size: 1.1em;
+			}
+			
+			.fontPanelHeader {
+				font-size: 1.3em;
+				font-weight: bold;
+			}
+		</style>
+		
+		<p:panel>
+			<h:outputText value="SABORES NATURAIS | APAGAR (CANCELAR) UMA COMPRA DE UM CLIENTE" />
+		</p:panel>
+		
+		<h:form id="form1">
+		
+			<p:growl showDetail="false" showSummary="true"/>
+			
+			<h:panelGroup 	columns="1" 
+							id="pnlGeral" 
+							style="width:100%;">
+			
+				<h:panelGroup 	id="pnlSearch" >
+				
+					<p:panel>
+					
+						<h:outputText 	value="Digite o codigo da Lista de Pedidos  " styleClass="fontPanelGrid"/>
+						
+						<p:inputText 	value="#{listaMB.id}" 
+										id="buscarId" />
+						<p:spacer width="15px;"/>			
+						<p:commandButton 	value="Buscar Lista" 
+											process="@form"
+											update="pnlGeral pnlResult"  
+											action="#{listaMB.buscarPedido()}"/>
+											
+					</p:panel>
+						
+				</h:panelGroup>
+				
+				<h:panelGroup 	id="pnlResult" 
+								rendered="#{listaMB.renderizarTabela}" 
+								style="width:100%;">
+					<p:panel>
+								
+						<p:toolbar>
+						
+							<f:facet 	name="left">
+								<h:outputText 	value="LISTA DE PEDIDOS Nº DE ORDEM "/>
+								<h:outputText 	value="#{listaMB.listaPedidos.id}" />
+							</f:facet>
+							
+							<f:facet name="right">
+							
+								<p:commandButton 	id="btnApagarLista"	
+													value="Apagar Pedido"
+													action="#{listaMB.cancelarPedido(listaMB.listaPedidos)}" 
+													update="pnlGeral pnlResult"/>
+													
+							</f:facet>
+						</p:toolbar>
+						
+						<p:spacer height="10px;"/>
+						
+						<p:panelGrid 	border="1" 
+										style="width:100%;">
+										
+							<p:row style="width:100%;">
+							
+								<p:column>
+									<h:outputText 	value="Cliente" 
+													style="width:100%;"
+													styleClass="fontPanelHeader"/> <br/>
+									<h:outputText 	value="#{listaMB.listaPedidos.cliente.razaoSocial}" 
+													style="width:100% !important;"/>
+								</p:column>
+								
+								<p:column>
+									<h:outputText 	value="Data Compra" 
+													style="width:100%;"
+													styleClass="fontPanelHeader"/> <br/>
+									<h:outputText 	value="#{listaMB.listaPedidos.dataCompra}" 
+													style="width:100%;">
+										<f:convertDateTime 	pattern="dd/MM/yyyy HH:mm:ss" />
+									</h:outputText>
+								</p:column>
+								
+								<p:column>
+									<h:outputText 	value="Entregue?" 
+													style="width:100%;"
+													styleClass="fontPanelHeader"/> <br/>
+									<h:outputText 	value="#{listaMB.getStatusEntregue(listaMB.listaPedidos)}" 
+													style="width:100%;"/>
+								</p:column>
+								
+								<p:column>
+									<h:outputText 	value="Subtotal" 
+													style="width:100%;"
+													styleClass="fontPanelHeader"/> <br/>
+									<h:outputText 	value="#{listaMB.getSubtotal(listaMB.listaPedidos)}" 
+													style="width:100%;">
+										<f:convertNumber 	type="currency" 
+															currencySymbol="R$"/>
+									</h:outputText>	
+								</p:column>
+								
+							</p:row>
+										
+						</p:panelGrid>
+						
+						<p:spacer height="10px;"/>
+						
+						<p:toolbar 	id="tb_itens">
+							<f:facet 	name="left">
+								<h:outputText 	value="ITENS"/>
+							</f:facet>
+							<f:facet 	name="right">
+							</f:facet>
+						</p:toolbar>
+						
+						<p:spacer height="10px;"/>
+						
+						<ui:repeat 	var="item" 	
+									value="#{listaMB.listaPedidos.itens}">
+									
+							<p:panelGrid 	style="width:100%;">
+							
+								<p:row 	style="width:100%;">
+								
+									<p:column 	style="width:15%;">
+										<h:outputText 	value="Codigo Produto" 
+														styleClass="fontPanelHeader"/> <br/>
+														
+										<h:outputText 	value="#{item.produto.codigoProduto}" />
+									</p:column>
+									
+									<p:column 	style="width:40%;">
+										<h:outputText 	value="Produto" 
+														styleClass="fontPanelHeader"/> <br/>
+														
+										<h:outputText 	value="#{item.produto.produto}" />
+									</p:column>
+									
+									<p:column   style="width:20%;">
+										<h:outputText 	value="Quantidade"
+														styleClass="fontPanelHeader"/> <br/>
+														
+										<p:spinner 		id="spinnerQtd"
+														value="#{item.quantidade}">
+											<f:convertNumber 	integerOnly="true" 
+																type="number" 
+																maxIntegerDigits="3" 
+																minIntegerDigits="3"/>
+										</p:spinner>
+									</p:column>
+									
+									<p:column   style="width:10%;">
+										<h:outputText 	value="Preço" 
+														styleClass="fontPanelHeader"/> <br/>
+														
+										<h:outputText 	value="#{item.preco}">
+											<f:convertNumber 	type="currency" 
+																currencySymbol="R$" />
+										</h:outputText>
+									</p:column>
+									
+								</p:row>
+								
+							</p:panelGrid>
+							
+						</ui:repeat>
+						
+					</p:panel>	
+						
+				</h:panelGroup>
+					
+			</h:panelGroup>
+			
+		</h:form>
+		
+	</ui:define>
+	
+</ui:composition>

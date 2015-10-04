@@ -1,0 +1,318 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      template="/pages/protected/admin/administracao.xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+    
+<ui:define name="relatorio"> 
+	<script type="text/javascript">
+		var title='ADMINISTRADOR | RELATÓRIO GERAL';
+		document.getElementsByTagName('title')[0].innerHTML = title;
+	</script>
+	<style type="text/css">
+		
+	
+		.ui-picklist .ui-picklist-list 
+		{
+		    height: 300px;
+		    width: 280px;
+		}
+		
+/* 		.ui-picklist-button-add */
+/* 		{ */
+/* 			background-image: url("#{resource['icons/add-black.png']}") !important; */
+/* 			background-repeat:no-repeat !important; */
+/* 			background-position: 0 0 !important; */
+			
+/* 		} */
+		
+		.ui-picklist-button-add-all
+		{
+			background-image: url(images/addAllButton.png);
+			background-repeat:no-repeat !important;
+			background-position: 0 0 !important;
+		}
+		
+		.ui-picklist-button-remove-all
+		{
+			background-image: url(images/removeButton.jpg);
+			background-repeat:no-repeat !important;
+			background-position: 0 0 !important;
+		}
+		
+		.ui-picklist-button-remove
+		{
+			background-image: url(images/removeAllButton.jpg);
+			background-repeat:no-repeat !important;
+			background-position: 0 0 !important;
+		}
+		
+	</style>
+	<p:panel>
+		<h:outputText value="RELATÓRIO PERIÓDICO GERAL"/>
+	</p:panel>
+	
+	<h:form prependId="true" id="formPeriodicoGeral">
+		<p:growl id="msgs"/>
+		<p:tabView id="tabView" dynamic="true" widgetVar="widget_tabview">
+		
+			<p:tab 	id="tabPesquisa" 
+					title="GERAR RELATÓRIO">
+				
+				<h:panelGrid id="pnlPesquisa" columns="2">
+						
+						<p:panel header="Seleção de Cliente(s)">
+							
+							<p:pickList 	id="pickListClientes"
+											value="#{dashboardProdutosXClientesMB.dualClientes}"
+											var="dualCliente"
+											itemValue="#{dualCliente}"
+											itemLabel="#{dualCliente.id} - #{dualCliente.nomeFantasia}"
+											converter="clienteConverter"
+											converterMessage="Erro de Conversão em clienteConverter"
+											showCheckbox="true"
+											showSourceControls="true"
+											showTargetControls="true"
+											required="true"
+											requiredMessage="Escolha pelo menos 1 cliente.">
+																						
+								<f:facet name="sourceCaption">Disponível</f:facet>
+        						<f:facet name="targetCaption">Selecionada</f:facet>
+        						
+        						<p:ajax event="transfer" listener="#{dashboardProdutosXClientesMB.onTransferClientes}"/>
+        						
+							</p:pickList>
+							
+						</p:panel>
+						
+						<p:panel header="Seleção de Produto(s)">
+						
+							<p:pickList 	id="pickListProdutos"
+											value="#{dashboardProdutosXClientesMB.dualProdutos}"
+											var="dualProduto"
+											itemValue="#{dualProduto}"
+											itemLabel="#{dualProduto.id} - #{dualProduto.produto}"
+											converter="produtoConverter"
+											converterMessage="Erro de Conversão em produtoConverter"
+											showCheckbox="true"
+											showSourceControls="true"
+											showTargetControls="true"
+											required="true"
+											requiredMessage="Escolha pelo menos 1 produto.">
+											
+								<f:facet name="sourceCaption">Disponível</f:facet>
+        						<f:facet name="targetCaption">Selecionada</f:facet>
+        						
+        						<p:ajax event="transfer" listener="#{dashboardProdutosXClientesMB.onTransferProdutos}"/>
+        						
+							</p:pickList>
+							
+						</p:panel>
+						
+						<p:panel header="Data Inicial">
+						
+							<p:calendar 	id="dataInicio"
+											mode="popup"
+											showButtonPanel="true"
+											value="#{dashboardProdutosXClientesMB.dataInicio}"
+											showOn="button"
+											locale="br"
+											pattern="dd/MM/yyyy"
+											maxlength="0"
+											size="35"
+											showOtherMonths="true"
+											immediate="true"
+											valueChangeListener="#{dashboardProdutosXClientesMB.dataInicioListener}">
+							</p:calendar>
+							
+						</p:panel>
+						
+						<p:panel header="Data Final">
+						
+							<p:calendar 	id="dataFim"
+											mode="popup"
+											showButtonPanel="true"
+											value="#{dashboardProdutosXClientesMB.dataFim}"
+											showOtherMonths="true"
+											immediate="true"
+											showOn="button"
+											locale="br"
+											pattern="dd/MM/yyyy"
+											maxlength="0"
+											size="35"
+											valueChangeListener="#{dashboardProdutosXClientesMB.dataFimListener}">
+							</p:calendar>
+						
+						</p:panel>
+						
+						<p:commandButton 	id="btnSubmeterPesquisa"
+											value="Pesquisar"
+											action="#{dashboardProdutosXClientesMB.pesquisar()}"
+											process="@this,dataInicio,dataFim"
+											update="@form,:formPeriodicoGeral:tabView:tabResultadoGrafico"
+											oncomplete="PF('widget_tabview').select(1)">
+							
+						</p:commandButton>
+						
+					
+				
+				</h:panelGrid>
+				
+			</p:tab>
+			
+			<p:tab id="tabResultadoDatatable" title="REALATÓRIO-TABELA">
+				
+				<p:toolbar>
+				
+					<f:facet name="left">
+						<h:outputText value="Relatório-Tabela da Pesquisa"/>
+					</f:facet>
+				
+					<f:facet name="right">
+						<h:outputText value="#{dashboardProdutosXClientesMB.produtosXClientes.subtotalGeral}">
+							<f:convertNumber type="currency" currencySymbol="R$ "/>
+						</h:outputText>
+					</f:facet>
+					
+				</p:toolbar>
+				
+				<p:dataTable 	id="datatableResultado"
+								value="#{dashboardProdutosXClientesMB.produtosXClientes.clientes}"
+								var="cli">
+					
+					<p:column>
+						<p:rowToggler />
+					</p:column>
+								
+					<p:column headerText="CNPJ">
+						<h:outputText value="#{cli.cliente.cnpj}"/>
+					</p:column>
+					
+					<p:column headerText="Nome Fantasia">
+						<h:outputText value="#{cli.cliente.nomeFantasia}"/>
+					</p:column>
+					
+					<p:column headerText="Subtotal Cliente">
+						<h:outputText value="#{cli.subtotalCliente}">
+							<f:convertNumber type="currency" currencySymbol="R$ "/>
+						</h:outputText>
+					</p:column>
+					
+					<p:rowExpansion>
+						
+						<p:dataTable 	id="dataTableProdutos_#{cli.cliente.nomeFantasia}"
+										value="#{cli.produtos}"
+										var="prod">
+							
+							<f:facet name="header">
+								<h:outputText value="Produtos comprados por #{cli.cliente.nomeFantasia}"/>
+							</f:facet>
+										
+							<p:column headerText="Produto">
+								<h:outputText value="#{prod.produto.produto}"/>
+							</p:column>
+						
+							<p:column headerText="Data Compra">
+								<h:outputText value="#{prod.dataCompra}">
+									<f:convertDateTime pattern="dd/MM/yyyy"/>
+								</h:outputText>
+							</p:column>
+							
+							<p:column headerText="Quantidade">
+								<h:outputText value="#{prod.quantidade}"/>
+							</p:column>
+							
+							<p:column headerText="Preço">
+								<h:outputText value="#{prod.preco}">
+									<f:convertNumber type="currency" currencySymbol="R$ "/>
+								</h:outputText>
+							</p:column>
+							
+							<p:column headerText="Subtotal Produto">
+								<h:outputText value="#{prod.subtotalProduto}">
+									<f:convertNumber type="currency" currencySymbol="R$ "/>
+								</h:outputText>
+							</p:column>
+							
+						</p:dataTable>
+						
+					</p:rowExpansion>
+					
+				</p:dataTable>
+				
+			</p:tab>
+			
+			<p:tab id="tabResultadoGrafico" title="RELATÓRIO-GRÁFICO">
+			
+				<h:panelGrid id="pnlResultadoGrafico" style="width:100%;">
+				
+					<p:toolbar id="toolbarGraficoGeral" rendered="#{!dashboardProdutosXClientesMB.renderizarBarChart}">
+					
+						<f:facet name="left">
+							<h:outputText value="Relatório-Gráfico da Pesquisa"/>
+						</f:facet>
+					
+						<f:facet name="right">
+							<h:outputText value="Total Geral: "/>
+							<h:outputText value="#{dashboardProdutosXClientesMB.produtosXClientes.subtotalGeral}">
+								<f:convertNumber type="currency" currencySymbol="R$ "/>
+							</h:outputText>
+						</f:facet>
+						
+					</p:toolbar>
+					
+					<p:chart 	id="graficoGeral" 
+								type="pie" 
+								model="#{dashboardProdutosXClientesMB.pieModel}" 
+								style="width:100%;height:600px;" 
+								rendered="#{!dashboardProdutosXClientesMB.renderizarBarChart}">
+						<p:ajax event="itemSelect" 
+								listener="#{dashboardProdutosXClientesMB.itemSelectListener}"
+								process="@this"
+								update="pnlResultadoGrafico"/>
+					</p:chart>
+					
+					<p:toolbar id="toolbarEspecifica1" rendered="#{dashboardProdutosXClientesMB.renderizarBarChart}">
+					
+						<f:facet name="left">
+							<h:outputText value="Produtos comprados por #{dashboardProdutosXClientesMB.clienteSelecionado}"/>
+						</f:facet>
+					
+						<f:facet name="right">
+							<h:outputText value="Total Geral: "/>
+							<h:outputText value="#{dashboardProdutosXClientesMB.produtosXClientes.subtotalGeral}">
+								<f:convertNumber type="currency" currencySymbol="R$ "/>
+							</h:outputText>
+						</f:facet>
+						
+					</p:toolbar>
+					
+					<p:toolbar id="toolbarEspecifica2" rendered="#{dashboardProdutosXClientesMB.renderizarBarChart}">
+					
+						<f:facet name="left"></f:facet>
+						<f:facet name="right">
+							<p:commandButton 	value="Voltar"
+												action="#{dashboardProdutosXClientesMB.voltar()}"
+												immediate="true"
+												process="@this"
+												update="pnlResultadoGrafico"/>
+						</f:facet>
+						
+					</p:toolbar>
+					
+					<p:chart 	id="graficoEspecifico" 
+								type="bar" 
+								model="#{dashboardProdutosXClientesMB.barModel}" 
+								style="width:100%;height:450px;" 
+								rendered="#{dashboardProdutosXClientesMB.renderizarBarChart}"/>
+					
+				</h:panelGrid>
+			</p:tab>
+			
+		</p:tabView>
+		
+	</h:form>
+</ui:define>
+</ui:composition>

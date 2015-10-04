@@ -1,0 +1,604 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	template="/pages/protected/usuario_autorizado/home.xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui">
+<ui:define name="dados_usuario"> 
+	<script type="text/javascript">
+		var title='USUARIO | ALTERAR DADOS';
+		document.getElementsByTagName('title')[0].innerHTML = title;
+	</script>
+	
+	<p:panel>
+		<h:outputText value="SABORES | ALTERAR DADOS CLIENTE"/>
+	</p:panel>
+	
+	<h:form prependId="false">
+	
+		<p:growl 	id="msg_cadastro_endereco" 
+					autoUpdate="true" 
+					showDetail="true" 
+					showSummary="true" 
+					escape="false"/>
+		
+		<p:panel header="ALTERAR DADOS GERAIS DA EMPRESA">
+			
+			<h:panelGrid columns="2" style="width:100%;">
+			
+				<h:column>
+					<p:outputLabel 	for="razao" 
+									value="Razão Social" /> <br/>
+					<p:inputText 	id="razao" 
+									value="#{clienteMB.cliente.razaoSocial}" 
+									placeholder="Razão Social" 
+									style="width:90%;" 
+									required="true" 
+									requiredMessage="Razão Social é obrigatória"/>
+				</h:column>
+				
+				<h:column>
+					<p:outputLabel 	for="fantasia" 
+									value="Nome Fantasia" /> <br/>
+					<p:inputText 	id="fantasia" 
+									value="#{clienteMB.cliente.nomeFantasia}" 
+									placeholder="Nome Fantasia da Empresa" 
+									style="width:90%;" 
+									required="true" 
+									requiredMessage="Nome Fantasia é obrigatório"/>
+				</h:column>		
+
+				<h:column>
+					<p:outputLabel 	for="site" 
+									value="Site da Empresa" /> <br/>
+					<p:inputText 	id="site" 
+									value="#{clienteMB.cliente.siteDoCliente}" 
+									placeholder="Site do Cliente" 
+									style="width:90%;"/>
+				</h:column>
+			</h:panelGrid>
+			
+			<h:panelGrid columns="4" style="width:100%;">
+				<h:column>
+					<p:outputLabel 	for="cnpj" 
+									value="CNPJ" /> <br/>
+					<p:inputMask 	id="cnpj" 
+									mask="99.999.999/9999-99" 
+									value="#{clienteMB.cliente.cnpj}" 
+									style="width:80%;" 
+									required="true" 
+									requiredMessage="CNPJ é obrigatório"/>
+				
+				</h:column>
+				
+				<h:column>
+					<p:outputLabel 	for="ie" 
+									value="IE" /> <br/>
+					<p:inputMask 	id="ie" 
+									mask="999.999.999.999" 
+									value="#{clienteMB.cliente.ie}" 
+									style="width:80%;" 
+									required="true" 
+									requiredMessage="IE é obrigatória"/>
+				</h:column>	
+						
+				<h:column>
+					<p:outputLabel 	for="contato" 
+									value="Nome do Contato" /> <br/>
+					<p:inputText 	id="contato" 
+									value="#{clienteMB.cliente.nomeDoContato}" 
+									placeholder="Nome do contato (pessoa)" 
+									style="width:80%;" 
+									required="true" 
+									requiredMessage="Nome do Contato é obrigatório"/>
+				</h:column>
+				
+				<h:column>
+					<p:outputLabel 	for="seguimento" 
+									value="Seguimento Comercial"/> <br/>
+					<p:selectOneMenu 	id="seguimento" 
+										value="#{clienteMB.cliente.seguimento}" 
+										required="true" 
+										requiredMessage="Seguimento do Cliente é obrigatório"
+										style="width:80%;">
+						<f:selectItem 	itemLabel="Selecione..." 
+										noSelectionOption="true" />
+						<f:selectItems 	value="#{clienteMB.listaTiposEstabelecimentos}"
+										var="tipo" 
+										itemLabel="#{tipo.tipoDeEstabelecimento}"
+										itemValue="#{tipo}" />
+						<f:converter 	converterId="tipoEstabelecimentoConverter" 
+										for="br.com.sabores.web.TipoEstabelecimentoConverter.class"/>
+					</p:selectOneMenu>
+				</h:column>
+				
+			</h:panelGrid>
+				
+		</p:panel>
+		
+		<p:panel header="ALTERAR EMAILS CADASTRADOS">
+		
+			<h:panelGrid 	columns="2" style="width:100%;">
+			
+				<h:column>
+					<p:outputLabel 	for="email" 
+									value="Email Principal:" /><br/>
+					<p:inputText 	id="email" 
+									value="#{clienteMB.email.emailPrincipal}" 
+									required="true" 
+									requiredMessage="Email Principal é obrigatório (Ele será usado para o login)" 
+									placeholder="Email principal (usado no login)" 
+									style="width:90%;"/>
+				</h:column>
+				
+				<h:column>
+					<p:outputLabel 	for="email2" 
+									value="Email Alternativo:" /><br/>
+					<p:inputText 	id="email2" 
+									value="#{clienteMB.email.emailAlternativo1}" 
+									placeholder="Email de Contato Alternativo" 
+									style="width:90%;"/>
+				</h:column>
+				
+				<h:column>
+					<p:outputLabel 	for="email3" 
+									value="Email Alternativo:" /><br/>
+					<p:inputText 	id="email3" 
+									value="#{clienteMB.email.emailAlternativo2}" 
+									placeholder="Email de Contato Alternativo" 
+									style="width:90%;"/>
+				</h:column>
+				
+				<h:column>
+					<p:outputLabel 	for="email4" 
+									value="Email Alternativo:" /><br/>
+					<p:inputText 	id="email4" 
+									value="#{clienteMB.email.emailAlternativo3}" 
+									placeholder="Email de Contato Alternativo" 
+									style="width:90%;"/>
+				</h:column>
+				
+				<h:column>
+					<p:outputLabel 	for="email5" 
+									value="Email Alternativo:" /><br/>
+					<p:inputText 	id="email5" 
+									value="#{clienteMB.email.emailAlternativo4}" 
+									placeholder="Email de Contato Alternativo" 
+									style="width:90%;"/>
+				</h:column>
+				
+			</h:panelGrid>	
+					
+		</p:panel>
+		
+		<p:panel header="ALTERAR TELEFONES CADASTRADOS">
+		
+			<h:panelGrid 	columns="2" style="width: 100%;">
+				<h:column>
+					<p:outputLabel 	for="fixo_1" 
+									value="Tel. Fixo Principal:" /><br/>
+					<p:inputMask 	id="fixo_1" 
+									mask="(99) 9 9999-9999"
+									required="true" 
+									requiredMessage="O telefone de contato principal é obrigatório" 
+									value="#{clienteMB.telefone.telefonePrincipal}" 
+									style="width: 90%;"/>
+				</h:column>
+				
+				<h:column>
+					<p:outputLabel 	for="fixo_2" 
+									value="Tel. Fixo Alternativo:" /><br/>
+					<p:inputMask 	id="fixo_2" 
+									mask="(99) 9 9999-9999" 
+									value="#{clienteMB.telefone.telefoneAlternativo}" 
+									style="width: 90%;"/>
+				</h:column>
+				
+				<h:column>
+					<p:outputLabel 	for="cel_1" 
+									value="Tel. Celular Principal:" /><br/>
+					<p:inputMask 	id="cel_1" 
+									mask="(99) 9 9999-9999" 
+									value="#{clienteMB.telefone.celularPrincipal}" 
+									style="width: 90%;"/>
+				</h:column>
+				
+				<h:column>
+					<p:outputLabel 	for="cel_2" 
+									value="Tel. Celular Alternativo:" /><br/>
+					<p:inputMask 	id="cel_2" 
+									mask="(99) 9 9999-9999" 
+									value="#{clienteMB.telefone.celularAlternativo}" 
+									style="width: 90%;"/>
+				</h:column>
+				
+				<h:column>
+					<p:outputLabel 	for="fax" 	
+									value="Tel. Fax:" /><br/>
+					<p:inputMask 	id="fax" 
+									mask="(99) 9 9999-9999" 
+									value="#{clienteMB.telefone.fax}" 
+									style="width: 90%;"/>
+				</h:column>
+			
+			</h:panelGrid>
+			
+		</p:panel>
+		
+		<p:tabView>
+			<p:tab title="ALTERAR CADASTRO DE ENDERECO DO ESTABELECIMENTO">
+				
+				<h:panelGrid id="gridEstabelecimento" columns="3" style="width:100%;">
+						
+					<h:column>
+						<p:outputLabel for="cep_est" value="CEP" /> <br />
+						<p:inputMask 	id="cep_est" 
+										mask="99.999-999" 
+										required="true" 
+										requiredMessage="CEP do estabelecimento é obrigatório"
+										value="#{clienteMB.cepHeaderEst}" 
+										size="15" 
+										maxlength="15" 
+										immediate="true"
+										valueChangeListener="clienteMB.cepEstabelecimentoListener">
+										
+							<p:ajax process="@this" update="@this"/>
+							
+						</p:inputMask>
+						
+						<p:commandButton 	id="buscarEnderecoEst" 
+											value="Buscar Cep" 
+											action="#{clienteMB.buscarCepEstabelecimento()}"
+											immediate="false"
+											ajax="true"
+											onclick="this.value = 'Aguarde ...'"
+											update="gridEstabelecimento"
+											process="@this">
+						</p:commandButton>
+					</h:column>
+					
+					<h:column>
+					</h:column>
+					
+					<h:column>
+					</h:column>
+					
+						<h:column>
+							<p:outputLabel 	for="tipoLogradouro_est" 	value="Tipo" /><br />
+							<p:selectOneMenu 	id="tipoLogradouro_est" 
+												value="#{clienteMB.estabelecimento.tipoLogradouro}" 
+												required="true" 
+												requiredMessage="Tipo de Logradouro é obrigatório">
+												
+								<f:selectItem 	itemLabel="Selecione..." 	noSelectionOption="true" />
+								<f:selectItems 	value="#{clienteMB.listaTiposLogradouros}"
+												var="tipo" 
+												itemValue="#{tipo.descricao}"
+												itemLabel="#{tipo.descricao}" />
+												
+								<p:ajax 	update="@this" 	process="@this"/>
+							</p:selectOneMenu>
+						</h:column>
+						
+						<h:column>
+							<p:outputLabel 	for="logradouro_est" 	value="Logradouro" /> <br />
+							<p:inputText 	id="logradouro_est" 
+											required="true" 
+											requiredMessage="Logradouro do estabelecimento é obrigatório" 
+											value="#{clienteMB.estabelecimento.logradouro}" 
+											placeholder="Logradouro do Endereço do Estabelecimento" 
+											style="width:80%;"/>
+								
+						</h:column>
+						
+						<h:column>
+							<p:outputLabel 	for="num_est" 	value="No" /> <br/>
+							<p:inputText 	id="num_est" 
+											required="true" 
+											requiredMessage="Num. do estabelecimento é obrigatório" 
+											value="#{clienteMB.estabelecimento.numero}" 
+											placeholder="Num." 
+											size="5">
+								<f:validateRegex pattern="[0-9]+"/>
+							</p:inputText>
+							
+						</h:column>
+						
+						<h:column>
+							<p:outputLabel 	for="compl_est" 	value="Complemento" /><br/>
+							<p:inputText 	id="compl_est" 
+											required="false" 
+											value="#{clienteMB.estabelecimento.complemento}" 
+											placeholder="Complemento" 
+											style="width:80%;"/>
+						</h:column>	
+					
+						<h:column>
+							<p:outputLabel 	for="bairro_est" 	value="Bairro" /><br/>
+							<p:inputText 	id="bairro_est" 
+											required="true" 
+											requiredMessage="Bairro do estabelecimento é obrigatório" 
+											value="#{clienteMB.estabelecimento.bairro}" 
+											placeholder="Bairro do Endereço do Estabelecimento" 
+											style="width:80%;"/>
+						</h:column>
+						
+							
+						<h:column>
+							<p:outputLabel 	for="estado_est" 	value="Estado" /><br/>
+							<p:selectOneMenu 	id="estado_est" 
+												value="#{clienteMB.estabelecimento.uf}" 
+												required="true" 
+												requiredMessage="Estado do estabelecimento é obrigatório">
+												
+								<p:ajax 	listener="#{clienteMB.atualizarListaCidadesEstPorEstado}" 
+											process="@this"
+											update="cidade_est" />
+											
+								<f:selectItem 	noSelectionOption="true"	itemLabel="Selecione um Estado..." />
+								<f:selectItems 	value="#{clienteMB.listaDeEstados}" 
+												var="estado"
+												itemLabel="#{estado.nomeEstado}" 
+												itemValue="#{estado.nomeEstado}" />
+							</p:selectOneMenu>
+						</h:column>
+						
+						<h:column>
+							<p:outputLabel 	for="cidade_est" 	value="Cidade"/><br/>
+							<p:selectOneMenu 	id="cidade_est" 
+												value="#{clienteMB.estabelecimento.cidade}"
+												required="true" 
+												requiredMessage="Cidade do estabelecimento é obrigatória">
+												
+								<f:selectItem 	noSelectionOption="true"	itemLabel="Selecione uma Cidade..." />
+								<f:selectItems 	value="#{clienteMB.listaDeCidades}" />
+							</p:selectOneMenu>
+						</h:column>
+					</h:panelGrid>
+						
+			</p:tab>
+			
+			<p:tab title="ALTERAR CADASTRO DE ENDERECO DE ENTREGA">
+				
+				<h:panelGrid 	id="gridEntrega" columns="3" style="width:100%;">
+					
+					<h:column>
+						<p:outputLabel for="cep_est" value="CEP" /> <br/>
+						<p:inputMask 	id="cep_ent" 
+										mask="99.999-999" 
+										value="#{clienteMB.cepHeaderEnt}" 
+										size="15" 
+										maxlength="15" 
+										immediate="true"
+										valueChangeListener="clienteMB.cepEntregaListener">
+										
+							<p:ajax process="@this" update="@this"/>
+							
+						</p:inputMask>
+					
+						<p:commandButton 	id="buscarEnderecoEnt" 
+											value="Buscar Cep" 
+											action="#{clienteMB.buscarCepEntrega()}"
+											immediate="false"
+											ajax="true"
+											onclick="this.value = 'Aguarde ...'"
+											update="gridEntrega"
+											process="@this">
+						</p:commandButton>
+					</h:column>
+						
+					<h:column>
+					</h:column>
+					
+					<h:column>
+					</h:column>		
+					
+					<h:column>
+						<p:outputLabel 	for="tipoLogradouro_ent" 	value="Tipo" />  <br/>
+						<p:selectOneMenu 	id="tipoLogradouro_ent" 
+											value="#{clienteMB.entrega.tipoLogradouro}">
+											
+							<f:selectItem 	itemLabel="Selecione..." 	noSelectionOption="true" />
+							<f:selectItems 	value="#{clienteMB.listaTiposLogradouros}"
+											var="tipo" 
+											itemValue="#{tipo.descricao}"
+											itemLabel="#{tipo.descricao}" />
+											
+							<p:ajax 	update="@this" 	process="@this"/>
+						</p:selectOneMenu>
+					</h:column>
+					
+					<h:column>
+						<p:outputLabel 	for="logradouro_ent" 	value="Logradouro" />  <br/>
+						<p:inputText 	id="logradouro_ent" 
+										value="#{clienteMB.entrega.logradouro}" 
+										placeholder="Logradouro de Entrega do Estabelecimento" 
+										style="width:80%;"/>
+					</h:column>		
+
+					<h:column>
+						<p:outputLabel 	for="num_ent" 	value="No" />  <br/>
+						<p:inputText 	id="num_ent" 
+										value="#{clienteMB.entrega.numero}" 
+										placeholder="Num." 
+										size="5"/>
+					</h:column>								
+					
+					<h:column>
+						<p:outputLabel 	for="compl_ent" 	value="Complemento" /> <br/>
+						<p:inputText 	id="compl_ent" 
+										value="#{clienteMB.entrega.complemento}" 
+										placeholder="Complemento de Entrega do Estabelecimento" 
+										style="width:80%;"/>
+					</h:column>		
+					
+					<h:column>
+						<p:outputLabel 	for="bairro_ent" 	value="Bairro" /> <br/>
+						<p:inputText 	id="bairro_ent" 
+										value="#{clienteMB.entrega.bairro}" 
+										placeholder="Bairro de Entrega do Estabelecimento" 
+										style="width:80%;"/>
+					</h:column>			
+					
+					<h:column>
+						<p:outputLabel 	for="estado_ent" 	value="Estado" /> <br/>
+						<p:selectOneMenu 	id="estado_ent" 
+											value="#{clienteMB.entrega.uf}">
+											
+							<p:ajax 	listener="#{clienteMB.atualizarListaCidadesEntPorEstado}" 
+										process="@this"
+										update="cidade_ent" />
+										
+							<f:selectItem 	noSelectionOption="true"	itemLabel="Selecione um Estado..." />
+							<f:selectItems 	value="#{clienteMB.listaDeEstados}" 
+											var="estado"
+											itemLabel="#{estado.nomeEstado}" 
+											itemValue="#{estado.nomeEstado}" />
+						</p:selectOneMenu>
+					</h:column>		
+					
+					<h:column>
+						<p:outputLabel 	for="cidade_ent" 	value="Cidade"/> <br/>
+						<p:selectOneMenu 	id="cidade_ent" 
+											value="#{clienteMB.entrega.cidade}">
+											
+							<f:selectItem 	noSelectionOption="true"	itemLabel="Selecione uma Cidade..." />
+							<f:selectItems 	value="#{clienteMB.listaDeCidades}" />
+						</p:selectOneMenu>
+					</h:column>	
+						
+				</h:panelGrid>
+				
+			</p:tab>
+			
+			<p:tab title="ALTERAR CADASTRO DE ENDERECO DE COBRANÇA">
+			
+				<h:panelGrid id="gridCobranca" columns="3" style="width:100%;">
+				
+					<h:column>
+						<p:outputLabel for="cep_cob" value="CEP" /> <br />
+						<p:inputMask 	id="cep_cob" 
+										mask="99.999-999" 
+										value="#{clienteMB.cepHeaderCob}" 
+										size="15" 
+										maxlength="15" 
+										immediate="true"
+										valueChangeListener="clienteMB.cepCobrancaListener">
+										
+							<p:ajax process="@this" update="@this"/>
+							
+						</p:inputMask>
+						
+						<p:commandButton 	id="buscarEnderecoCob" 
+											value="Buscar Cep" 
+											action="#{clienteMB.buscarCepCobranca()}"
+											immediate="false"
+											ajax="true"
+											onclick="this.value = 'Aguarde ...'"
+											update="gridCobranca"
+											process="@this">
+						</p:commandButton>
+					</h:column>
+					
+					<h:column>
+					</h:column>
+					
+					<h:column>
+					</h:column>
+					
+					<h:column>
+						<p:outputLabel 	for="tipoLogradouro_cob" 	value="Tipo" /> <br />
+						<p:selectOneMenu 	id="tipoLogradouro_cob" 
+											value="#{clienteMB.cobranca.tipoLogradouro}">
+											
+							<f:selectItem 	itemLabel="Selecione..." 	noSelectionOption="true" />
+							<f:selectItems 	value="#{clienteMB.listaTiposLogradouros}"
+											var="tipo" 
+											itemValue="#{tipo.descricao}"
+											itemLabel="#{tipo.descricao}" />
+											
+							<p:ajax 	update="@this" 	process="@this"/>
+						</p:selectOneMenu>
+					</h:column>
+					
+					<h:column>
+						<p:outputLabel 	for="logradouro_cob" 	value="Logradouro" /> <br />
+						<p:inputText 	id="logradouro_cob" 
+										value="#{clienteMB.cobranca.logradouro}" 
+										placeholder="Logradouro de Cobranca do Estabelecimento" 
+										style="width:80%;"/>
+					</h:column>
+					
+					<h:column>
+						<p:outputLabel 	for="num_cob" 	value="No" /> <br />
+						<p:inputText 	id="num_cob" 
+										value="#{clienteMB.cobranca.numero}" 
+										placeholder="Num." 
+										size="5"/>
+					</h:column>		
+					
+					<h:column>
+						<p:outputLabel 	for="compl_cob" 	value="Complemento" /> <br />
+						<p:inputText 	id="compl_cob" 
+										value="#{clienteMB.cobranca.complemento}" 
+										placeholder="Complemento de Cobranca do Estabelecimento" 
+										style="width:80%;"/>
+					</h:column>	
+					
+					<h:column>
+						<p:outputLabel 	for="bairro_cob" 	value="Bairro" /> <br />
+						<p:inputText 	id="bairro_cob" 
+										value="#{clienteMB.cobranca.bairro}" 
+										placeholder="Bairro de Cobranca do Estabelecimento" 
+										style="width:80%;"/>
+					</h:column>		
+					
+					<h:column>
+						<p:outputLabel 	for="estado_cob" 	value="Estado" /> <br />
+						<p:selectOneMenu 	id="estado_cob" 
+											value="#{clienteMB.cobranca.uf}">
+											
+							<p:ajax 	listener="#{clienteMB.atualizarListaCidadesEntPorEstado}" 
+										process="@this"
+										update="cidade_cob" />
+										
+							<f:selectItem 	noSelectionOption="true"	itemLabel="Selecione um Estado..." />
+							<f:selectItems 	value="#{clienteMB.listaDeEstados}" 
+											var="estado"
+											itemLabel="#{estado.nomeEstado}" 
+											itemValue="#{estado.nomeEstado}" />
+						</p:selectOneMenu>
+					</h:column>	
+					
+					<h:column>
+						<p:outputLabel 	for="cidade_cob" 	value="Cidade"/> <br />
+						<p:selectOneMenu 	id="cidade_cob" 
+											value="#{clienteMB.cobranca.cidade}">
+											
+							<f:selectItem 	noSelectionOption="true"	itemLabel="Selecione uma Cidade..." />
+							<f:selectItems 	value="#{clienteMB.listaDeCidades}" />
+						</p:selectOneMenu>
+					</h:column>	
+					
+				</h:panelGrid>
+			
+			</p:tab>
+		</p:tabView>
+					
+			
+		<p:panel>
+			<p:commandButton value="Enviar" action="#{clienteMB.alterarCliente()}" >
+				<f:setPropertyActionListener target="#{clienteMB.cliente}" value="#{clienteMB.cliente}"/>
+				<f:setPropertyActionListener target="#{clienteMB.email}" value="#{clienteMB.email}"/>
+				<f:setPropertyActionListener target="#{clienteMB.telefone}" value="#{clienteMB.telefone}"/>
+				<f:setPropertyActionListener target="#{clienteMB.estabelecimento}" value="#{clienteMB.estabelecimento}"/>
+				<f:setPropertyActionListener target="#{clienteMB.entrega}" value="#{clienteMB.entrega}"/>
+				<f:setPropertyActionListener target="#{clienteMB.cobranca}" value="#{clienteMB.cobranca}"/>
+			</p:commandButton>
+			
+			<p:commandButton value="Cancelar" immediate="true" action="toSabores" />
+		</p:panel>
+	</h:form>
+</ui:define> 
+</ui:composition>

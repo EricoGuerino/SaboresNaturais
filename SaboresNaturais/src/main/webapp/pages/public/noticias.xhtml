@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/pages/public/sabores.xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:define name="home">
+		<script type="text/javascript">
+			var title='SABORES | PRODUTOS';
+			document.getElementsByTagName('title')[0].innerHTML = title;
+
+			function abrirFecharPainel(actionObject)
+			{
+				var componenteOrigemId = actionObject.id;
+				var idParaAlterar = componenteOrigemId.replace("link","div");
+				var componenteDestino = document.getElementById(idParaAlterar);
+				var componenteDestinoStyleDisplay = componenteDestino.style.display;
+
+				if(componenteDestinoStyleDisplay == "none")
+				{
+					componenteDestino.style.display = "inline";
+				}
+
+				if(componenteDestinoStyleDisplay == "inline")
+				{
+					componenteDestino.style.display = "none";
+				}
+
+			}
+			
+		</script>
+
+		<p:panel>
+			<h:outputText value="SABORES NATURAIS | BLOG DE NOTÍCIAS" />
+		</p:panel>
+		
+		<h:form id="formNoticias" prependId="false">
+		
+			<div id="divGeral" style="width:100%;">
+				
+				<div id="divParametros" style="width:100%;">
+				
+					<p:panel header="Pesquisar Notícias" style="width:99%;height:89px;">
+					
+						<div style="width:100%;">
+						
+							<div style="width:60%;float:left;">
+							
+								<div style="width:40%;float:left;">
+									<p:outputLabel value="Pesquisar por palavra-chave"/>
+								</div>
+								
+								<div  style="width:50%;float:right;">
+									<p:inputText value="#{listaNoticiasMB.palavraChave}"/>
+								</div>
+								
+							</div>
+							
+							<div style="width:35%;float:right;">
+								<p:commandButton 	id="btnPesquisar"	
+													value="Pesquisar" 
+													style="float:right;"
+													update="@form"
+													action="#{listaNoticiasMB.pesquisar()}"/>
+							</div>
+							
+						</div>
+								
+					</p:panel>
+					
+				</div>
+				
+				<div id="divNoticiasGeral" style="width:100%;">
+					
+					<div id="divNoticias" style="width:60%;float:left">
+					
+						<p:panel header="Notícias">
+						
+							<ui:repeat var="post" value="#{listaNoticiasMB.noticias}">
+							
+								<div style="width:100%;">
+								
+									<p:commandLink immediate="true" action="#{listaNoticiasMB.abrirNoticia(post.id)}">
+									
+										<h:outputText value="#{post.dataPublicacao}">
+											<f:convertDateTime pattern="dd/MM/yyyy"/>
+										</h:outputText>
+										<h:outputText value=" - "/>
+										<h:outputText value="#{post.titulo}"/>
+										
+									</p:commandLink>
+									
+								</div>
+								
+							</ui:repeat>
+							
+						</p:panel>
+						
+					</div>
+					
+					<div id="divEstruturaNoticias" style="width:40%;min-height:500px;float:right;">
+					
+						<p:panel id="pnlTagCloud" header="Nuvem de Tags">
+							<p:tagCloud model="#{listaNoticiasMB.tagCloudModel}">
+								<p:ajax event="select" listener="#{listaNoticiasMB.onSelectListener}" update="@form"/>
+							</p:tagCloud>
+						</p:panel>
+					
+						<p:panel id="pnlGeral" header="Notícias por ano e mês">
+			
+							<c:forEach var="ano" items="#{listaNoticiasMB.listaEstruturaNoticiasDTO}">
+							
+								<div id="pnl_1_ano_#{ano.ano}" style="display:inline;width:98%;">
+									<h:graphicImage name="img/icon-green-folder51X40.jpeg" />
+									<p:commandLink 	id="link_pnl_ano_#{ano.ano}"
+													onclick="abrirFecharPainel(this);">
+										<h:outputText value="#{ano.ano}" />
+									</p:commandLink>
+									<h:outputText value="(#{ano.postsAno})" />
+								</div>
+								
+								<div id="div_pnl_ano_#{ano.ano}" style="display:none;">
+										
+									<c:forEach var="mes" items="#{ano.meses}">
+											
+										<div id="pnl_1_mes_#{mes.mes}_#{ano.ano}" style="width:98%;padding-left:15px;">
+											<h:graphicImage	name="img/icon-green-folder51X40.jpeg" />
+											<p:commandLink 	id="link_pnl_mes_#{mes.mes}_#{ano.ano}" 
+															onclick="abrirFecharPainel(this);">
+												<h:outputText value="#{mes.mes}" />
+											</p:commandLink>
+											<h:outputText value="(#{mes.postsMes})" />
+										</div>
+										
+										<div id="div_pnl_mes_#{mes.mes}_#{ano.ano}" style="display:none;">
+														
+											<c:forEach var="n" items="#{mes.noticiasMes}">
+															
+												<p:commandLink 	action="#{listaNoticiasMB.abrirNoticia(n.noticiaId)}"
+																style="padding-left:68px;">
+													<h:outputText value="#{n.noticiaTitulo}" />
+												</p:commandLink>
+														
+												
+											</c:forEach>
+										
+										</div>
+												
+									</c:forEach>
+								
+								</div>
+											
+							</c:forEach>
+							
+						</p:panel>
+						
+					</div>
+					
+				</div>
+				
+			</div>
+		
+		</h:form>
+
+	</ui:define>
+</ui:composition>

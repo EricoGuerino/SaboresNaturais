@@ -1,0 +1,558 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      template="/pages/protected/admin/administracao.xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+    
+<ui:define name="relatorio"> 
+	<script type="text/javascript">
+		var title='ADMINISTRADOR | RELATÓRIO CLIENTES';
+		document.getElementsByTagName('title')[0].innerHTML = title;
+	</script>
+		
+		<p:panel>
+			<h:outputText value="RELATÓRIO PERIÓDICO POR CLIENTES"/>
+		</p:panel>
+		
+		<p:accordionPanel dynamic="true" cache="false" id="accordion">
+			<p:tab title="VENDAS ANUAIS TOP 10 CLIENTES">
+				<h:form prependId="true" id="formTop10Anual">
+				
+					<p:toolbar>
+						<f:facet 	name="left">
+							<h:outputText value="SOMA DOS 10 CLIENTES: "/>
+							<h:outputText value="#{dashboardClienteMB.totalVendaTop10ClientesAnual}">
+								<f:convertNumber type="currency" currencySymbol="R$"/>
+							</h:outputText>
+						</f:facet>
+						<f:facet 	name="right">
+							<p:commandButton	value="PARAMETRIZAÇÕES"
+												update=":form_dialog_parametrizacoes_formTop10Anual:pnlDialogTop10Anual"
+												onclick="PF('widget_form_dialog_parametrizacoes_formTop10Anual').show();"
+												process="@this"/>
+						</f:facet>
+					</p:toolbar>
+					
+					<h:panelGrid columns="2" id="pnlTop10Anual">
+					
+						<p:chart 	type="donut" 
+									model="#{dashboardClienteMB.donutTop10ClientesModel}"
+									id="chartTop10Anual" 
+									style="width:1000px;height:400px"/>
+									
+						<h:panelGrid columns="1">
+							
+							<p:toolbar>
+								<f:facet 	name="left">
+									<h:outputText value=""/>
+								</f:facet>
+								<f:facet 	name="right">
+									<h:outputText id="valor" value="Ano da Consulta aos dados: #{dashboardClienteMB.selectedAnoTop10}"/>
+								</f:facet>
+							</p:toolbar>
+							
+							<p:dataTable id="dtTop10Anual" value="#{dashboardClienteMB.top10ClientesAnual}" var="top10">
+								<p:column headerText="Cliente" style="width:60%;">
+									<h:outputText value="#{top10.cliente.nomeFantasia}"/>
+								</p:column>
+								<p:column headerText="Valor">
+									<h:outputText value="#{top10.total}">
+										<f:convertNumber type="currency" currencySymbol="R$"/>
+									</h:outputText>
+								</p:column>
+							</p:dataTable>
+						</h:panelGrid>
+					</h:panelGrid>
+				</h:form>
+			</p:tab>
+			
+			<p:tab title="VENDAS COMPARATIVAS TOP 5 (TOP 5 DE CLIENTES MAIS COMPRARAM NO ANO / PRESENTE DATA)">
+				<h:form prependId="true" id="formTop5Anual">
+					<p:panel style="height:430px;">
+						<p:toolbar>
+							<f:facet 	name="left">
+								<h:outputText 	value="VENDAS ANUAIS TOP 5 CLIENTES"/>
+							</f:facet>
+							<f:facet 	name="right">
+								<p:commandButton	value="PARAMETRIZAÇÕES"
+													update=":form_dialog_parametrizacoes_formTop5Anual:pnlDialogTop5Anual"
+													onclick="PF('widget_form_dialog_parametrizacoes_formTop5Anual').show();"
+													process="@this"/>
+							</f:facet>
+						</p:toolbar>
+						
+						<h:panelGrid columns="2" id="pnlTop5Anual">
+							<p:chart 	type="#{dashboardClienteMB.innerTipoChart.tipo.descricao}" 
+										model="#{dashboardClienteMB.innerTipoChart.chartModel}" 
+										style="width:1000px;height:400px;margin-top:-80px;"/>
+							<h:panelGrid columns="1">
+								<p:toolbar>
+									<f:facet 	name="left">
+										<h:outputText value=""/>
+									</f:facet>
+									<f:facet 	name="right">
+										<h:outputText id="valor" value="Ano da Consulta aos dados: #{dashboardClienteMB.selectedAnoTop5}"/>
+									</f:facet>
+								</p:toolbar>
+								<p:dataTable 	value="#{dashboardClienteMB.top5ClientesGeralAnual}" 
+												var="top5Geral"
+												id="dtTop5Anual"
+												rowIndexVar="rowIndex"
+												style="width:500px;" 
+												scrollable="true"
+												scrollHeight="400">
+												
+									<p:column exportable="false" width="50">
+										<p:rowToggler/>
+									</p:column>
+									
+									<p:column headerText="Cliente">
+										<h:outputText value="#{top5Geral.cliente.nomeFantasia}"/>
+									</p:column>
+									
+									<p:rowExpansion>
+										<p:dataTable 	value="#{top5Geral.mesesValores}" var="mesesVal" 
+														style="width:418px;float:right;">
+											<p:column headerText="Mês">
+												<h:outputText value="#{mesesVal.mes}"/>
+											</p:column>
+											<p:column headerText="Valor">
+												<h:outputText value="#{mesesVal.total}">
+													<f:convertNumber type="currency" currencySymbol="R$"/>
+												</h:outputText>
+											</p:column>
+										</p:dataTable>
+									</p:rowExpansion>
+									
+								</p:dataTable>
+								
+							</h:panelGrid>
+						</h:panelGrid>
+						
+					</p:panel>
+				</h:form>
+			</p:tab>
+			
+			<p:tab title="VENDAS COMPARATIVAS TOP 5 (TOP 5 CLIENTES QUEM MAIS COMPRARAM A CADA MÊS)">
+				<h:form prependId="true" id="formTop5AnualMensal">
+					<p:panel style="height:450px;">
+						<p:toolbar>
+							<f:facet 	name="left">
+								<h:outputText 	value="VENDAS ANUAIS / MENSAIS TOP 5 CLIENTES"/>
+							</f:facet>
+							<f:facet 	name="right">
+								<p:commandButton	value="PARAMETRIZAÇÕES"
+													update=":form_dialog_parametrizacoes_formTop5AnualMensal:pnlDialogTop5AnualMensal"
+													onclick="PF('widget_form_dialog_parametrizacoes_formTop5AnualMensal').show();"
+													process="@this"/>
+							</f:facet>
+						</p:toolbar>
+						
+						<h:panelGrid columns="2" id="pnlTop5ClientesAnoMes">
+							<h:panelGrid columns="2" rendered="#{dashboardClienteMB.renderizaAnual}">
+								<p:chart 	type="bar" 
+											model="#{dashboardClienteMB.barTop5ClientesMensalPorAnoModel}" 
+											style="width:800px;height:400px;margin-top:-50px;"
+											id="chartTop5ClientesAnual"/>
+											
+								<h:panelGrid columns="1">
+									<p:toolbar>
+										<f:facet 	name="left">
+											<h:outputText value=""/>
+										</f:facet>
+										<f:facet 	name="right">
+											<h:outputText id="valor" value="Ano da Consulta aos dados: #{dashboardClienteMB.selectedAnoTop5Meses}"/>
+										</f:facet>
+									</p:toolbar>
+									<p:dataTable 	value="#{dashboardClienteMB.top5ClientesAnual}" 
+													var="top5Anual"
+													selectionMode="single" 
+													selection="#{dashboardClienteMB.innerTop5Anual}"
+													rowIndexVar="rowIndex" 
+													rowKey="#{top5Anual.mes}"
+													id="dtTop5ClientesAnual"
+													scrollable="true"
+													scrollHeight="375">
+													
+										<p:ajax 	event="rowSelect" 
+													listener="#{dashboardClienteMB.onRowSelectTop5ClientesAnual}" 
+													update="@form"
+													process="@form"/>
+													
+										<p:column headerText="MÊS">
+											<h:outputText value="#{top5Anual.mes}"/>
+										</p:column>
+										
+									</p:dataTable>
+									
+								</h:panelGrid>			
+								
+							</h:panelGrid>
+										
+							<h:panelGrid columns="2" rendered="#{dashboardClienteMB.renderizaMensal}">
+								<p:chart 	type="bar" 
+											model="#{dashboardClienteMB.barTop5ClientesEspecificoMes}" 
+											style="width:800px;height:400px;margin-top:-50px;"
+											id="chartTop5ClientesMensal"/>
+							
+								<h:panelGrid columns="1">
+									<p:toolbar rendered="#{dashboardClienteMB.renderizaMensal}">
+										<f:facet name="left">
+											<h:outputText value="#{dashboardClienteMB.innerTop5Anual.mes}"/>
+										</f:facet>
+										<f:facet name="right">
+											<p:commandButton 	value="Voltar"
+																action="#{dashboardClienteMB.voltarTop5ClientesAnoMes()}"
+																immediate="true"
+																update="@form"/>
+										</f:facet>
+									</p:toolbar>
+									<p:dataTable 	value="#{dashboardClienteMB.innerTop5Anual.listaClientesTotal}" 
+													var="top5Mensal"
+													rowIndexVar="rowIndex" 
+													rowKey="#{top5Mensal.cliente.id}"
+													id="dtTop5ClientesMensal"
+													scrollable="true"
+													scrollHeight="375">
+										
+										
+										<p:column headerText="CLIENTE">
+											<h:outputText value="#{top5Mensal.cliente.nomeFantasia}"/>
+										</p:column>
+										
+										<p:column headerText="VALOR VENDIDO">
+											<h:outputText value="#{top5Mensal.total}">
+												<f:convertNumber type="currency" currencySymbol="R$"/>
+											</h:outputText>
+										</p:column>
+										
+									</p:dataTable>
+								</h:panelGrid>
+								
+							</h:panelGrid>
+							
+													
+							
+						</h:panelGrid>
+						
+					</p:panel>
+				</h:form>
+			</p:tab>
+			
+			<p:tab title="COMPARATIVO DA MÉDIA DAS VENDAS ANUAIS DOS CLIENTES X VENDA ANUAL POR CLIENTE">
+			
+				<h:form prependId="true" id="formMediaE1Cliente">
+				
+					<p:panel style="height:450px;">
+					
+						<p:toolbar>
+						
+							<f:facet 	name="left">
+								<h:outputText 	value="VENDAS COMPARATIVAS CLIENTE X MÉDIA CLIENTES"/>
+							</f:facet>
+							<f:facet 	name="right">
+								<p:commandButton	value="PARAMETRIZAÇÕES"
+													update=":form_dialog_parametrizacoes_formMediaE1Cliente:pnlDialogMediaE1Cliente"
+													onclick="PF('widget_form_dialog_parametrizacoes_formMediaE1Cliente').show();"
+													process="@this"/>
+							</f:facet>
+						</p:toolbar>
+						
+						<h:panelGrid columns="2" id="pnlMediaE1Cliente">
+						
+							<p:chart 	type="bar" 
+										model="#{dashboardClienteMB.combinedTop1ClientesModel}" 
+										style="width:1000px;height:350px;margin-top:-50px;"/>
+										
+							<h:panelGrid columns="1">
+								
+								<p:toolbar>
+									<f:facet 	name="left">
+										<h:outputText value=""/>
+									</f:facet>
+									<f:facet 	name="right">
+										<h:outputText id="valor" value="Ano da Consulta aos dados: #{dashboardClienteMB.selectedAnoMediaTop1}"/>
+									</f:facet>
+								</p:toolbar>
+								
+								<p:dataTable 	value="#{dashboardClienteMB.top1ClienteAnual}" 
+												var="top1"
+												rowIndexVar="rowIndex"
+												scrollable="true"
+												scrollHeight="350">
+
+									<p:column headerText="Mês">
+										<h:outputText value="#{top1.mes}"/>
+									</p:column>
+												
+									<p:column headerText="Média Clientes">
+										<h:outputText value="#{top1.mediaClientes}">
+											<f:convertNumber type="currency" currencySymbol="R$"/>
+										</h:outputText>
+									</p:column>
+									
+									<p:column headerText="Venda Clientes">
+										<h:outputText value="#{top1.vendaCliente}">
+											<f:convertNumber type="currency" currencySymbol="R$"/>
+										</h:outputText>
+									</p:column>
+									
+								</p:dataTable>
+								
+							</h:panelGrid>
+						</h:panelGrid>
+						
+					</p:panel>
+				</h:form>
+			</p:tab>
+		</p:accordionPanel>
+		
+		<h:form id="form_dialog_parametrizacoes_formTop10Anual" prependId="true">
+		
+			<p:dialog 	widgetVar="widget_form_dialog_parametrizacoes_formTop10Anual"
+						id="dialogTop10Anual"
+						closable="false"
+						width="500"
+						height="200"
+						header="PARAMETRIZAÇÕES TOP 10 ANUAL"
+						modal="true">
+						
+				<h:panelGrid id="pnlDialogTop10Anual">
+					
+					<h:panelGroup>
+					
+						<h:inputText 	value="Selecione um ano" disabled="true" 
+										style="height: 40px;margin-bottom: 30px;margin-right: 20px;width: 215px;"/>
+	
+						<p:selectOneMenu 	value="#{dashboardClienteMB.selectedAnoTop10}"
+											valueChangeListener="#{dashboardClienteMB.carregarListaAnosTop10}"
+											style="width:200px;height: 40px;"
+											immediate="true">
+											
+							<f:selectItem 	itemValue="#{dashboardClienteMB.selectedAnoTop10}" 
+											itemLabel="#{dashboardClienteMB.selectedAnoTop10}"/>
+											
+							<f:selectItems 	value="#{dashboardClienteMB.listaAnos}"/>
+							<p:ajax 	process="@this"
+										update="@this"/>
+						</p:selectOneMenu>
+					
+					</h:panelGroup>
+					
+					<h:panelGroup>
+					
+						<p:commandButton 	value="Carregar Parametros"
+											action="#{dashboardClienteMB.carregarTop10Parametrizado()}"
+											process="@this"
+											oncomplete="PF('widget_form_dialog_parametrizacoes_formTop10Anual').hide();"
+											style="height: 70px;margin-right: 20px;width: 221px;"/>
+											
+						<p:commandButton 	value="Cancelar"
+											oncomplete="PF('widget_form_dialog_parametrizacoes_formTop10Anual').hide();"
+											immediate="true"
+											action="#{dashboardClienteMB.fecharDialogParametrizacoes()}"
+											process="form_dialog_parametrizacoes_formTop10Anual"
+											style="height: 70px;width: 206px;"/>
+										
+					</h:panelGroup>
+										
+				</h:panelGrid>
+			
+			</p:dialog>
+			
+		</h:form>
+		
+		<h:form id="form_dialog_parametrizacoes_formTop5Anual" prependId="true">
+		
+			<p:dialog 	widgetVar="widget_form_dialog_parametrizacoes_formTop5Anual"
+						id="dialogTop5Comparativas"
+						closable="false"
+						width="500"
+						height="200"
+						header="PARAMETRIZAÇÕES TOP 5 COMPARATIVAS"
+						modal="true">
+						
+				<h:panelGrid id="pnlDialogTop5Anual">
+					
+					<h:panelGroup>
+					
+						<h:inputText 	value="Selecione um ano" disabled="true" 
+										style="height: 40px;margin-bottom: 30px;margin-right: 20px;width: 215px;"/>
+	
+						<p:selectOneMenu 	value="#{dashboardClienteMB.selectedAnoTop5}"
+											valueChangeListener="#{dashboardClienteMB.carregarListaAnosTop5}"
+											style="width:200px;height: 40px;"
+											immediate="true">
+											
+							<f:selectItem 	itemValue="#{dashboardClienteMB.selectedAnoTop5}" 
+											itemLabel="#{dashboardClienteMB.selectedAnoTop5}"/>
+											
+							<f:selectItems 	value="#{dashboardClienteMB.listaAnos}"/>
+							<p:ajax 	process="@this"
+										update="@this"/>
+						</p:selectOneMenu>
+					
+					</h:panelGroup>
+					
+					<h:panelGroup>
+					
+						<p:commandButton 	value="Carregar Parametros"
+											action="#{dashboardClienteMB.carregarTop5Parametrizado()}"
+											process="@this"
+											oncomplete="PF('widget_form_dialog_parametrizacoes_formTop5Anual').hide();"
+											style="height: 70px;margin-right: 20px;width: 221px;"/>
+											
+						<p:commandButton 	value="Cancelar"
+											oncomplete="PF('widget_form_dialog_parametrizacoes_formTop5Anual').hide();"
+											immediate="true"
+											action="#{dashboardClienteMB.fecharDialogParametrizacoes()}"
+											process="form_dialog_parametrizacoes_formTop5Anual"
+											style="height: 70px;width: 206px;"/>
+										
+					</h:panelGroup>
+										
+				</h:panelGrid>
+			
+			</p:dialog>
+			
+		</h:form>
+		
+		<h:form id="form_dialog_parametrizacoes_formTop5AnualMensal" prependId="true">
+		
+			<p:dialog 	widgetVar="widget_form_dialog_parametrizacoes_formTop5AnualMensal"
+						id="dialogTop5AnualMensal"
+						closable="false"
+						width="500"
+						height="200"
+						header="PARAMETRIZAÇÕES TOP 5 COMPARATIVAS"
+						modal="true">
+						
+				<h:panelGrid id="pnlDialogTop5AnualMensal">
+					
+					<h:panelGroup>
+					
+						<h:inputText 	value="Selecione um ano" disabled="true" 
+										style="height: 40px;margin-bottom: 30px;margin-right: 20px;width: 215px;"/>
+	
+						<p:selectOneMenu 	value="#{dashboardClienteMB.selectedAnoTop5Meses}"
+											valueChangeListener="#{dashboardClienteMB.carregarListaAnosTop5Meses}"
+											style="width:200px;height: 40px;"
+											immediate="true">
+											
+							<f:selectItem 	itemValue="#{dashboardClienteMB.selectedAnoTop5Meses}" 
+											itemLabel="#{dashboardClienteMB.selectedAnoTop5Meses}"/>
+											
+							<f:selectItems 	value="#{dashboardClienteMB.listaAnos}"/>
+							<p:ajax 	process="@this"
+										update="@this"/>
+						</p:selectOneMenu>
+					
+					</h:panelGroup>
+					
+					<h:panelGroup>
+					
+						<p:commandButton 	value="Carregar Parametros"
+											action="#{dashboardClienteMB.carregarTop5MesesParametrizado()}"
+											process="@this"
+											oncomplete="PF('widget_form_dialog_parametrizacoes_formTop5AnualMensal').hide();"
+											style="height: 70px;margin-right: 20px;width: 221px;"/>
+											
+						<p:commandButton 	value="Cancelar"
+											oncomplete="PF('widget_form_dialog_parametrizacoes_formTop5AnualMensal').hide();"
+											immediate="true"
+											action="#{dashboardClienteMB.fecharDialogParametrizacoes()}"
+											process="form_dialog_parametrizacoes_formTop5AnualMensal"
+											style="height: 70px;width: 206px;"/>
+										
+					</h:panelGroup>
+										
+				</h:panelGrid>
+			
+			</p:dialog>
+			
+		</h:form>
+		
+		<h:form id="form_dialog_parametrizacoes_formMediaE1Cliente" prependId="true">
+		
+			<p:dialog 	widgetVar="widget_form_dialog_parametrizacoes_formMediaE1Cliente"
+						id="dialogMediaE1Cliente"
+						closable="false"
+						width="500"
+						height="350"
+						header="PARAMETRIZAÇÕES TOP 5 COMPARATIVAS"
+						modal="true">
+						
+				<h:panelGrid id="pnlDialogMediaE1Cliente">
+					
+					<h:panelGroup>
+					
+						<h:inputText 	value="Selecione um ano" disabled="true" 
+										style="height: 40px;margin-bottom: 30px;margin-right: 20px;width: 215px;"/>
+	
+						<p:selectOneMenu 	value="#{dashboardClienteMB.selectedAnoMediaTop1}"
+											valueChangeListener="#{dashboardClienteMB.carregarListaAnoMediaTop1}"
+											style="width:200px;height: 40px;"
+											immediate="true">
+											
+							<f:selectItem 	itemValue="#{dashboardClienteMB.selectedAnoMediaTop1}" 
+											itemLabel="#{dashboardClienteMB.selectedAnoMediaTop1}"/>
+											
+							<f:selectItems 	value="#{dashboardClienteMB.listaAnos}"/>
+							<p:ajax 	process="@this"
+										update="@this"/>
+						</p:selectOneMenu>
+					
+					</h:panelGroup>
+					
+					<h:panelGroup>
+					
+						<h:inputText 	value="Selecione um Cliente" disabled="true" 
+										style="height: 40px;margin-bottom: 30px;margin-right: 20px;width: 215px;"/>
+	
+						<p:selectOneMenu 	value="#{dashboardClienteMB.selectedCliente}"
+											valueChangeListener="#{dashboardClienteMB.carregarParamCliente}"
+											style="width:200px;height: 40px;"
+											immediate="true"
+											converter="clienteConverter">
+											
+							<f:selectItem 	itemValue="#{dashboardClienteMB.selectedCliente}" 
+											itemLabel="#{dashboardClienteMB.selectedCliente.nomeFantasia}"/>
+											
+							<f:selectItems 		value="#{dashboardClienteMB.clientes}"
+												var="prod"
+												itemValue="#{prod}"
+												itemLabel="#{prod.nomeFantasia}"/>
+												
+							<p:ajax 	process="@this"
+										update="@this"/>
+										
+						</p:selectOneMenu>
+					
+					</h:panelGroup>
+					
+					<h:panelGroup>
+					
+						<p:commandButton 	value="Carregar Parametros"
+											action="#{dashboardClienteMB.carregarMediaTop1Parametrizado()}"
+											process="@this"
+											oncomplete="PF('widget_form_dialog_parametrizacoes_formMediaE1Cliente').hide();"
+											style="height: 70px;margin-right: 20px;width: 221px;"/>
+											
+						<p:commandButton 	value="Cancelar"
+											oncomplete="PF('widget_form_dialog_parametrizacoes_formMediaE1Cliente').hide();"
+											immediate="true"
+											action="#{dashboardClienteMB.fecharDialogParametrizacoes()}"
+											process="form_dialog_parametrizacoes_formMediaE1Cliente"
+											style="height: 70px;width: 206px;"/>
+										
+					</h:panelGroup>
+										
+				</h:panelGrid>
+			
+			</p:dialog>
+			
+		</h:form>
+</ui:define>
+</ui:composition>

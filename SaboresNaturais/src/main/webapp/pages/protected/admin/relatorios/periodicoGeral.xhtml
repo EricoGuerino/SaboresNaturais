@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      template="/pages/protected/admin/administracao.xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+    
+<ui:define name="relatorio"> 
+	<script type="text/javascript">
+		var title='ADMINISTRADOR | RELATÓRIO GERAL';
+		document.getElementsByTagName('title')[0].innerHTML = title;
+	</script>
+	<p:panel>
+		<h:outputText value="RELATÓRIO PERIÓDICO GERAL"/>
+	</p:panel>
+	
+	<h:form prependId="true" id="formPeriodicoGeral">
+		
+		<p:panel id="pnlGeral">
+		
+			<p:toolbar>
+			
+				<f:facet 	name="left">
+					<h:outputText 	value="VENDAS ANUAIS AO LONGO DOS MÊS"/>
+				</f:facet>
+				
+				<f:facet 	name="right">
+				
+					<h:panelGroup>
+					
+						<h:panelGroup>
+						
+							<h:outputText 	value="TOTAL ANUAL ACUMULADO: "/>
+							
+							<h:outputText value="#{dashboardMB.totalAcumuladoVendasGeralAno}">
+								<f:convertNumber type="currency" currencySymbol="R$"/>
+							</h:outputText>
+							
+						</h:panelGroup>
+						
+						<p:spacer width="30"/>
+						
+						<p:commandButton	value="PARAMETRIZAÇÕES"
+											update=":formDialogParametrizacoes_formPeriodicoGeral:pnlDialogPeriodicoGeral"
+											onclick="PF('widget_formDialogParametrizacoes_formPeriodicoGeral').show();"
+											process="@this"/>
+						
+					</h:panelGroup>
+					
+				</f:facet>
+				
+			</p:toolbar>
+			
+			<p:chart type="bar" model="#{dashboardMB.barVendasAnuaisModel}"/>
+							
+			<p:toolbar>
+				<f:facet 	name="left">
+					<h:outputText id="valor" value="Ano da Consulta aos dados: #{dashboardMB.selectedAnoVendasGerais}"/>
+				</f:facet>
+				<f:facet 	name="right">
+					<h:outputText 	value="TOTAL ANUAL ACUMULADO: "/>
+					
+					<h:outputText value="#{dashboardMB.totalAcumuladoVendasGeralAno}">
+						<f:convertNumber type="currency" currencySymbol="R$"/>
+					</h:outputText>
+				</f:facet>
+			</p:toolbar>
+				
+			<p:dataGrid 	columns="#{dashboardMB.vendasAnuaisMes.size()}" 
+							value="#{dashboardMB.vendasAnuaisMes}"
+							var="vam">
+				
+				<f:facet name="header">
+					<h:outputText value="VALOR ANUAL MÊS A MÊS"/>
+				</f:facet>
+				
+				<p:panel header="#{vam.mes}">
+				
+					<h:outputText value="#{vam.totalMes}">
+						<f:convertNumber type="currency" currencySymbol="R$ "/>
+					</h:outputText>
+				</p:panel>
+				
+			</p:dataGrid>
+			
+		</p:panel>
+			
+	</h:form>
+	
+	<h:form id="formDialogParametrizacoes_formPeriodicoGeral" prependId="true">
+		
+		<p:dialog 	widgetVar="widget_formDialogParametrizacoes_formPeriodicoGeral"
+					id="dialogPeriodicoGeral"
+					closable="false"
+					width="500"
+					height="350"
+					header="PARAMETRIZAÇÕES TOP 5 COMPARATIVAS"
+					modal="true">
+					
+			<h:panelGrid id="pnlDialogPeriodicoGeral">
+				
+				<h:panelGroup>
+				
+					<h:inputText 	value="Selecione um ano" disabled="true" 
+									style="height: 40px;margin-bottom: 30px;margin-right: 20px;width: 215px;"/>
+
+					<p:selectOneMenu 	value="#{dashboardMB.selectedAnoMediaTop1}"
+										valueChangeListener="#{dashboardMB.carregarParamVendasGerais}"
+										style="width:200px;height: 40px;"
+										immediate="true">
+										
+						<f:selectItem 	itemValue="#{dashboardMB.selectedAnoMediaTop1}" 
+										itemLabel="#{dashboardMB.selectedAnoMediaTop1}"/>
+										
+						<f:selectItems 	value="#{dashboardMB.listaAnos}"/>
+						<p:ajax 	process="@this"
+									update="@this"/>
+					</p:selectOneMenu>
+				
+				</h:panelGroup>
+				
+				
+				<h:panelGroup>
+				
+					<p:commandButton 	value="Carregar Parametros"
+										action="#{dashboardMB.carregarVendasGeraisParametrizado()}"
+										process="@this"
+										update=":formPeriodicoGeral:pnlGeral"
+										oncomplete="PF('widget_formDialogParametrizacoes_formPeriodicoGeral').hide();"
+										style="height: 70px;margin-right: 20px;width: 221px;"/>
+										
+					<p:commandButton 	value="Cancelar"
+										oncomplete="PF('widget_formDialogParametrizacoes_formPeriodicoGeral').hide();"
+										immediate="true"
+										action="#{dashboardMB.fecharDialogParametrizacoes()}"
+										process="formDialogParametrizacoes_formPeriodicoGeral"
+										style="height: 70px;width: 206px;"/>
+									
+				</h:panelGroup>
+									
+			</h:panelGrid>
+		
+		</p:dialog>
+		
+	</h:form>
+</ui:define>
+</ui:composition>

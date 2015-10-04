@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence 	version="2.1" 
+				xmlns="http://xmlns.jcp.org/xml/ns/persistence" 
+				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+				xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+    
+    <persistence-unit name="SaboresPU" transaction-type="JTA">
+        
+        <jta-data-source>java:jboss/datasources/datasource/SaboresDS</jta-data-source>
+        <class>br.com.sabores.ejb.model.Administrador</class>
+        <class>br.com.sabores.ejb.model.Categoria</class>
+        <class>br.com.sabores.ejb.model.Cliente</class>
+        <class>br.com.sabores.ejb.model.Email</class>
+        <class>br.com.sabores.ejb.model.Fabricante</class>
+        <class>br.com.sabores.ejb.model.Fotos</class>
+        <class>br.com.sabores.ejb.model.ImagemNoticia</class>
+        <class>br.com.sabores.ejb.model.Itens</class>
+        <class>br.com.sabores.ejb.model.ListaDePedidos</class>
+        <class>br.com.sabores.ejb.model.Login</class>
+        <class>br.com.sabores.ejb.model.Noticia</class>
+        <class>br.com.sabores.ejb.model.Produto</class>
+        <class>br.com.sabores.ejb.model.Telefone</class>
+        <class>br.com.sabores.ejb.model.TipoDeEstabelecimento</class>
+        <class>br.com.sabores.ejb.model.Video</class>
+        <class>br.com.sabores.ejb.model.emailparts.EmailParts</class>
+        <class>br.com.sabores.ejb.model.TabelaNutricional</class>
+        
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <properties>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+        </properties>
+        
+    </persistence-unit>
+    
+    <persistence-unit name="EnderecosPU" transaction-type="JTA">
+    	<jta-data-source>java:jboss/datasources/datasource/EnderecosDS</jta-data-source>
+    	<class>br.com.sabores.ejb.model.cep.AC</class>
+        <class>br.com.sabores.ejb.model.cep.AL</class>
+        <class>br.com.sabores.ejb.model.cep.AM</class>
+        <class>br.com.sabores.ejb.model.cep.AP</class>
+        <class>br.com.sabores.ejb.model.cep.BA</class>
+        <class>br.com.sabores.ejb.model.cep.CE</class>
+        <class>br.com.sabores.ejb.model.cep.CepUnico</class>
+        <class>br.com.sabores.ejb.model.cep.DF</class>
+        <class>br.com.sabores.ejb.model.cep.ES</class>
+        <class>br.com.sabores.ejb.model.Endereco</class>
+        <class>br.com.sabores.ejb.model.cep.Estados</class>
+        <class>br.com.sabores.ejb.model.cep.GO</class>
+        <class>br.com.sabores.ejb.model.cep.MA</class>
+        <class>br.com.sabores.ejb.model.cep.MG</class>
+        <class>br.com.sabores.ejb.model.cep.MS</class>
+        <class>br.com.sabores.ejb.model.cep.MT</class>
+        <class>br.com.sabores.ejb.model.cep.PA</class>
+        <class>br.com.sabores.ejb.model.cep.PB</class>
+        <class>br.com.sabores.ejb.model.cep.PE</class>
+        <class>br.com.sabores.ejb.model.cep.PI</class>
+        <class>br.com.sabores.ejb.model.cep.PR</class>
+        <class>br.com.sabores.ejb.model.cep.RJ</class>
+        <class>br.com.sabores.ejb.model.cep.RN</class>
+        <class>br.com.sabores.ejb.model.cep.RO</class>
+        <class>br.com.sabores.ejb.model.cep.RR</class>
+        <class>br.com.sabores.ejb.model.cep.RS</class>
+        <class>br.com.sabores.ejb.model.cep.SC</class>
+        <class>br.com.sabores.ejb.model.cep.SE</class>
+        <class>br.com.sabores.ejb.model.cep.SP</class>
+        <class>br.com.sabores.ejb.model.cep.TO</class>
+        
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <properties>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+        </properties>
+        
+    </persistence-unit>
+</persistence>

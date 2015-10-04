@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:cadastros="http://java.sun.com/jsf/composite/componentes/cadastros"
+	template="/pages/protected/admin/administracao.xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<ui:define name="visualizar">
+	<script type="text/javascript">
+		var title='LISTAR | CLIENTES';
+		document.getElementsByTagName('title')[0].innerHTML = title;
+	</script>
+	
+	<p:panel>
+		<h:outputText value="SABORES NATURAIS | VISUALIZAR CLIENTES"/>
+	</p:panel>
+	
+	<h:form id="formUiDados">
+	
+		<p:dataTable 	id="dtClientes"
+						value="#{clienteMB.listaClientes}" 
+						var="cliente" 
+						rowIndexVar="rowIndex"
+						paginator="true"
+						paginatorAlwaysVisible="true"
+						rows="15">
+			
+			<p:columnGroup type="header">
+	            
+	            <p:row>
+	            	<p:column rowspan="2" colspan="1" headerText="RAZÃO SOCIAL"/>
+	            	<p:column rowspan="2" colspan="1" headerText="CONTATO"/>
+	            	<p:column rowspan="2" colspan="1" headerText="TEL. PRINCIPAL"/>
+	            	<p:column rowspan="2" colspan="1" headerText="EMAIL PRINCIPAL"/>
+	            	<p:column rowspan="1" colspan="5" headerText="ENDEREÇO DO ESTABELECIMENTO"/>
+	            	<p:column rowspan="2" colspan="1" />
+	            </p:row>
+	            
+	            <p:row>
+	            	<p:column rowspan="1" colspan="1" headerText="CEP"/>
+	            	<p:column rowspan="1" colspan="1" headerText="LOGRADOURO"/>
+	            	<p:column rowspan="1" colspan="1" headerText="BAIRRO"/>
+	            	<p:column rowspan="1" colspan="1" headerText="CIDADE"/>
+	            	<p:column rowspan="1" colspan="1" headerText="ESTADO"/>
+	            </p:row>
+	            
+	        </p:columnGroup>
+			
+			<p:column 	style="font-size:15px;" filterBy="#{cliente.razaoSocial}" filterMatchMode="contains">
+				<h:outputText id="razao" value="#{cliente.razaoSocial}"/>
+			</p:column>
+			
+			<p:column style="font-size:15px;">
+				<h:outputText id="contato" value="#{cliente.nomeDoContato}"/>
+			</p:column>
+			
+			<p:column style="font-size:15px;">
+				<h:outputText id="tel" value="#{cliente.telefone.telefonePrincipal}"/>
+			</p:column>
+			
+			<p:column style="font-size:15px;">
+				<h:outputText id="email" value="#{clienteMB.getQuebraEmail(cliente.email.emailPrincipal)}"/>
+			</p:column>
+			
+			<p:column  style="font-size:15px;text-align:center;">
+				<h:outputText id="cep" value="#{cliente.estabelecimento.cep}"/>
+			</p:column>
+			
+			<p:column style="font-size:15px;">
+				<h:outputText id="tp_logradouro" value="#{cliente.estabelecimento.tipoLogradouro}"/>
+				<p:spacer width="3"/>
+				<h:outputText id="logradouro" value="#{cliente.estabelecimento.logradouro}"/>
+				<h:outputText value=", "/>
+				<h:outputText id="num_logradouro" value="#{cliente.estabelecimento.numero}"/>
+			</p:column>
+			
+			<p:column style="font-size:15px;">
+				<h:outputText id="bairro" value="#{cliente.estabelecimento.bairro}"/>
+			</p:column>
+			
+			<p:column style="font-size:15px;">
+				<h:outputText id="cidade" value="#{cliente.estabelecimento.cidade}"/>
+			</p:column>
+			
+			<p:column style="text-align:center;">
+				<h:outputText id="estado" value="#{clienteMB.getSigla(cliente.estabelecimento.uf)}"/>
+			</p:column>
+				
+			<p:column style="text-align:center;">
+			
+				<h:inputHidden value="#{rowIndex+1}"/>
+				
+				<p:commandButton 	id="detalhes" 
+									icon="ui-icon-search" 
+									immediate="true" 
+									onclick="PF('widgetDialogDetalhesCliente').show();"
+									update=":formDialogDetalhesCliente:pnlDialogDetalhesCliente">
+					<f:setPropertyActionListener target="#{clienteMB.cliente}" value="#{cliente}"/>					
+				</p:commandButton>
+			</p:column>
+		</p:dataTable>
+	</h:form>
+	
+	<p:dialog 	id="dialogDetalhesCliente" 
+				modal="true" 
+				fitViewport="true" 
+				dynamic="true" 
+				widgetVar="widgetDialogDetalhesCliente">
+				
+		<h:form id="formDialogDetalhesCliente">		
+				
+			<h:panelGroup id="pnlDialogDetalhesCliente">
+			
+				<table style="width:100%;">
+				
+					<tr  style="width:100%;">
+					
+						<td>
+						
+							<p:panel header="DADOS GERAIS" style="vertical-align:top !important">
+								<h:panelGrid columns="2">
+									<p:outputLabel for="cnpj_detalhes" value="CNPJ" />
+									<h:outputText id="cnpj_detalhes" value="#{clienteMB.cliente.cnpj}"/>
+									<p:outputLabel for="ie_detalhes" value="IE" />
+									<h:outputText id="ie_detalhes" value="#{clienteMB.cliente.ie}"/>
+									<p:outputLabel for="razao_detalhes" value="Razão Social"/>
+									<h:outputText id="razao_detalhes" value="#{clienteMB.cliente.razaoSocial}"/>
+									<p:outputLabel for="fantasia_detalhes" value="Nome Fantasia" />
+									<h:outputText id="fantasia_detalhes" value="#{clienteMB.cliente.nomeFantasia}"/>
+									<p:outputLabel for="contato_detalhes" value="Nome do Contato" />
+									<h:outputText id="contato_detalhes" value="#{clienteMB.cliente.nomeDoContato}"/>
+									<p:outputLabel for="seguimento_detalhes" value="Seguimento Comercial"/>
+									<h:outputText id="seguimento_detalhes" value="#{clienteMB.cliente.seguimento.tipoDeEstabelecimento}"/>
+									<p:outputLabel for="site_detalhes" value="Site da Empresa" />
+									<h:outputText id="site_detalhes" value="#{clienteMB.cliente.siteDoCliente}"/>
+								</h:panelGrid>
+							</p:panel>
+							
+						</td>
+						
+						<td>
+						
+							<p:panel header="TELEFONES" style="vertical-align:top !important">
+								<h:panelGrid columns="2">
+									<p:outputLabel for="tel_principal_detalhes" value="Tel. Fixo Principal:" />
+									<h:outputText id="tel_principal_detalhes" value="#{clienteMB.cliente.telefone.telefonePrincipal}" />
+									<p:outputLabel for="tel_alt_detalhes" value="Tel. Fixo Alternativo:" />
+									<h:outputText id="tel_alt_detalhes" value="#{clienteMB.cliente.telefone.telefoneAlternativo}" />
+									<p:outputLabel for="tel_cel_principal_detalhes" value="Tel. Celular Principal:" />
+									<h:outputText id="tel_cel_principal_detalhes" value="#{clienteMB.cliente.telefone.celularPrincipal}" />
+									<p:outputLabel for="tel_cel_alt_detalhes" value="Tel. Celular Alternativo:" />
+									<h:outputText id="tel_cel_alt_detalhes" value="#{clienteMB.cliente.telefone.celularAlternativo}" />
+									<p:outputLabel for="tel_fax_detalhes" value="Tel. Fax:" />
+									<h:outputText id="tel_fax_detalhes" value="#{clienteMB.cliente.telefone.fax}" />
+								</h:panelGrid>
+							</p:panel>
+							
+						</td>
+						
+						<td>
+						
+							<p:panel header="E-MAILS">
+								<h:panelGrid columns="2">
+									<p:outputLabel for="email_principal_detalhes" value="Email Principal:" />
+									<h:outputText id="email_principal_detalhes" value="#{clienteMB.cliente.email.emailPrincipal}"/>
+									<p:outputLabel for="email2_detalhes" value="Email Alternativo:" />
+									<h:outputText id="email2_detalhes" value="#{clienteMB.cliente.email.emailAlternativo1}"/>
+									<p:outputLabel for="email3_detalhes" value="Email Alternativo:" />
+									<h:outputText id="email3_detalhes" value="#{clienteMB.cliente.email.emailAlternativo2}"/>
+									<p:outputLabel for="email4_detalhes" value="Email Alternativo:" />
+									<h:outputText id="email4_detalhes" value="#{clienteMB.cliente.email.emailAlternativo3}"/>
+									<p:outputLabel for="email5_detalhes" value="Email Alternativo:" />
+									<h:outputText id="email5_detalhes" value="#{clienteMB.cliente.email.emailAlternativo4}"/>
+								</h:panelGrid>
+								
+							</p:panel>
+							
+						</td>
+						
+					</tr>
+					
+					<tr  style="width:100%;">
+					
+						<td colspan="3">
+						
+							<p:panel header="ENDEREÇO DO ESTABELECIMENTO">
+								<h:outputText value="#{clienteMB.cliente.estabelecimento.tipoLogradouro}"/><h:outputText value=" "/>
+								<h:outputText value="#{clienteMB.cliente.estabelecimento.logradouro}"/><h:outputText value=", "/>
+								<h:outputText value="#{clienteMB.cliente.estabelecimento.numero}"/><h:outputText value=", "/>
+								<h:outputText value="#{clienteMB.cliente.estabelecimento.bairro}"/><h:outputText value=" - "/>
+								<h:outputText value="#{clienteMB.cliente.estabelecimento.cep}"/><h:outputText value=" - "/>
+								<h:outputText value="#{clienteMB.cliente.estabelecimento.cidade}"/><h:outputText value="/"/>
+								<h:outputText value="#{clienteMB.cliente.estabelecimento.uf}"/><h:outputText value=" - "/>
+								<h:outputText value="#{clienteMB.cliente.estabelecimento.pais}"/>
+							</p:panel>
+							
+						</td>
+						
+					</tr>
+					
+					<tr  style="width:100%;">
+					
+						<td colspan="3">
+						
+							<p:panel header="ENDEREÇO DE ENTREGA">
+								<h:outputText value="#{clienteMB.cliente.entrega.tipoLogradouro}"/><h:outputText value=" "/>
+								<h:outputText value="#{clienteMB.cliente.entrega.logradouro}"/><h:outputText value=", "/>
+								<h:outputText value="#{clienteMB.cliente.entrega.numero}"/><h:outputText value=", "/>
+								<h:outputText value="#{clienteMB.cliente.entrega.bairro}"/><h:outputText value=" - "/>
+								<h:outputText value="#{clienteMB.cliente.entrega.cep}"/><h:outputText value=" - "/>
+								<h:outputText value="#{clienteMB.cliente.entrega.cidade}"/><h:outputText value="/"/>
+								<h:outputText value="#{clienteMB.cliente.entrega.uf}"/><h:outputText value=" - "/>
+								<h:outputText value="#{clienteMB.cliente.entrega.pais}"/>
+							</p:panel>
+							
+						</td>
+						
+					</tr>
+					
+					<tr  style="width:100%;">
+					
+						<td colspan="3">
+						
+							<p:panel header="ENDEREÇO DE COBRANÇA">
+								<h:outputText value="#{clienteMB.cliente.cobranca.tipoLogradouro}"/><h:outputText value=" "/>
+								<h:outputText value="#{clienteMB.cliente.cobranca.logradouro}"/><h:outputText value=", "/>
+								<h:outputText value="#{clienteMB.cliente.cobranca.numero}"/><h:outputText value=", "/>
+								<h:outputText value="#{clienteMB.cliente.cobranca.bairro}"/><h:outputText value=" - "/>
+								<h:outputText value="#{clienteMB.cliente.cobranca.cep}"/><h:outputText value=" - "/>
+								<h:outputText value="#{clienteMB.cliente.cobranca.cidade}"/><h:outputText value="/"/>
+								<h:outputText value="#{clienteMB.cliente.cobranca.uf}"/><h:outputText value=" - "/>
+								<h:outputText value="#{clienteMB.cliente.cobranca.pais}"/>
+							</p:panel>
+							
+						</td>
+						
+					</tr>
+					
+				</table>
+					
+			</h:panelGroup>
+		
+		</h:form>
+				
+    </p:dialog>
+    
+</ui:define>
+</ui:composition>

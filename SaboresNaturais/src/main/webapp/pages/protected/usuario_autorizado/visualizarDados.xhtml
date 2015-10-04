@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	template="/pages/protected/usuario_autorizado/home.xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="dados_usuario">
+		<script type="text/javascript">
+		var title='USUARIO | VISUALIZAR DADOS';
+		document.getElementsByTagName('title')[0].innerHTML = title;
+	</script>
+		<p:panel>
+			<h:outputText value="SABORES NATURAIS | VISUALIZAR DADOS CADASTRAIS" />
+		</p:panel>
+		<h:form>
+		<p:panel header="DADOS GERAIS DA EMPRESA">
+			
+			<h:panelGrid style="width:100%;" columns="2">
+				<h:column>
+					<p:outputLabel 	value="Razão Social" /><br />
+					<p:inputText 	id="razao" 
+									value="#{clienteMB.cliente.razaoSocial}" 
+									disabled="true" 
+									size="40"
+									style="width:90%;"/>
+				</h:column>
+				
+				<h:column>
+					<p:outputLabel 	value="Nome Fantasia" /><br />
+					<p:inputText 	id="fantasia" 
+									value="#{clienteMB.cliente.nomeFantasia}" 
+									disabled="true" 
+									size="40"
+									style="width:90%;"/>
+				</h:column>
+				
+				<h:column>
+					<p:outputLabel 	value="Site da Empresa" /><br />
+					<p:inputText 	id="site" 
+									value="#{clienteMB.cliente.siteDoCliente}" 
+									disabled="true" 
+									size="40" 
+									style="width:90%;"/>
+				</h:column>
+			</h:panelGrid>
+			
+			<h:panelGrid style="width:100%;" columns="4">
+				<h:column>
+					<p:outputLabel 	value="CNPJ"/><br />
+					<p:inputText 	id="cnpj" 
+									value="#{clienteMB.cliente.cnpj}" 
+									disabled="true" 
+									size="40" 
+									style="width:80%;"/>
+				</h:column>
+				
+				<h:column>
+					<p:outputLabel 	value="IE" /><br />
+					<p:inputText 	id="ie" 
+									value="#{clienteMB.cliente.ie}" 
+									disabled="true" 
+									size="40"
+									style="width:80%;"/>
+				</h:column>
+				
+				<h:column>
+					<p:outputLabel 	value="Nome do Contato" /><br />
+					<p:inputText 	id="contato" 
+									value="#{clienteMB.cliente.nomeDoContato}" 
+									disabled="true" 
+									size="40" 
+									style="width:80%;"/>
+				</h:column>
+				
+				<h:column>
+					<p:outputLabel 	value="Seguimento Comercial" /><br />
+					<p:inputText 	id="seguimento" 
+									value="#{clienteMB.cliente.seguimento.tipoDeEstabelecimento}" 
+									disabled="true" 
+									size="40"
+									style="width:80%;"/>
+				</h:column>
+			</h:panelGrid>
+		</p:panel>
+		
+		<p:panel header="EMAILS CADASTRADOS">
+			<h:panelGrid columns="2" style="width:100%;">
+				<h:column>
+					<p:outputLabel 	value="Email Principal" /><br />
+					<p:inputText 	id="email" 
+									value="#{clienteMB.cliente.email.emailPrincipal}" 
+									disabled="true" 
+									size="40" 
+									style="width:90%;"/>
+				</h:column>
+				
+				<h:column rendered="#{clienteMB.getRenderizarCampo(clienteMB.cliente.email.emailAlternativo1)}">
+					<p:outputLabel 	value="Email Alternativo 1" /><br />
+					<p:inputText 	id="email2" 
+									value="#{clienteMB.cliente.email.emailAlternativo1}" 
+									disabled="true" 
+									size="40" 
+									style="width:90%;"/>
+				</h:column>
+				
+				<h:column rendered="#{clienteMB.getRenderizarCampo(clienteMB.cliente.email.emailAlternativo2)}">
+					<p:outputLabel 	value="Email Alternativo 2" /><br />
+					<p:inputText 	id="email3" 
+									value="#{clienteMB.cliente.email.emailAlternativo2}" 
+									disabled="true" 
+									size="40" 
+									style="width:90%;"/>
+				</h:column>
+				
+				<h:column rendered="#{clienteMB.getRenderizarCampo(clienteMB.cliente.email.emailAlternativo3)}">
+					<p:outputLabel 	value="Email Alternativo 3" /><br />
+					<p:inputText 	id="email4" 
+									value="#{clienteMB.cliente.email.emailAlternativo3}" 
+									disabled="true" 
+									size="40" 
+									style="width:90%;"/>
+				</h:column>
+				
+				<h:column rendered="#{clienteMB.getRenderizarCampo(clienteMB.cliente.email.emailAlternativo4)}">
+					<p:outputLabel 	value="Email Alternativo 4" /><br />
+					<p:inputText 	id="email5" 
+									value="#{clienteMB.cliente.email.emailAlternativo4}" 
+									disabled="true" 
+									size="40" 
+									style="width:90%;"/>
+				</h:column>
+			</h:panelGrid>
+		</p:panel>				
+		<p:panel header="TELEFONES CADASTRADOS">
+			<h:panelGrid columns="2" style="width:100%;">
+				<h:column>
+					<p:outputLabel 	value="Tel. Fixo Principal" /><br />
+					<p:inputText 	id="fixo_1" 
+									value="#{clienteMB.cliente.telefone.telefonePrincipal}"  
+									disabled="true" 
+									size="40" 
+									style="width:90%;"/>
+				</h:column>
+				
+				<h:column rendered="#{clienteMB.getRenderizarCampo(clienteMB.cliente.telefone.telefoneAlternativo)}">
+					<p:outputLabel 	value="Tel. Fixo Alternativo" /><br />
+					<p:inputText 	id="fixo_2" 
+									value="#{clienteMB.cliente.telefone.telefoneAlternativo}" 
+									disabled="true" 
+									size="40"  
+									style="width:90%;"/>
+				</h:column>
+				
+				<h:column rendered="#{clienteMB.getRenderizarCampo(clienteMB.cliente.telefone.celularPrincipal)}">
+					<p:outputLabel 	value="Tel. Celular Principal" /><br />
+					<p:inputText 	id="cel_1" 
+									value="#{clienteMB.cliente.telefone.celularPrincipal}" 
+									disabled="true" 
+									size="40"  
+									style="width:90%;"/>
+				</h:column>
+				
+				<h:column rendered="#{clienteMB.getRenderizarCampo(clienteMB.cliente.telefone.celularAlternativo)}">
+					<p:outputLabel 	value="Tel. Celular Alternativo" /><br />
+					<p:inputText 	id="cel_2" 
+									value="#{clienteMB.cliente.telefone.celularAlternativo}" 
+									disabled="true" 
+									size="40"  
+									style="width:90%;"/>
+				</h:column>
+				
+				<h:column rendered="#{clienteMB.getRenderizarCampo(clienteMB.cliente.telefone.fax)}">
+					<p:outputLabel 	value="Tel. Fax" /><br />
+					<p:inputText 	id="fax" 
+									value="#{clienteMB.cliente.telefone.fax}" 
+									disabled="true" 
+									size="40"  
+									style="width:90%;"/>
+				</h:column>
+			</h:panelGrid>
+		</p:panel>			
+					
+		<p:panel header="ENDEREÇO DO ESTABELECIMENTO">
+			<h:outputText value="#{clienteMB.cliente.estabelecimento.tipoLogradouro}"/><h:outputText value=" "/>
+			<h:outputText value="#{clienteMB.cliente.estabelecimento.logradouro}"/><h:outputText value=", "/>
+			<h:outputText value="#{clienteMB.cliente.estabelecimento.numero}"/><h:outputText value=", "/>
+			<h:outputText value="#{clienteMB.cliente.estabelecimento.bairro}"/><h:outputText value=" - "/>
+			<h:outputText value="#{clienteMB.cliente.estabelecimento.cep}"/><h:outputText value=" - "/>
+			<h:outputText value="#{clienteMB.cliente.estabelecimento.cidade}"/><h:outputText value="/"/>
+			<h:outputText value="#{clienteMB.cliente.estabelecimento.uf}"/><h:outputText value=" - "/>
+			<h:outputText value="#{clienteMB.cliente.estabelecimento.pais}"/>
+		</p:panel>
+						
+		<p:panel header="ENDEREÇO DE ENTREGA">
+			<h:outputText value="#{clienteMB.cliente.entrega.tipoLogradouro}"/><h:outputText value=" "/>
+			<h:outputText value="#{clienteMB.cliente.entrega.logradouro}"/><h:outputText value=", "/>
+			<h:outputText value="#{clienteMB.cliente.entrega.numero}"/><h:outputText value=", "/>
+			<h:outputText value="#{clienteMB.cliente.entrega.bairro}"/><h:outputText value=" - "/>
+			<h:outputText value="#{clienteMB.cliente.entrega.cep}"/><h:outputText value=" - "/>
+			<h:outputText value="#{clienteMB.cliente.entrega.cidade}"/><h:outputText value="/"/>
+			<h:outputText value="#{clienteMB.cliente.entrega.uf}"/><h:outputText value=" - "/>
+			<h:outputText value="#{clienteMB.cliente.entrega.pais}"/>
+		</p:panel>
+						
+		<p:panel header="ENDEREÇO DE COBRANÇA">
+			<h:outputText value="#{clienteMB.cliente.cobranca.tipoLogradouro}"/><h:outputText value=" "/>
+			<h:outputText value="#{clienteMB.cliente.cobranca.logradouro}"/><h:outputText value=", "/>
+			<h:outputText value="#{clienteMB.cliente.cobranca.numero}"/><h:outputText value=", "/>
+			<h:outputText value="#{clienteMB.cliente.cobranca.bairro}"/><h:outputText value=" - "/>
+			<h:outputText value="#{clienteMB.cliente.cobranca.cep}"/><h:outputText value=" - "/>
+			<h:outputText value="#{clienteMB.cliente.cobranca.cidade}"/><h:outputText value="/"/>
+			<h:outputText value="#{clienteMB.cliente.cobranca.uf}"/><h:outputText value=" - "/>
+			<h:outputText value="#{clienteMB.cliente.cobranca.pais}"/>
+		</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

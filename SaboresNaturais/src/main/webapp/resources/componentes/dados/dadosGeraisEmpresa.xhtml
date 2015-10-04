@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<composite:interface>
+	<composite:attribute name="cnpj" required="true"
+		shortDescription="#{msgs.dsc_cnpj}" type="java.lang.String" />
+	<composite:attribute name="nome_do_contato" required="true"
+		shortDescription="#{msgs.dsc_contato_na_empresa}"
+		type="java.lang.String" />
+	<composite:attribute name="ie" required="true"
+		shortDescription="#{msgs.dsc_ie}" type="java.lang.String" />
+	<composite:attribute name="razao_social" required="true"
+		shortDescription="#{msgs.dsc_razao}" type="java.lang.String" />
+	<composite:attribute name="seguimento" required="true"
+		shortDescription="#{msgs.dsc_seguimento}"
+		type="br.com.sabores.ejb.model.TipoDeEstabelecimento" />
+	<composite:attribute name="site_do_cliente"
+		shortDescription="#{msgs.dsc_site}" type="java.lang.String" />
+	<composite:attribute name="lista_de_tipos_estabelecimentos"
+		type="java.util.List" />
+</composite:interface>
+<composite:implementation>
+	<p:panelGrid columns="1" style="text-align: center;">
+		<h2>CADASTRO DE DADOS GERAIS DA EMPRESA</h2>
+		<p:panelGrid columns="2">
+			<p:outputLabel for="cnpj" value="CNPJ" />
+			<p:inputText id="cnpj" value="#{cc.attrs.cnpj}" />
+
+			<p:outputLabel for="ie" value="IE" />
+			<p:inputMask id="ie" value="#{cc.attrs.ie}" />
+
+			<p:outputLabel for="razao" value="Razão Social" />
+			<p:inputMask id="razao" value="#{cc.attrs.razao_social}" />
+
+			<p:outputLabel for="contato" value="Nome do Contato" />
+			<p:inputMask id="contato" value="#{cc.attrs.nome_do_contato}" />
+
+			<p:outputLabel for="seguimento" value="Seguimento Comercial" />
+			<p:selectOneMenu id="seguimento" value="#{cc.attrs.seguimento}">
+				<f:selectItem itemLabel="Selecione..." noSelectionOption="true" />
+				<f:selectItems value="#{cc.attrs.lista_de_tipos_estabelecimentos}"
+					var="tipo" itemLabel="#{tipo.tipoDeEstabelecimento}"
+					itemValue="#{tipo}" />
+			</p:selectOneMenu>
+
+			<p:outputLabel for="site" value="Site da Empresa" />
+			<p:inputMask id="site" value="#{cc.attrs.site_do_cliente}" />
+		</p:panelGrid>
+	</p:panelGrid>
+</composite:implementation>
+
+</html>

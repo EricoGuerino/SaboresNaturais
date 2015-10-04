@@ -1,0 +1,235 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+			    xmlns:h="http://java.sun.com/jsf/html"
+			    template="/pages/protected/admin/administracao.xhtml"
+			    xmlns:f="http://java.sun.com/jsf/core"
+			    xmlns:ui="http://java.sun.com/jsf/facelets"
+		    	xmlns:p="http://primefaces.org/ui"
+		    	xmlns:pe="http://primefaces.org/ui/extensions">
+    
+<ui:define name="pedidos">
+
+	<script type="text/javascript">
+		var title='PEDIDOS | ENTREGAR';
+		document.getElementsByTagName('title')[0].innerHTML = title;
+	</script>
+	
+	<style type="text/css">
+		
+		.ui-panelgrid td, .ui-panelgrid tr
+		{
+		    border-style: none !important
+		}
+		.pe-inputNumber
+		{
+			width:50% !important;
+		}
+	</style>
+	
+	<p:panel>
+		<h:outputText 	value="SABORES NATURAIS | LISTAS DE PEDIDOS COM ENDEREÇO DE ENTREGA EM BELO HORIZONTE QUE POSSUEM SUA ENTREGA PENDENTE"/>
+	</p:panel>
+	
+	<h:form 	id="formDataTable" 
+				prependId="true">
+	
+		<p:toolbar id="toolbar_total_geral">
+		
+			<f:facet name="left">
+			
+				<h:outputText value="LISTAS EXIBIDAS"/>
+				
+			</f:facet>
+			
+			<f:facet 	name="right">
+			
+				<h:outputText 	value="Total Geral: "/>
+				
+				<h:outputText 	id="total_geral" value="#{listaMB.totalGeral}">
+				
+					<f:convertNumber 	type="currency" 
+										currencySymbol="R$"/>
+					
+				</h:outputText>
+				
+			</f:facet>
+			
+		</p:toolbar>
+		
+		<p:toolbar id="toolbar_refresh">
+		
+			<f:facet name="left"></f:facet>
+			
+			<f:facet 	name="right">
+			
+				<p:commandButton 	id="refreshThePage"
+									value="Atualizar a Tela"
+									action="#{listaMB.atualizarTelaPedidosNaoEntreguesBH()}"
+									process="@this"
+									update="@form">
+				
+				</p:commandButton>
+				
+			</f:facet>
+			
+		</p:toolbar>
+		
+		<p:dataTable 	id="dtPedidos" 
+						value="#{listaMB.listaPedidosCustom}" 
+						var="pedido" 
+						rowIndexVar="rowIndex"
+						rows="10"
+						paginator="true">
+						
+			<p:column style="width:5%;">
+			
+				<p:rowToggler />
+				
+			</p:column>
+			
+			<p:column headerText="Codigo da Compra" style="text-align:center;">
+			
+				<h:outputText value="#{pedido.id}"/>
+				
+			</p:column>
+			
+			<p:column headerText="Cliente">
+			
+				<h:outputText value="#{pedido.cliente.nomeFantasia}"/>
+			
+			</p:column>
+			
+			<p:column headerText="Data Compra" style="text-align:center;">
+			
+				<h:outputText value="#{pedido.dataCompra}">
+				
+					<f:convertDateTime pattern="dd/MM/yyyy"/>
+					
+				</h:outputText>
+				
+			</p:column>
+			
+			<p:column headerText="Definir Prazo" style="text-align:center;">
+			
+				<pe:inputNumber 	id="prazo"	
+									minValue="0" 
+									maxValue="120" 
+									decimalPlaces="0" 
+									maxlength="3"
+									binding="#{listaMB.inputText}"
+									value="#{pedido.prazo}"
+									valueChangeListener="#{listaMB.definirPrazo}">
+					<f:attribute name="listaPedidos" value="#{pedido}"/>
+					<p:ajax process="@this" update="vencimento"/>
+				</pe:inputNumber>
+				
+			</p:column>
+			
+			<p:column headerText="Data Vencimento" style="text-align:center;">
+			
+				<h:outputText id="vencimento" value="#{pedido.dataVencimento}">
+				
+					<f:convertDateTime pattern="dd/MM/yyyy"/>
+					
+				</h:outputText>
+				
+			</p:column>
+			
+			<p:column headerText="Total Geral">
+			
+				<h:outputText value="#{listaMB.getSubtotal(pedido)}">
+				
+					<f:convertNumber type="currency" currencySymbol="R$"/>
+					
+				</h:outputText>
+				
+			</p:column>
+			
+			<p:column headerText="Definir Pedido como Entregue" style="text-align:center;">
+			
+				<h:panelGroup>
+					<p:commandButton 	value="Sim" 
+										disabled="#{pedido.entregue}" 
+										action="#{listaMB.entregarOuCancelarEntrega(pedido)}"
+										update="@form"
+										process="@this">
+					</p:commandButton>
+					
+					<p:commandButton 	value="Não" 
+										disabled="#{!pedido.entregue}" 
+										action="#{listaMB.entregarOuCancelarEntrega(pedido)}"
+										update="@form"
+										process="@this">
+					</p:commandButton>
+				</h:panelGroup>
+				
+			</p:column>
+			
+			<p:column headerText="Imprimir Pedido" style="text-align: center;">
+				<h:panelGroup>
+					<p:commandLink ajax="false">
+						<f:setPropertyActionListener target="#{listaMB.tirarPedido}" value="#{pedido}"/>
+						<p:graphicImage library="icons" name="excel2.png"/>
+						<p:dataExporter target="dtPedidos" type="xls" fileName="#{listaMB.fileNamePedido}" postProcessor="#{listaMB.postProcessorEXCEL}"/>
+					</p:commandLink>
+					
+					<p:commandLink ajax="false" action="#{listaMB.exportarPedidoPDF(pedido)}">
+						<f:setPropertyActionListener target="#{listaMB.tirarPedido}" value="#{pedido}"/>
+						<p:graphicImage library="icons" name="pdf2.png"/>
+					</p:commandLink>
+				</h:panelGroup>
+				
+			</p:column>
+			
+			<p:rowExpansion>
+			
+				<p:dataTable value="#{pedido.itens}" var="it">
+					
+					<p:column headerText="Codigo Produto" style="text-align:center;">
+					
+						<h:outputText value="#{it.produto.codigoProduto}"/>
+						
+					</p:column>
+					
+					<p:column headerText="Produto">
+					
+						<h:outputText value="#{it.produto.produto}"/>
+						
+					</p:column>
+					
+					<p:column headerText="Quantidade" style="text-align:center;">
+					
+						<h:outputText value="#{it.quantidade}"/>
+						
+					</p:column>
+					
+					<p:column headerText="Preco" style="padding-left:20px;">
+					
+						<h:outputText value="#{it.preco}">
+						
+							<f:convertNumber type="currency" currencySymbol="R$"/>
+							
+						</h:outputText>
+						
+					</p:column>
+					
+					<p:column headerText="Total">
+					
+						<h:outputText value="#{listaMB.getTotalItem(it.quantidade,it.preco)}" style="padding-left:20px;">
+						
+							<f:convertNumber type="currency" currencySymbol="R$"/>
+							
+						</h:outputText>
+						
+					</p:column>
+					
+				</p:dataTable>
+				
+			</p:rowExpansion>
+			
+		</p:dataTable>
+		
+	</h:form>
+	
+</ui:define>
+</ui:composition>

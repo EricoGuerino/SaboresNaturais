@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<composite:interface>
+	<composite:attribute name="email_principal" required="true"
+		shortDescription="#{msgs.dsc_email_principal}" type="java.lang.String" />
+	<composite:attribute name="email_alternativo1"
+		shortDescription="#{msgs.dsc_email_alternativo}"
+		type="java.lang.String" />
+	<composite:attribute name="email_alternativo2"
+		shortDescription="#{msgs.dsc_email_alternativo}"
+		type="java.lang.String" />
+	<composite:attribute name="email_alternativo3"
+		shortDescription="#{msgs.dsc_email_alternativo}"
+		type="java.lang.String" />
+	<composite:attribute name="email_alternativo4"
+		shortDescription="#{msgs.dsc_email_alternativo}"
+		type="java.lang.String" />
+</composite:interface>
+<composite:implementation>
+	<p:panelGrid columns="1" style="text-align: center;">
+
+		<h2>CADASTRO DE EMAILS</h2>
+
+		<p:panelGrid columns="2">
+			<p:outputLabel for="email" value="Email Principal:" />
+			<p:inputText id="email" value="#{cc.attrs.email_principal}" />
+
+			<p:outputLabel for="email2" value="Email Alternativo:" />
+			<p:inputMask id="email2" value="#{cc.attrs.email_alternativo1}" />
+
+			<p:outputLabel for="email3" value="Email Alternativo:" />
+			<p:inputMask id="email3" value="#{cc.attrs.email_alternativo2}" />
+
+			<p:outputLabel for="email4" value="Email Alternativo:" />
+			<p:inputMask id="email4" value="#{cc.attrs.email_alternativo3}" />
+
+			<p:outputLabel for="email5" value="Email Alternativo:" />
+			<p:inputMask id="email5" value="#{cc.attrs.email_alternativo4}" />
+		</p:panelGrid>
+	</p:panelGrid>
+</composite:implementation>
+
+</html>

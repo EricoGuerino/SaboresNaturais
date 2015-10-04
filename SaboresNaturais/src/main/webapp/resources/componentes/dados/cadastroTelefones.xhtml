@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<composite:interface>
+	<composite:attribute name="fixo_principal" required="true"
+		shortDescription="#{msgs.dsc_telefoneFixo1}" type="java.lang.String" />
+	<composite:attribute name="fixo_alternativo"
+		shortDescription="#{msgs.dsc_telefoneFixo2}" type="java.lang.String" />
+	<composite:attribute name="cel_principal" required="true"
+		shortDescription="#{msgs.dsc_celular1}" type="java.lang.String" />
+	<composite:attribute name="cel_alternativo"
+		shortDescription="#{msgs.dsc_celular2}" type="java.lang.String" />
+	<composite:attribute name="fax" shortDescription="#{msgs.dsc_fax}"
+		type="java.lang.String" />
+</composite:interface>
+
+<composite:implementation>
+	<p:panelGrid columns="1" style="text-align: center;">
+		<h2>CADASTRO DE TELEFONES</h2>
+		<p:panelGrid columns="2">
+			<p:outputLabel for="fixo_1" value="Tel. Fixo Principal:" />
+			<p:inputMask id="fixo_1" mask="(99) 9 9999-9999"
+				value="#{cc.attrs.fixo_principal}" />
+
+			<p:outputLabel for="fixo_2" value="Tel. Fixo Alternativo:" />
+			<p:inputMask id="fixo_2" mask="(99) 9 9999-9999"
+				value="#{cc.attrs.fixo_alternativo}" />
+
+			<p:outputLabel for="cel_1" value="Tel. Celular Principal:" />
+			<p:inputMask id="cel_1" mask="(99) 9 9999-9999"
+				value="#{cc.attrs.cel_principal}" />
+
+			<p:outputLabel for="cel_2" value="Tel. Celular Alternativo:" />
+			<p:inputMask id="cel_2" mask="(99) 9 9999-9999"
+				value="#{cc.attrs.cel_alternativo}" />
+
+			<p:outputLabel for="fax" value="Tel. Fax:" />
+			<p:inputMask id="fax" mask="(99) 9 9999-9999" value="#{cc.attrs.fax}" />
+		</p:panelGrid>
+	</p:panelGrid>
+</composite:implementation>
+</html>

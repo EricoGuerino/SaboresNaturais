@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:cadastros="http://java.sun.com/jsf/composite/componentes/cadastros"
+	template="/pages/protected/admin/administracao.xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="visualizar">
+		<script type="text/javascript">
+			var title='ADMINISTRAR | CATEGORIAS';
+			document.getElementsByTagName('title')[0].innerHTML = title;
+		</script>
+		
+		<p:panel>
+			<h:outputText value="SABORES NATURAIS | ADMINISTRAÇÃO DE CATEGORIAS"/>
+		</p:panel>
+		
+		<h:form id="formUiDados">
+			
+			<p:growl 	id="msgs" 	
+						autoUpdate="true" 
+						showDetail="true" 
+						showSummary="true" />
+		
+			<p:dataTable 	id="dtCategoria" 
+							value="#{categoriaMB.allCategorias}"
+							var="categoria" 
+							emptyMessage="Não há categorias para serem exibidas"
+							rowIndexVar="rowIndex"
+							paginator="true"
+							paginatorAlwaysVisible="true"
+							rows="15">
+	
+				<p:column 	headerText="Código" style="text-align:center;">
+				
+					<h:outputText 	value="#{categoria.id}" />
+					
+				</p:column>
+				
+				<p:column 	headerText="Categoria" 
+							style="text-align:center;"
+							filterBy="#{categoria.categoria}"
+							filterMatchMode="contains">
+					
+					<p:inputText 	id="categoria"
+									value="#{categoria.categoria}" 
+									valueChangeListener="#{categoriaMB.valueChangeAlterarCategoria}"
+									immediate="true">
+						<p:ajax process="@this" update="@this"/>
+						<f:param id="nome_categoria" name="nomeCategoria" value="#{categoria.id}"/>
+					</p:inputText>	
+					
+				</p:column>
+				
+				<p:column 	headerText="Ativar / Desativar Categoria" style="text-align:center;">
+				
+					<p:commandButton 	value="#{categoria.statusAtivacao}" 
+										immediate="true"
+										process="@this"
+										update="@this"
+										action="#{categoriaMB.alterarStatusAtivacao()}">
+						<f:setPropertyActionListener target="#{categoriaMB.categoria}" value="#{categoria}"/>
+					</p:commandButton>
+				
+				</p:column>
+				
+				<p:column 	headerText="Apagar" style="text-align:center;">
+				
+					<p:commandButton 	id="btnApagarCategoria" 
+										icon="ui-icon-close"
+										title="Apagar Categoria" action="#{categoriaMB.removerCategoria()}"
+										immediate="true"
+										update=":formUiDados:dtCategoria :formUiDados:msgs"
+										widgetVar="formUiDados_btnApagarCategoria_#{rowIndex}">
+										
+						<f:setPropertyActionListener 	target="#{categoriaMB.categoria}"
+														value="#{categoria}" />
+														
+						<f:ajax />
+						
+					</p:commandButton>
+					
+				</p:column>
+				
+			</p:dataTable>
+			
+		</h:form>
+		
+	</ui:define>
+	
+</ui:composition>

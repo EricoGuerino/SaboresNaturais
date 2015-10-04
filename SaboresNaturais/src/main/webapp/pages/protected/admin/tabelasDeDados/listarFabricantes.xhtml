@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:cadastros="http://java.sun.com/jsf/composite/componentes/cadastros"
+	template="/pages/protected/admin/administracao.xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="visualizar">
+	
+		<script 	type="text/javascript">
+		
+			var title='ADMINISTRAR | FABRICANTES';
+			document.getElementsByTagName('title')[0].innerHTML = title;
+			
+		</script>
+		
+		<p:panel>
+			<h:outputText value="SABORES NATURAIS | ADMINISTRAÇÃO DE FABRICANTES" />
+		</p:panel>
+		
+		<h:form 	id="formUiDados">
+		
+			<p:growl 	id="msgs" 	
+						autoUpdate="true" 
+						showDetail="true" 
+						showSummary="true" />
+		
+			<p:dataTable 	id="dtFabricante" 
+							value="#{fabricanteMB.allFabricantes}"
+							var="fabricante"
+							emptyMessage="Não há fabricantes para serem exibidas"
+							rowIndexVar="rowIndex"
+							paginator="true"
+							paginatorAlwaysVisible="true"
+							rows="15">
+	
+				<p:column 	headerText="Código" style="text-align:center;">
+				
+					<h:outputText 	value="#{fabricante.id}" />
+					
+				</p:column>
+				
+				<p:column 	headerText="Fabricante"
+							style="text-align:center;"
+							filterBy="#{fabricante.fabricante}"
+							filterMatchMode="contains">
+				
+					<p:inputText 	id="fabricante" 
+									value="#{fabricante.fabricante}"
+									valueChangeListener="#{fabricanteMB.valueChangeAlterarFabricante}"
+									immediate="true">
+						<p:ajax process="@this" update="@this"/>
+						<f:param id="nome_fabricante" name="nomeFabricante" value="#{fabricante.id}"/>
+					</p:inputText>
+					
+				</p:column>
+				
+				<p:column 	headerText="Ativar / Desativar Fabricante" style="text-align:center;">
+				
+					<p:commandButton 	value="#{fabricante.statusAtivacao}" 
+										immediate="true"
+										process="@this"
+										update="@this"
+										action="#{fabricanteMB.alterarStatusAtivacao()}">
+						<f:setPropertyActionListener target="#{fabricanteMB.fabricante}" value="#{fabricante}"/>
+					</p:commandButton>
+				
+				</p:column>
+				
+				<p:column 	headerText="Apagar" style="text-align:center;">
+				
+					<p:commandButton 	id="btnApagarFabricante" 
+										icon="ui-icon-close"
+										title="Apagar fabricante"
+										action="#{fabricanteMB.removerFabricante()}" immediate="true"
+										update=":formUiDados:dtFabricante :formUiDados:msgs"
+										widgetVar="formUiDados_btnApagarFabricante_#{rowIndex}">
+										
+						<f:setPropertyActionListener 	target="#{fabricanteMB.fabricante}"
+														value="#{fabricante}" />
+														
+					</p:commandButton>
+					
+				</p:column>
+				
+			</p:dataTable>
+			
+		</h:form>
+		
+	</ui:define>
+	
+</ui:composition>

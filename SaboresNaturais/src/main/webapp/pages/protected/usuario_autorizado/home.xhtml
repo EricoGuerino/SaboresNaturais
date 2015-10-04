@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head><title></title></h:head>
+<h:body>
+	<h:form>
+	<p:menubar>
+		<p:submenu label="Dados Pessoais">
+			<p:menuitem value="Visualizar Dados" action="toVerDadosCadastrais"/>
+			<p:menuitem value="Alterar Dados" action="toAlterarDadosCadastrais"/>
+			<p:menuitem value="Alterar Senha" action="toAlterarSenha"/>
+			<p:menuitem value="Cancelar Cadastro" action="toCancelarCadastro"/>
+			<p:menuitem value="Sair" action="toSabores"/>
+		</p:submenu>
+		<p:menuitem value="Comprar" action="toComprar"/>
+		<p:submenu label="Histórico de Pedidos">
+			<p:menuitem value="Pedidos Recentes" action="toPedidosRecentes"/>
+			<p:menuitem value="Histórico de Compras" action="toHistoricoCompras"/>
+		</p:submenu>
+		<p:menuitem value="Contato" action="toContatoHomeCliente"/>
+		
+		<f:facet name="options">
+			<h:outputText value="USUARIO LOGADO: " />
+			<h:outputText value="#{loginMB.usuarioRazaoSocial}"/>
+			<p:commandButton value="Logoff" id="btnLogoff"
+				action="#{loginMB.logoff}"
+				update="@all">
+				<p:ajax />
+			</p:commandButton>
+		</f:facet>
+	</p:menubar>
+	</h:form>
+	
+	<p:growl id="msg_home_user" autoUpdate="true" showSummary="true" showDetail="true" escape="false"/>
+	<ui:insert name="home_usuario"/>
+	
+	<p:growl id="msg_dados" autoUpdate="true" showSummary="true" showDetail="true" escape="false"/>
+	<ui:insert name="dados_usuario"/>
+	
+	<p:growl id="msg_comprar" autoUpdate="true" showSummary="true" showDetail="true" escape="false"/>
+	<ui:insert name="comprar"/>
+	
+	<p:growl id="msg_historico_pedidos" autoUpdate="true" showSummary="true" showDetail="true" escape="false"/>
+	<ui:insert name="historico_pedidos_usuario"/>
+
+	<p:growl id="msg_contato_home_user" autoUpdate="true" showSummary="true" showDetail="true" escape="false"/>
+	<ui:insert name="contato_home_user"/>
+		
+</h:body>
+</html>

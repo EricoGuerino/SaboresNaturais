@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/pages/public/sabores.xhtml"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<ui:define name="home">
+	
+		<script type="text/javascript">
+			var title='SABORES | CONTATO';
+			document.getElementsByTagName('title')[0].innerHTML = title;
+		</script>
+		
+		<style type="text/css">
+			.bordas_arredondas
+			{
+				
+				border-radius: 20px;
+				-moz-border-radius: 20px;
+				-webkit-border-radius: 20px;
+			}
+		</style>
+		
+		<h:form id="formPrincipal" prependId="true">
+	
+			<p:panel style="width:100%;">
+				<h:outputText value="SABORES NATURAIS | #{saboresMB.getTituloUpperCase(saboresMB.noticia.titulo)}"/>
+			</p:panel>
+			
+			<div style="height:100%;width:100%;">
+				<p:panel style="width:100%;max-height:700px;text-align:center;">
+					<p:graphicImage 	style="width:50%;height:50%;max-height:680px;max-width:930px;;"
+										value="/ShowMedia/?display=imagem_@NN@_#{saboresMB.noticia.id}_@NN@_#{saboresMB.nomeImagemPrincipal}"
+										rendered="#{saboresMB.renderizarImagemPrincipal()}"/>
+				</p:panel>
+				
+				<h:panelGroup 	rendered="#{saboresMB.renderizarPainelImagens()}">
+
+					<table style="width:100%;" class="bordas_arredondas">
+					
+						<tr style="width:100%;">
+						
+							<ui:repeat var="img" value="#{saboresMB.noticia.imagem}">
+							
+								<td>
+								
+									<p:panel style="width:100%;text-align:center;">
+									
+										<p:commandLink 	action="#{saboresMB.callDialogImagem(img.imagemNome)}"
+															update=":formImagem"
+															oncomplete="PF('widgetImagemDialog').show();">
+											<p:graphicImage id="imagem" style="height: 77px; width: 100px"
+															title="Clique na imagem para ampliar"
+															value="/ShowMedia/?display=imagem_@NN@_#{saboresMB.noticia.id}_@NN@_#{img.imagemNome}"  />
+										</p:commandLink>
+										
+									</p:panel>
+									
+								</td>
+								
+							</ui:repeat>
+							
+						</tr>
+						
+					</table>
+					
+				</h:panelGroup>
+				
+			</div>
+			
+			<div>
+				<p:panel 	style="width:100%;text-align:center;"
+							rendered="#{saboresMB.renderizarVideoYoutube()}">
+					<object id="playerYoutube" width="600" height="480"> 
+						<param name="movie" value="#{saboresMB.noticia.video.url}" /> 
+						<embed 	src="#{saboresMB.noticia.video.url}" 
+								type="application/x-shockwave-flash" 
+								width="600" 
+								height="480" />
+
+					</object>
+				</p:panel>
+				
+				<p:panel	style="width:100%;text-align:center;"
+							rendered="#{saboresMB.renderizarVideosPC()}">
+					<p:media 	player="#{saboresMB.noticia.video.tipoPlayer.descricao}" 
+								value="/ShowMedia/?display=video_@NN@_#{saboresMB.noticia.id}_@NN@_#{saboresMB.noticia.video.nomeVideo}"
+								cache="false">
+						<f:param name="autoplay" value="false" />
+					</p:media>
+				</p:panel>
+			</div>
+			<div>
+				<p:panel style="width:100%;">
+					<h:outputText value="#{saboresMB.noticia.noticia}" escape="false"/>
+				</p:panel>
+				<p:toolbar style="width:100%;">
+					<f:facet name="left">
+						<h:outputText value="Tags: "/>
+						<ui:repeat var="t" value="#{saboresMB.getTagsList(saboresMB.noticia.tags)}">
+							<p:commandLink action="#{saboresMB.pesquisarPorTag(t)}">
+								<h:outputText value="#{t}"/>
+							</p:commandLink>
+							<h:outputText value=" "/>
+						</ui:repeat>
+					</f:facet>
+					
+					<f:facet name="right">
+						<p:commandButton 	id="fechar_noticia" 
+											value="Voltar" 
+											action="#{saboresMB.voltar()}"
+											immediate="true"/>
+					</f:facet>
+				</p:toolbar>
+			</div>
+		</h:form>
+		
+		<h:form id="formImagem" prependId="true">
+			<p:dialog 	id="imagemDialog"
+						widgetVar="widgetImagemDialog"
+						maxWidth="700px"
+						masHeight="700px"
+						modal="true"
+						dynamic="true"
+						position="top"
+						styleClass="bordas_arredondas">
+				<h:panelGroup id="pnlImagem" style="text-align:center;vertical-align:middle;" >
+					<h:graphicImage 	id="imagemExibida"
+										value="/ShowMedia/?display=imagem_@NN@_#{saboresMB.noticia.id}_@NN@_#{saboresMB.nomeImagem}" 
+										style="max-height:650px;max-width:650px;"/>
+				</h:panelGroup>
+			</p:dialog>
+		</h:form>
+		
+	</ui:define>
+</ui:composition>

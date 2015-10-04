@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+	<h:head><title>COMPRAS | CARRINHO</title></h:head>
+	<h:body>
+	
+	<p:panel>
+		<h:outputText value="SEU CARRINHO"/>
+	</p:panel>
+	
+	<h:form prependId="false">
+		<p:growl autoUpdate="true" escape="false" showDetail="true" showSummary="true"/>
+		<p:sticky target="toolbarCarrinho"/>
+		<p:toolbar id="toolbarCarrinho">
+		<f:facet name="left"></f:facet>
+		<f:facet name="right">
+			<p:commandButton value="Continuar Comprando" action="toComprar"/>
+			<p:commandButton value="Finalizar Pedido" action="#{compraMB.finalizarCompra()}"/>
+			<p:commandButton value="Limpar Carrinho" action="#{compraMB.limparCarrinho()}" update="tblCarrinho"/>
+		</f:facet>
+		</p:toolbar>	
+	
+		<p:dataTable value="#{compraMB.carrinho}" var="item" id="tblCarrinho" editable="true" rowIndexVar="rowIndex">
+		
+			<p:column headerText="Produto">
+				<h:outputText value="#{item.produto.produto}"/>
+			</p:column>
+			<p:column headerText="Preço">
+				<h:outputText value="#{item.produto.preco}"/>
+			</p:column>
+			<p:column headerText="Quantidade">
+				<p:spinner 	accesskey="changeQtdCarrinho_produtoId:#{item.produto.id}" size="5"
+               				id="changeQtdCarrinho" value="#{compraMB.quantidade}" 
+               				valueChangeListener="#{compraMB.pegarQuantidade}">
+					<f:convertNumber type="number" integerOnly="true" maxIntegerDigits="3" minIntegerDigits="3" pattern="###"/>
+				</p:spinner>
+			</p:column>
+			<p:column headerText="Remover Item">
+				<p:commandButton value="Remover" action="#{compraMB.retirarItemCarrinho(item)}" process="@form" update="tblCarrinho"/>
+			</p:column>
+		</p:dataTable>
+	</h:form>
+	</h:body>
+</html>

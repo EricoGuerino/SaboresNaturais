@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	template="/pages/protected/usuario_autorizado/home.xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui">
+    
+<ui:define name="historico_pedidos_usuario"> 
+	<script type="text/javascript">
+		var title='USUARIO | HISTÓRICO PEDIDOS RECENTES';
+		document.getElementsByTagName('title')[0].innerHTML = title;
+	</script>
+	<p:panel>
+		<h:outputText value="SABORES NATURAIS | MEUS PEDIDOS RECENTES AINDA NÃO ENTREGUES"/>
+	</p:panel>
+	
+	<p:dataTable 	value="#{pedidosRecentesMB.pedidos}" 
+					var="ped" 
+					rowIndexVar="rowIndex"
+					paginator="true"
+					paginatorAlwaysVisible="false"
+					rows="15">
+		<p:column style="width:5%;">
+			<p:rowToggler />
+		</p:column>
+		
+		<p:column 	headerText="Data Compra"
+					style="text-align:center;">
+			<h:outputText value="#{ped.pedido.dataCompra}">
+				<f:convertDateTime pattern="dd/MM/yyyy hh:MM:ss"/>
+			</h:outputText>
+		</p:column>
+		
+		<p:column 	headerText="Entregue?"
+					style="text-align:center;">
+			<h:outputText value="#{pedidosRecentesMB.getStatusEntregue(ped.pedido)}"/>
+		</p:column>
+		
+		<p:column headerText="Subtotal">
+			<h:outputText value="#{pedidosRecentesMB.getSubtotal(ped.pedido)}" style="padding-left:20px;">
+				<f:convertNumber type="currency" currencySymbol="R$ "/>
+			</h:outputText>
+		</p:column>
+		
+		<p:rowExpansion>
+			
+			<p:dataTable 	id="dtItens" 
+							value="#{ped.pedido.itens}" 
+							var="it">
+							
+				<f:facet name="header">
+					<h:outputText value="Itens do Pedido"/>
+				</f:facet>			
+				
+				<p:column headerText="Codigo do Produto" style="text-align:center;">
+					<h:outputText value="#{it.produto.codigoProduto}"/>
+				</p:column>
+							
+				<p:column headerText="Produto">
+					<h:outputText value="#{it.produto.produto}"/>
+				</p:column>
+				
+				<p:column headerText="Quantidade" style="text-align:center;">
+					<h:outputText value="#{it.quantidade}"/>
+				</p:column>
+				
+				<p:column headerText="Preco">
+					<h:outputText value="#{it.preco}" style="padding-left:20px;">
+						<f:convertNumber type="currency" currencySymbol="R$ "/>
+					</h:outputText>
+				</p:column>
+				
+				<p:column headerText="Subtotal Produto">
+					<h:outputText value="#{listaMB.getTotalItem(it.quantidade,it.preco)}" style="padding-left:20px;">
+						<f:convertNumber type="currency" currencySymbol="R$ "/>
+					</h:outputText>
+				</p:column>
+				
+			</p:dataTable>
+			
+			<p:dataTable 	id="dtRastreiamento"
+							value="#{ped.rastreio.historico}" 
+							var="r" 
+							rendered="#{ped.rastreavel}">
+				
+				<f:facet name="header">
+					<h:outputText value="Rastreamento do Pedido"/>
+				</f:facet>
+						
+				<p:column headerText="Data Evento">
+					<h:outputText value="#{r.data}"/>
+				</p:column>
+				
+				<p:column headerText="Local">
+					<h:outputText value="#{r.local}"/>
+				</p:column>
+				
+				<p:column headerText="Situação">
+					<h:outputText value="#{r.situacao}"/>
+				</p:column>
+				
+				<p:column headerText="Detalhes">
+					<h:outputText value="#{r.detalhes}"/>
+				</p:column>
+			</p:dataTable>
+				
+		</p:rowExpansion>
+	</p:dataTable>
+</ui:define>
+</ui:composition>

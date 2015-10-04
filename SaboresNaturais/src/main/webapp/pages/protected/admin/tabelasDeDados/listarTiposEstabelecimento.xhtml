@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:cadastros="http://java.sun.com/jsf/composite/componentes/cadastros"
+	template="/pages/protected/admin/administracao.xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="visualizar">
+	
+		<script type="text/javascript">
+		
+			var title='ADMINISTRAR | TIPOS DE ESTAB.';
+			document.getElementsByTagName('title')[0].innerHTML = title;
+			
+		</script>
+		
+		<p:panel>
+			<h:outputText value="SABORES NATURAIS | ADMINISTRAÇÃO DE TIPOS DE ESTABELECIMENTO"/>
+		</p:panel>
+		
+		<h:form id="formUiDados">
+		
+			<p:growl 	id="msgs" 	
+						autoUpdate="true" 
+						showDetail="true" 
+						showSummary="true" />
+		
+			<p:dataTable 	id="dtTipoEstabelecimento"
+							value="#{tipoDeEstabelecimentoMB.allTiposEstabelecimentos}"
+							var="tipo"
+							emptyMessage="Não há tipos de estabelecimento para serem exibidas"
+							rowIndexVar="rowIndex"
+							paginator="true"
+							paginatorAlwaysVisible="true"
+							rows="15">
+	
+				<p:column 	headerText="Código" style="text-align:center;">
+				
+					<h:outputText 	value="#{tipo.id}" />
+					
+				</p:column>
+				
+				<p:column 	headerText="Tipo de Estabelecimento"
+							style="text-align:center;"
+							filterBy="#{tipo.tipoDeEstabelecimento}"
+							filterMatchMode="contains">
+				
+					<p:inputText 	id="tipoEstabelecimento" 
+									value="#{tipo.tipoDeEstabelecimento}"
+									valueChangeListener="#{tipoDeEstabelecimentoMB.valueChangeAlterarTipoDeEstabelecimento}"
+									immediate="true">
+						<p:ajax process="@this" update="@this"/>
+						<f:param id="nome_tipo_estabelecimento" name="nomeTipoDeEstabelecimento" value="#{tipo.id}"/>
+					</p:inputText>
+					
+				</p:column>
+				
+				<p:column 	headerText="Ativar / Desativar Tipo de Estabelecimento" style="text-align:center;">
+				
+					<p:commandButton 	value="#{tipo.statusAtivacao}" 
+										immediate="true"
+										process="@this"
+										update="@this"
+										action="#{tipoDeEstabelecimentoMB.alterarStatusAtivacao()}">
+						<f:setPropertyActionListener target="#{tipoDeEstabelecimentoMB.tipoDeEstabelecimento}" value="#{tipo}"/>
+					</p:commandButton>
+				
+				</p:column>
+				
+				<p:column headerText="Apagar" style="text-align:center;">
+				
+					<p:commandButton 	id="btnApagarTipo" 
+										icon="ui-icon-close"
+										title="Apagar Tipo Estabelecimento"
+										action="#{tipoDeEstabelecimentoMB.removerTipoDeEstabelecimento()}"
+										immediate="true"
+										update=":formUiDados:dtTipoEstabelecimento :formUiDados:msgs"
+										widgetVar="formUiDados_btnApagarTipo_#{rowIndex}">
+										
+						<f:setPropertyActionListener	target="#{tipoDeEstabelecimentoMB.tipoDeEstabelecimento}"
+														value="#{tipo}" />
+														
+					</p:commandButton>
+					
+				</p:column>
+				
+			</p:dataTable>
+			
+		</h:form>
+		
+	</ui:define>
+	
+</ui:composition>

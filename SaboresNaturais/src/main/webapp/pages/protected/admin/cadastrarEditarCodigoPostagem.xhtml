@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      template="/pages/protected/admin/administracao.xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+    
+<ui:define name="pedidos">
+
+	<script type="text/javascript">
+		var title='PEDIDOS | COD. POSTAGEM';
+		document.getElementsByTagName('title')[0].innerHTML = title;
+	</script>
+	
+	<style type="text/css">
+		
+		.ui-panelgrid td, .ui-panelgrid tr
+		{
+		    border-style: none !important
+		}
+		
+	</style>
+	
+	<p:panel>
+		<h:outputText 	value="CADASTRAR / EDITAR CÓDIGO DE POSTAGEM DAS LISTAS DE PEDIDOS"/>
+	</p:panel>
+	
+	<h:form 	id="formDataTable" 
+				prependId="true">
+	
+		<p:toolbar id="toolbar_total_geral">
+		
+			<f:facet name="left">
+			
+				<h:outputText value="LISTAS EXIBIDAS"/>
+				
+			</f:facet>
+			
+			<f:facet 	name="right">
+			
+				<h:outputText 	value="Total Geral: "/>
+				
+				<h:outputText 	id="total_geral" value="#{listaMB.totalGeral}">
+				
+					<f:convertNumber 	type="currency" 
+										currencySymbol="R$"/>
+					
+				</h:outputText>
+				
+			</f:facet>
+			
+		</p:toolbar>
+		
+		<p:toolbar id="toolbar_refresh">
+		
+			<f:facet name="left"></f:facet>
+			
+			<f:facet 	name="right">
+			
+				<p:commandButton 	id="refreshThePage"
+									value="Atualizar a Tela"
+									action="#{listaMB.atualizarTelaPedidosNaoEntreguesBH()}"
+									process="@this"
+									update="@form">
+				
+				</p:commandButton>
+				
+			</f:facet>
+			
+		</p:toolbar>
+		
+		<p:dataTable 	id="dtPedidos" 
+						value="#{listaMB.listaPedidosCustom}" 
+						var="pedido"
+						rowIndexVar="rowIndex"
+						rows="10"
+						paginator="true">
+						
+			<p:column headerText="Codigo">
+			
+				<h:outputText value="#{pedido.id}"/>
+				
+			</p:column>
+			
+			<p:column headerText="Cliente">
+			
+				<h:outputText value="#{pedido.cliente.nomeFantasia}"/>
+			
+			</p:column>
+			
+			<p:column headerText="Data Compra">
+			
+				<h:outputText value="#{pedido.dataCompra}">
+				
+					<f:convertDateTime pattern="dd/MM/yyyy hh:MM:ss"/>
+					
+				</h:outputText>
+				
+			</p:column>
+			
+			<p:column headerText="Cidade da Entrega">
+			
+				<h:outputText value="#{pedido.cliente.entrega.cidade}"/>
+				
+			</p:column>
+			
+			<p:column headerText="Código Postagem">
+			
+				<p:inputText value="#{pedido.codigoPostagem}">
+					<f:ajax execute="@this" render="@this"/>
+				</p:inputText>
+				
+			</p:column>
+			
+			<p:column headerText="Cadastrar / Editar">
+
+				<p:commandButton 	id="cadastrarEditar" 
+									value="#{listaMB.getCadastrarEditar(pedido)}"
+									action="#{listaMB.cadastrarEditarCodigoPostagem(pedido)}"
+									process="@this"
+									update="@form">
+				</p:commandButton>			
+				
+			</p:column>
+			
+		</p:dataTable>
+		
+	</h:form>
+	
+</ui:define>
+</ui:composition>
